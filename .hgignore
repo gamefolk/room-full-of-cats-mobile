@@ -1,0 +1,19 @@
+syntax: glob
+bin
+build
+dist
+gen
+libs
+.settings
+.classpath
+.project
+.settings/org.eclipse.jdt.core.prefs
+build.properties
+build.xml
+default.properties
+local.properties
+nbproject/build-Android.xml
+nbproject/build-impl.xml
+nbproject/build-Java.xml
+proguard-project.txt
+project.properties
