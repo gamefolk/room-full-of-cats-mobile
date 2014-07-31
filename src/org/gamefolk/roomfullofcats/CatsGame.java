@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.Random;
 
 import org.gamefolk.roomfullofcats.R;
@@ -21,6 +22,7 @@ import android.webkit.WebView;
 
 import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameView;
+import com.arcadeoftheabsurd.absurdengine.MobFoxNativeRequest;
 import com.arcadeoftheabsurd.absurdengine.Sprite;
 import com.arcadeoftheabsurd.absurdengine.Timer;
 import com.arcadeoftheabsurd.absurdengine.WebUtils;
@@ -146,7 +148,11 @@ public class CatsGame extends GameView
 		if (!test) {
 			test = true;
 			try {
-				System.out.println("ip address: " + WebUtils.getLocalIpAddress());
+				/*
+				 * IMAGE TEST
+				 */
+				
+				/*System.out.println("ip address: " + WebUtils.getLocalIpAddress());
 				
 				System.out.println("downloading images");
 				
@@ -156,15 +162,41 @@ public class CatsGame extends GameView
 				
 				String fileName2 = "image2.png";
 				filePath = WebUtils.downloadFile("http://3.bp.blogspot.com/-Xo0EuTNYNQg/UEI1zqGDUTI/AAAAAAAAAYE/PLYx5H4J4-k/s1600/smiley+face+super+happy.jpg", fileName2, getContext());
-				downloaded2 = makeSprite(loadTempBitmapFile(filePath, fileName2, new Vector2d(50, 50)), 50, 50);
+				downloaded2 = makeSprite(loadTempBitmapFile(filePath, fileName2, new Vector2d(50, 50)), 50, 50);*/
 				
-				//System.out.println("testing ad id method");
+				/*
+				 * FIRST AD TEST
+				 */
 				
-				//String id = DeviceUtility.getAdId(getContext());
+				/*System.out.println("getting ip...");
+				String ip = DeviceUtility.getLocalIp();
+				System.out.println(ip);
 				
-				/*if (id == null) {
-					System.out.println("yeah it's null.");
-				}*/
+				System.out.println("getting ad id...");
+				String adId = DeviceUtility.getAdId();
+				System.out.println(adId);
+				
+				MobFoxNativeRequest adRequest = new MobFoxNativeRequest();
+				
+				adRequest.publisherId = "80187188f458cfde788d961b6882fd53"; // test id
+				adRequest.userAgent = URLEncoder.encode(DeviceUtility.getUserAgent(), "UTF-8");
+				adRequest.ipAddress = ip;
+				adRequest.adId = adId;
+				
+				adRequest.imageTypes = new String[]{"icon"};
+				adRequest.textTypes = new String[]{"headline"};
+				
+				System.out.println("compiling request...");
+				String request = adRequest.compileRequest();
+				System.out.println(request);
+				
+				System.out.println("sending request...");
+				String result = WebUtils.restRequest(request);
+				System.out.println(result);*/
+				
+				/*
+				 * InetAddress test
+				 */
 				
 				/*System.out.println("by name:");
 				
@@ -187,6 +219,10 @@ public class CatsGame extends GameView
 				System.out.println("hostname: " + addr2.getHostName());
 				System.out.println("canonical name: " + addr2.getCanonicalHostName());
 				System.out.println();*/
+				
+				/*
+				 * Socket test
+				 */
 				
 			    /*InetAddress addr = InetAddress.getByName("arcadeoftheabsurd.com");
 				
@@ -219,6 +255,10 @@ public class CatsGame extends GameView
 				}
 				
 				ir.close();*/
+				
+				/*
+				 * URL TEST
+				 */
 								
 				/*URL url = new URL("http://arcadeoftheabsurd.com");
 				
@@ -232,30 +272,6 @@ public class CatsGame extends GameView
 				}
 				
 				in.close();*/
-				
-				/*URL url = new URL("http://pbs.twimg.com/profile_images/459885147328749568/iDElBRxE.jpeg");
-				URLConnection conn = url.openConnection();
-				InputStream in = new BufferedInputStream(conn.getInputStream());
-				
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				byte[] buffer = new byte[1024];
-				int byteIn = 0;
-				
-				while ((byteIn = in.read(buffer)) != -1) {
-				   out.write(buffer, 0, byteIn);
-				}
-				out.close();
-				in.close();
-								
-				String fileName = "tempimage.png";
-				
-				getContext().openFileOutput(fileName, 0).write(out.toByteArray());
-				
-				System.out.println("saved image as " + getContext().getFileStreamPath(fileName));
-				
-				String filePath = getContext().getFileStreamPath(fileName).getAbsolutePath();
-				
-				drawable = (BitmapDrawable) BitmapDrawable.createFromPath(filePath);*/
 	        } catch (Exception e) {}
 		}
 	}

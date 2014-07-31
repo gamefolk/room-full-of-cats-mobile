@@ -6,18 +6,19 @@ import android.view.WindowManager;
 
 import com.arcadeoftheabsurd.absurdengine.GameActivity;
 import com.arcadeoftheabsurd.absurdengine.GameView;
-import com.arcadeoftheabsurd.absurdengine.WebUtils;
 
 public class CatsGameActivity extends GameActivity
 {
 	private CatsGame world;
 	
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);    
+        requestWindowFeature(Window.FEATURE_NO_TITLE);   
         
-        System.out.println("user agent: " + WebUtils.getUserAgent(this));
+        super.onCreate(savedInstanceState); 
+        
+        //System.out.println("user agent: " + WebUtils.getUserAgent(this));
         
         /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
         startActivity(browserIntent);
@@ -31,12 +32,10 @@ public class CatsGameActivity extends GameActivity
 		} catch (IOException e) {
 			e.printStackTrace();
 		}*/
-                
-        super.onCreate(savedInstanceState); 
     }
     
     @Override
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
     }
 
