@@ -10,7 +10,7 @@ import com.arcadeoftheabsurd.absurdengine.GameView;
 
 public class CatsGameActivity extends GameActivity
 {
-	private CatsGame world;
+	//private CatsGame world;
 	
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -31,7 +31,6 @@ public class CatsGameActivity extends GameActivity
 		DeviceUtility.setLocalIp();
 		
 		Thread loaderThread = new Thread(new Runnable() {
-			@Override
 			public void run() {
 				try {
 					DeviceUtility.setAdId();
@@ -64,9 +63,8 @@ public class CatsGameActivity extends GameActivity
         super.onStop();
     }
 
-    protected GameView initializeGame() {
-        world = new CatsGame(this);
-        return world;
+    protected void initializeGame() {
+        game = new CatsGame(this, this);
     }
     
     private void finishedLoading() {
@@ -75,6 +73,6 @@ public class CatsGameActivity extends GameActivity
 		System.out.println("ad id: " + DeviceUtility.getAdId());
 		System.out.println("user agent: " + DeviceUtility.getUserAgent());
 		
-		startGame();
+		loadGame();
 	}
 }

@@ -22,7 +22,7 @@ import android.webkit.WebView;
 
 import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameView;
-import com.arcadeoftheabsurd.absurdengine.MobFoxNativeRequest;
+//import com.arcadeoftheabsurd.absurdengine.MobFoxNativeRequest;
 import com.arcadeoftheabsurd.absurdengine.Sprite;
 import com.arcadeoftheabsurd.absurdengine.Timer;
 import com.arcadeoftheabsurd.absurdengine.WebUtils;
@@ -47,8 +47,8 @@ public class CatsGame extends GameView
 	
 	private final Random rGen = new Random();
 	
-	public CatsGame(Context context) {
-		super(context);
+	public CatsGame(Context context, GameLoadListener loadListener) {
+		super(context, loadListener);
 		
 		fallTimer = new Timer(fallTime, this, new Delegate() {
 			public void function(Object... args) {		
@@ -128,14 +128,17 @@ public class CatsGame extends GameView
 	}
 
 	@Override
-	protected void setup(int width, int height) {
+	protected void setupGame(int width, int height) {
 		thingSize = new Vector2d((width / mapSize.x) - 20, (height / mapSize.y) - 20);
 		
 		ThingType.GEAR.setBitmap   (loadBitmapResource(ThingType.GEAR.resourceId,    thingSize));
 		ThingType.SHROOM.setBitmap (loadBitmapResource(ThingType.SHROOM.resourceId,  thingSize));
 		ThingType.CRYSTAL.setBitmap(loadBitmapResource(ThingType.CRYSTAL.resourceId, thingSize));
 		ThingType.ROCK.setBitmap   (loadBitmapResource(ThingType.ROCK.resourceId,    thingSize));
-		
+	}
+	
+	@Override
+	protected void startGame() {
 		fallTimer.start();	
 	}
 	
