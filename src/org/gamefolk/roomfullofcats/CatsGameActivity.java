@@ -17,6 +17,8 @@ public class CatsGameActivity extends GameActivity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);   
         
+        super.onCreate(savedInstanceState); 
+        
         DeviceUtility.setDeviceContext(getApplicationContext());
 		
 		System.out.println("checking ad services");
@@ -26,12 +28,12 @@ public class CatsGameActivity extends GameActivity
 		System.out.println("getting device info...");
 		
 		DeviceUtility.setUserAgent();
+		DeviceUtility.setLocalIp();
 		
 		Thread loaderThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					DeviceUtility.setLocalIp();
 					DeviceUtility.setAdId();
 				} catch (InterruptedException e) {
 					System.out.println("error getting ip");
@@ -41,8 +43,6 @@ public class CatsGameActivity extends GameActivity
 		});
 		loaderThread.start();
 		
-		super.onCreate(savedInstanceState); 
-        
         //System.out.println("user agent: " + WebUtils.getUserAgent(this));
         
         /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
