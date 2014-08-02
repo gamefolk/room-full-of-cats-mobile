@@ -103,19 +103,19 @@
 
 	<!-- Compile project -->
 	<target name="-target-compile" depends="-update-android-resources">
-		<!-- uncomment iOS specific code, comment out Android specific code -->
+        <!-- uncomment iOS specific code, comment out Android specific code -->
 		<replace dir="${src.absurdengine.dir}" token="IOSONLY" value="IOSONLY*/">
   			<include name="**/*.java"/>
 		</replace>
 		<replace dir="${src.absurdengine.dir}" token="ANDROIDONLY*/" value="ANDROIDONLY">
   			<include name="**/*.java"/>
 		</replace>
-		
+        
 		<mkdir dir="${build.classes.dir}"/>
 		<mkdir dir="${src.gen.dir}"/>
 		<javac srcdir="${src.java.dir}:${src.gen.dir}:${src.absurdengine.dir}" destdir="${build.classes.dir}" encoding="${source.encoding}" classpath="${javac.classpath}"/>
-		
-		<!-- restore Android specific code -->
+        
+        <!-- restore Android specific code -->
 		<replace dir="${src.absurdengine.dir}" token="IOSONLY*/" value="IOSONLY">
   			<include name="**/*.java"/>
 		</replace>
