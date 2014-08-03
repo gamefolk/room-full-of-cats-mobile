@@ -8,9 +8,7 @@ import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameActivity;
 
 public class CatsGameActivity extends GameActivity
-{
-	//private CatsGame world;
-	
+{	
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
