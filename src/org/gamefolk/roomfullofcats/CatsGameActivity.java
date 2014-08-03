@@ -6,7 +6,6 @@ import android.view.WindowManager;
 
 import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameActivity;
-import com.arcadeoftheabsurd.absurdengine.GameView;
 
 public class CatsGameActivity extends GameActivity
 {
