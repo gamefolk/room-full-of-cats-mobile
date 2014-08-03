@@ -29,8 +29,12 @@ import com.arcadeoftheabsurd.absurdengine.WebUtils;
 import com.arcadeoftheabsurd.j_utils.Delegate;
 import com.arcadeoftheabsurd.j_utils.Pair;
 import com.arcadeoftheabsurd.j_utils.Vector2d;
+import com.mobfox.adsdk.nativeads.NativeAd;
+import com.mobfox.adsdk.nativeads.NativeAd.ImageAsset;
+import com.mobfox.adsdk.nativeads.NativeAdListener;
+import com.mobfox.adsdk.nativeads.NativeAdManager;
 
-public class CatsGame extends GameView
+public class CatsGame extends GameView implements NativeAdListener
 {
 	private final Vector2d mapLoc = new Vector2d(50, 50); // in pixels, the top left corner of the top left column of things on the screen
 	private final Vector2d mapSize = new Vector2d(6, 10); // in columns, rows
@@ -46,6 +50,33 @@ public class CatsGame extends GameView
 	private Timer fallTimer;
 	
 	private final Random rGen = new Random();
+	
+	private NativeAdManager adManager = new NativeAdManager(getContext(), "http://my.mobfox.com/request.php", "80187188f458cfde788d961b6882fd53", this, null);
+	
+	@Override
+	public void adLoaded(NativeAd ad) {
+		// TODO Auto-generated method stub
+		System.out.println("got ad: " + ad.getClickUrl());
+		downloaded1 = makeSprite(loadBitmapHolder(((ImageAsset)ad.getImageAsset("icon")).bitmapHolder), 50, 50);
+	}
+
+	@Override
+	public void adFailedToLoad() {
+		// TODO Auto-generated method stub
+		System.out.println("ad failed");
+	}
+
+	@Override
+	public void impression() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void adClicked() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	public CatsGame(Context context, GameLoadListener loadListener) {
 		super(context, loadListener);
@@ -121,9 +152,9 @@ public class CatsGame extends GameView
 			}
 		}
 		
-		if (downloaded1 != null && downloaded2 != null) {
+		if (downloaded1 != null) {
 			drawSprite(canvas, downloaded1);
-			drawSprite(canvas, downloaded2);
+			//drawSprite(canvas, downloaded2);
 		}
 	}
 
@@ -140,6 +171,7 @@ public class CatsGame extends GameView
 	@Override
 	protected void startGame() {
 		fallTimer.start();	
+		adManager.requestAd();
 	}
 	
 	boolean test = false;
