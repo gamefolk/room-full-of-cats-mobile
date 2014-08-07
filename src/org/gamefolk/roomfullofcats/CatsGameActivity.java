@@ -3,12 +3,19 @@ package org.gamefolk.roomfullofcats;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 
 import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameActivity;
 
 public class CatsGameActivity extends GameActivity
 {	
+	private LinearLayout contentView;
+	private CatsGame gameView;
+	private FrameLayout adView;
+	
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -60,8 +67,21 @@ public class CatsGameActivity extends GameActivity
         super.onStop();
     }
 
-    protected void initializeGame() {
-        game = new CatsGame(this, this);
+    protected CatsGame initializeGame() {
+        gameView = new CatsGame(this, this);
+    	return gameView;
+    }
+    
+    protected LinearLayout initializeContentView() {
+    	adView = new FrameLayout(this);
+    	
+    	contentView = new LinearLayout(this);
+    	contentView.setOrientation(LinearLayout.VERTICAL);
+    	
+    	contentView.addView(gameView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .9f));
+    	contentView.addView(adView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .1f));
+    	
+    	return contentView;
     }
     
     private void finishedLoading() {
@@ -70,6 +90,6 @@ public class CatsGameActivity extends GameActivity
 		System.out.println("ad id: " + DeviceUtility.getAdId());
 		System.out.println("user agent: " + DeviceUtility.getUserAgent());
 		
-		loadGame();
+		loadContent();
 	}
 }
