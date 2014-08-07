@@ -97,31 +97,43 @@
     <target name="-update-android-resources" unless="android.skip.r.creation">
         <ant antfile="nbproject/build-Android.xml" target="-resource-src"/>
     </target>
+    
+    <target name="-target-java-fail" if="java.failed">
+		<fail message="java compile error"/>
+	</target>
 
-
-	<!-- ** MAIN TARGETS ** -->
-
-	<!-- Compile project -->
-	<target name="-target-compile" depends="-update-android-resources">
-        <!-- uncomment iOS specific code, comment out Android specific code -->
+	<!-- Conditional compilation targets --!>
+	
+	<target name="-target-condcomp-ios">
+		<echo message="#define IOSONLY"/>
+		<!-- uncomment iOS specific code, comment Android specific code --!>
 		<replace dir="${src.absurdengine.dir}" token="IOSONLY" value="IOSONLY*/">
   			<include name="**/*.java"/>
 		</replace>
 		<replace dir="${src.absurdengine.dir}" token="ANDROIDONLY*/" value="ANDROIDONLY">
   			<include name="**/*.java"/>
 		</replace>
-        
-		<mkdir dir="${build.classes.dir}"/>
-		<mkdir dir="${src.gen.dir}"/>
-		<javac srcdir="${src.java.dir}:${src.gen.dir}:${src.absurdengine.dir}" destdir="${build.classes.dir}" encoding="${source.encoding}" classpath="${javac.classpath}"/>
-        
-        <!-- restore Android specific code -->
+	</target>
+	
+	<target name="-target-condcomp-android">
+		<echo message="#define ANDROIDONLY"/>
+		<!-- comment iOS specific code, uncomment Android specific code --!>
 		<replace dir="${src.absurdengine.dir}" token="IOSONLY*/" value="IOSONLY">
   			<include name="**/*.java"/>
 		</replace>
 		<replace dir="${src.absurdengine.dir}" token="ANDROIDONLY" value="ANDROIDONLY*/">
   			<include name="**/*.java"/>
 		</replace>
+	</target>
+
+	<!-- ** MAIN TARGETS ** -->
+
+	<!-- Compile project -->
+	<target name="-target-compile" depends="-update-android-resources" >    
+		<mkdir dir="${build.classes.dir}"/>
+		<mkdir dir="${src.gen.dir}"/>
+		<javac srcdir="${src.java.dir}:${src.gen.dir}:${src.absurdengine.dir}" destdir="${build.classes.dir}" encoding="${source.encoding}" classpath="${javac.classpath}" 
+			failonerror="false" errorProperty="java.failed"/>
 	</target>
 
 	<!-- Run target -->
@@ -143,7 +155,7 @@
 	<!-- ** XCODE RELATED TARGETS ** -->
 
 	<!-- Create Xcode project -->
-	<target name="-target-xproject" depends="-xcode-init,-target-compile,-xproject-plugins,-xproject-create,-xproject-trim,-xproject-updater" description="Create XCode project."/>
+	<target name="-target-xproject" depends="-xcode-init,-target-condcomp-ios,-target-compile,-target-condcomp-android,-target-java-fail,-xproject-plugins,-xproject-create,-xproject-trim,-xproject-updater" description="Create XCode project."/>
 
 	<!-- Compile project in Obj-C -->
 	<target name="-target-xcompile" description="Compile XCode project." depends="-target-xproject">
