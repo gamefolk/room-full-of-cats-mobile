@@ -34,7 +34,7 @@ import com.mobfox.adsdk.nativeads.NativeAd.ImageAsset;
 import com.mobfox.adsdk.nativeads.NativeAdListener;
 import com.mobfox.adsdk.nativeads.NativeAdManager;
 
-public class CatsGame extends GameView implements NativeAdListener
+public class CatsGame extends GameView// implements NativeAdListener
 {
 	private final Vector2d mapLoc = new Vector2d(50, 50); // in pixels, the top left corner of the top left column of things on the screen
 	private final Vector2d mapSize = new Vector2d(6, 10); // in columns, rows
@@ -51,32 +51,28 @@ public class CatsGame extends GameView implements NativeAdListener
 	
 	private final Random rGen = new Random();
 	
-	private NativeAdManager adManager = new NativeAdManager(getContext(), "http://my.mobfox.com/request.php", "80187188f458cfde788d961b6882fd53", this, null);
+	//private NativeAdManager adManager = new NativeAdManager(getContext(), "http://my.mobfox.com/request.php", "80187188f458cfde788d961b6882fd53", this, null, null);
 	
-	@Override
-	public void adLoaded(NativeAd ad) {
+	/*public void adLoaded(NativeAd ad) {
 		// TODO Auto-generated method stub
 		System.out.println("got ad: " + ad.getClickUrl());
 		downloaded1 = makeSprite(loadBitmapHolder(((ImageAsset)ad.getImageAsset("icon")).bitmapHolder), 50, 50);
 	}
 
-	@Override
 	public void adFailedToLoad() {
 		// TODO Auto-generated method stub
 		System.out.println("ad failed");
 	}
 
-	@Override
 	public void impression() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void adClicked() {
 		// TODO Auto-generated method stub
 		
-	}
+	}*/
 	
 	public CatsGame(Context context, GameLoadListener loadListener) {
 		super(context, loadListener);
@@ -171,7 +167,7 @@ public class CatsGame extends GameView implements NativeAdListener
 	@Override
 	protected void startGame() {
 		fallTimer.start();	
-		adManager.requestAd();
+		//adManager.requestAd();
 	}
 	
 	boolean test = false;

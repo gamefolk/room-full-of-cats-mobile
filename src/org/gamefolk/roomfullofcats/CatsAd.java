@@ -1,0 +1,50 @@
+package org.gamefolk.roomfullofcats;
+
+import java.util.HashMap;
+
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.view.View;
+
+import com.arcadeoftheabsurd.j_utils.Vector2d;
+import com.mobfox.adsdk.nativeads.NativeAd;
+import com.mobfox.adsdk.nativeads.NativeAdListener;
+import com.mobfox.adsdk.nativeads.NativeAdManager;
+import com.mobfox.adsdk.nativeads.NativeAdView;
+
+public class CatsAd extends NativeAdView implements NativeAdListener
+{
+	private NativeAdManager adManager;
+	HashMap<String, Vector2d> imageAssets = new HashMap<String, Vector2d>();
+
+	public CatsAd(Context context) {
+		super(context);
+	}
+
+	public void adLoaded(final NativeAd ad) {
+		System.out.println("ad loaded");
+		this.setAd(ad);
+		this.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				if (ad.getClickUrl() != null && !ad.getClickUrl().equals("")) {
+					final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(ad.getClickUrl()));
+					getContext().startActivity(intent);
+				}
+			}
+		});
+	}
+
+	public void adFailedToLoad() {
+		System.out.println("ad failed");
+	}
+	
+	@Override
+	protected void onSizeChanged(int newWidth, int newHeight, int oldWidth, int oldHeight) {
+		super.onSizeChanged(newWidth, newHeight, oldWidth, oldHeight);
+
+		imageAssets.put("icon", new Vector2d(newHeight, newHeight));
+		adManager = new NativeAdManager(getContext(), this, "80187188f458cfde788d961b6882fd53", null, imageAssets);
+		adManager.requestAd();
+	}
+}

@@ -3,7 +3,6 @@ package org.gamefolk.roomfullofcats;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
@@ -14,8 +13,8 @@ public class CatsGameActivity extends GameActivity
 {	
 	private LinearLayout contentView;
 	private CatsGame gameView;
-	private FrameLayout adView;
-	
+	private CatsAd adView;
+		
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -72,8 +71,9 @@ public class CatsGameActivity extends GameActivity
     	return gameView;
     }
     
-    protected LinearLayout initializeContentView() {
-    	adView = new FrameLayout(this);
+	@SuppressWarnings("deprecation")
+	protected LinearLayout initializeContentView() {
+    	adView = new CatsAd(this);
     	
     	contentView = new LinearLayout(this);
     	contentView.setOrientation(LinearLayout.VERTICAL);
@@ -90,6 +90,7 @@ public class CatsGameActivity extends GameActivity
 		System.out.println("ad id: " + DeviceUtility.getAdId());
 		System.out.println("user agent: " + DeviceUtility.getUserAgent());
 		
+		// calls initializeGame and initializeContentView on the main thread, starting the game
 		loadContent();
 	}
 }
