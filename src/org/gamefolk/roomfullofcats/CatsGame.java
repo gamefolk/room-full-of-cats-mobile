@@ -143,13 +143,13 @@ public class CatsGame extends GameView// implements NativeAdListener
 		for (int x = 0; x < mapSize.x; x++) {
 			for (int y = 0; y < mapSize.y; y++) {
 				if (map[x][y] != null) {
-					drawSprite(canvas, map[x][y].sprite);
+					map[x][y].sprite.draw(canvas);
 				}
 			}
 		}
 		
 		if (downloaded1 != null) {
-			drawSprite(canvas, downloaded1);
+			downloaded1.draw(canvas);
 			//drawSprite(canvas, downloaded2);
 		}
 	}

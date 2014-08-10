@@ -102,11 +102,11 @@
 		<fail message="java compile error"/>
 	</target>
 
-	<!-- Conditional compilation targets --!>
+	<!-- Conditional compilation targets -->
 	
 	<target name="-target-condcomp-ios">
 		<echo message="#define IOSONLY"/>
-		<!-- uncomment iOS specific code, comment Android specific code --!>
+		<!-- uncomment iOS specific code, comment Android specific code -->
 		<replace dir="${src.absurdengine.dir}" token="IOSONLY" value="IOSONLY*/">
   			<include name="**/*.java"/>
 		</replace>
@@ -117,7 +117,7 @@
 	
 	<target name="-target-condcomp-android">
 		<echo message="#define ANDROIDONLY"/>
-		<!-- comment iOS specific code, uncomment Android specific code --!>
+		<!-- comment iOS specific code, uncomment Android specific code -->
 		<replace dir="${src.absurdengine.dir}" token="IOSONLY*/" value="IOSONLY">
   			<include name="**/*.java"/>
 		</replace>
