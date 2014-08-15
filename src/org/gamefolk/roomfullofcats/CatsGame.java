@@ -1,47 +1,25 @@
 package org.gamefolk.roomfullofcats;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.Random;
-
-import org.gamefolk.roomfullofcats.R;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.view.MotionEvent;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 
-import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameView;
-//import com.arcadeoftheabsurd.absurdengine.MobFoxNativeRequest;
 import com.arcadeoftheabsurd.absurdengine.Sprite;
 import com.arcadeoftheabsurd.absurdengine.Timer;
-import com.arcadeoftheabsurd.absurdengine.WebUtils;
 import com.arcadeoftheabsurd.j_utils.Delegate;
-import com.arcadeoftheabsurd.j_utils.Pair;
 import com.arcadeoftheabsurd.j_utils.Vector2d;
-import com.mobfox.adsdk.nativeads.NativeAd;
-import com.mobfox.adsdk.nativeads.NativeAd.ImageAsset;
-import com.mobfox.adsdk.nativeads.NativeAdListener;
-import com.mobfox.adsdk.nativeads.NativeAdManager;
 
-public class CatsGame extends GameView// implements NativeAdListener
+public class CatsGame extends GameView
 {
-	private final Vector2d mapLoc = new Vector2d(50, 50); // in pixels, the top left corner of the top left column of things on the screen
 	private final Vector2d mapSize = new Vector2d(6, 10); // in columns, rows
-	private final int bucketSpace = 60; // vertical pixels between the bottom of the columns and the buckets
+	//private final int bucketSpace = 60; // vertical pixels between the bottom of the columns and the buckets
 	private final int incSize = 10; // the amount by which to increase the size of things as they collect
 	private final Thing[][] map = new Thing[mapSize.x][mapSize.y];
 	
+	private Vector2d mapLoc; // in pixels, the top left corner of the top left column of things on the screen
 	private Vector2d thingSize; // in pixels, set according to the size of the screen in onSizeChanged()
 	
 	private final int fallTime = 1; // interval after which things fall, in seconds
@@ -50,29 +28,6 @@ public class CatsGame extends GameView// implements NativeAdListener
 	private Timer fallTimer;
 	
 	private final Random rGen = new Random();
-	
-	//private NativeAdManager adManager = new NativeAdManager(getContext(), "http://my.mobfox.com/request.php", "80187188f458cfde788d961b6882fd53", this, null, null);
-	
-	/*public void adLoaded(NativeAd ad) {
-		// TODO Auto-generated method stub
-		System.out.println("got ad: " + ad.getClickUrl());
-		downloaded1 = makeSprite(loadBitmapHolder(((ImageAsset)ad.getImageAsset("icon")).bitmapHolder), 50, 50);
-	}
-
-	public void adFailedToLoad() {
-		// TODO Auto-generated method stub
-		System.out.println("ad failed");
-	}
-
-	public void impression() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void adClicked() {
-		// TODO Auto-generated method stub
-		
-	}*/
 	
 	public CatsGame(Context context, GameLoadListener loadListener) {
 		super(context, loadListener);
@@ -97,11 +52,11 @@ public class CatsGame extends GameView// implements NativeAdListener
 								}
 							} else {
 								current = null;
-								candidate.sprite.translate(0, thingSize.y + bucketSpace);
+								candidate.sprite.translate(0, thingSize.y * 2);
 								map[x][mapSize.y-1] = candidate;
 							}
 						} else {
-							candidate.sprite.translate(0, thingSize.y + bucketSpace);
+							candidate.sprite.translate(0, thingSize.y * 2);
 							map[x][mapSize.y-1] = candidate;
 						}
 					}
@@ -147,16 +102,12 @@ public class CatsGame extends GameView// implements NativeAdListener
 				}
 			}
 		}
-		
-		if (downloaded1 != null) {
-			downloaded1.draw(canvas);
-			//drawSprite(canvas, downloaded2);
-		}
 	}
 
 	@Override
-	protected void setupGame(int width, int height) {
-		thingSize = new Vector2d((width / mapSize.x) - 20, (height / mapSize.y) - 20);
+	protected void setupGame(int screenWidth, int screenHeight) {
+		thingSize = new Vector2d(screenWidth / (mapSize.x + 1), screenHeight / (mapSize.y + 2));
+		mapLoc = new Vector2d((screenWidth - (mapSize.x * thingSize.x)) / 2, (screenHeight - ((mapSize.y + 1) * thingSize.y)) / 2);
 		
 		ThingType.GEAR.setBitmap   (loadBitmapResource(ThingType.GEAR.resourceId,    thingSize));
 		ThingType.SHROOM.setBitmap (loadBitmapResource(ThingType.SHROOM.resourceId,  thingSize));
@@ -167,145 +118,10 @@ public class CatsGame extends GameView// implements NativeAdListener
 	@Override
 	protected void startGame() {
 		fallTimer.start();	
-		//adManager.requestAd();
 	}
-	
-	boolean test = false;
-	Sprite downloaded1;
-	Sprite downloaded2;
 	
 	@Override
-	protected void updateGame() {
-		if (!test) {
-			test = true;
-			try {
-				/*
-				 * IMAGE TEST
-				 */
-				
-				/*System.out.println("ip address: " + WebUtils.getLocalIpAddress());
-				
-				System.out.println("downloading images");
-				
-				String fileName1 = "image.png";
-				String filePath = WebUtils.downloadFile("http://pbs.twimg.com/profile_images/459885147328749568/iDElBRxE.jpeg", fileName1, getContext());
-				downloaded1 = makeSprite(loadTempBitmapFile(filePath, fileName1, new Vector2d(50, 50)), 0, 0);
-				
-				String fileName2 = "image2.png";
-				filePath = WebUtils.downloadFile("http://3.bp.blogspot.com/-Xo0EuTNYNQg/UEI1zqGDUTI/AAAAAAAAAYE/PLYx5H4J4-k/s1600/smiley+face+super+happy.jpg", fileName2, getContext());
-				downloaded2 = makeSprite(loadTempBitmapFile(filePath, fileName2, new Vector2d(50, 50)), 50, 50);*/
-				
-				/*
-				 * FIRST AD TEST
-				 */
-				
-				/*System.out.println("getting ip...");
-				String ip = DeviceUtility.getLocalIp();
-				System.out.println(ip);
-				
-				System.out.println("getting ad id...");
-				String adId = DeviceUtility.getAdId();
-				System.out.println(adId);
-				
-				MobFoxNativeRequest adRequest = new MobFoxNativeRequest();
-				
-				adRequest.publisherId = "80187188f458cfde788d961b6882fd53"; // test id
-				adRequest.userAgent = URLEncoder.encode(DeviceUtility.getUserAgent(), "UTF-8");
-				adRequest.ipAddress = ip;
-				adRequest.adId = adId;
-				
-				adRequest.imageTypes = new String[]{"icon"};
-				adRequest.textTypes = new String[]{"headline"};
-				
-				System.out.println("compiling request...");
-				String request = adRequest.compileRequest();
-				System.out.println(request);
-				
-				System.out.println("sending request...");
-				String result = WebUtils.restRequest(request);
-				System.out.println(result);*/
-				
-				/*
-				 * InetAddress test
-				 */
-				
-				/*System.out.println("by name:");
-				
-				InetAddress addr = InetAddress.getByName("arcadeoftheabsurd.com");
-				System.out.println("Printing IP:");
-				for(byte b : addr.getAddress()){
-					System.out.println(b + ".");
-				}
-				System.out.println("hostname: " + addr.getHostName());
-				System.out.println("canonical name: " + addr.getCanonicalHostName());
-				System.out.println();
-				
-				System.out.println("by address:");
-				
-				InetAddress addr2 = InetAddress.getByAddress(new byte[]{(byte)72,(byte)167,(byte)3,(byte)128});
-				System.out.println("Printing IP:");
-				for(byte b : addr2.getAddress()){
-					System.out.println(b + ".");
-				}
-				System.out.println("hostname: " + addr2.getHostName());
-				System.out.println("canonical name: " + addr2.getCanonicalHostName());
-				System.out.println();*/
-				
-				/*
-				 * Socket test
-				 */
-				
-			    /*InetAddress addr = InetAddress.getByName("arcadeoftheabsurd.com");
-				
-				String address = addr.getHostAddress();
-				String host = addr.getHostName();
-				
-				System.out.println("address: " + address);
-				System.out.println("host: " + host);
-				
-				Socket s = new Socket(address, 80);
-				
-				System.out.println("connected?: " + s.isConnected());
-				
-				PrintWriter pw = new PrintWriter(s.getOutputStream());
-				pw.println("GET / HTTP/1.1");
-				pw.println("Host: arcadeoftheabsurd.com");
-				pw.println("");
-				pw.flush();
-				
-				System.out.println("connected?: " + s.isConnected());
-				
-				InputStreamReader ir = new InputStreamReader(s.getInputStream());
-				
-				char[] chars = new char[32];
-				
-				while(ir.read(chars) != -1) {
-					System.out.println("connected?: " + s.isConnected());
-					System.out.println(String.valueOf(chars));
-					chars = new char[32];
-				}
-				
-				ir.close();*/
-				
-				/*
-				 * URL TEST
-				 */
-								
-				/*URL url = new URL("http://arcadeoftheabsurd.com");
-				
-				URLConnection conn = url.openConnection();
-								
-				BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-
-				String line = "";
-				while((line = in.readLine()) != null) {
-					System.out.println(line);
-				}
-				
-				in.close();*/
-	        } catch (Exception e) {}
-		}
-	}
+	protected void updateGame() {}
 
 	private class Thing
 	{
