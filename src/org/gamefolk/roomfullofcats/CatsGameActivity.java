@@ -44,9 +44,7 @@ public class CatsGameActivity extends GameActivity
 			}
 		});
 		loaderThread.start();
-		
-        //System.out.println("user agent: " + WebUtils.getUserAgent(this));
-        
+		        
         /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
         startActivity(browserIntent);
         
@@ -73,13 +71,17 @@ public class CatsGameActivity extends GameActivity
     
 	@SuppressWarnings("deprecation")
 	protected LinearLayout initializeContentView() {
-    	adView = new CatsAd(this);
+		int adTextSize = 20;
+		if (DeviceUtility.isIOS()) {
+			adTextSize = 12;
+		}
+    	adView = new CatsAd(this, adTextSize, 5, 5);
     	
     	contentView = new LinearLayout(this);
     	contentView.setOrientation(LinearLayout.VERTICAL);
     	
-    	contentView.addView(gameView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .9f));
-    	contentView.addView(adView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .1f));
+    	contentView.addView(gameView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .85f));
+    	contentView.addView(adView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .15f));
     	
     	return contentView;
     }

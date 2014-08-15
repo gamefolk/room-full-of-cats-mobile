@@ -7,24 +7,26 @@ import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 
+import com.arcadeoftheabsurd.absurdengine.BannerAdView;
 import com.arcadeoftheabsurd.j_utils.Vector2d;
 import com.mobfox.adsdk.nativeads.NativeAd;
-import com.mobfox.adsdk.nativeads.NativeAdListener;
 import com.mobfox.adsdk.nativeads.NativeAdManager;
-import com.mobfox.adsdk.nativeads.NativeAdView;
 
-public class CatsAd extends NativeAdView implements NativeAdListener
+public class CatsAd extends BannerAdView
 {
 	private NativeAdManager adManager;
-	HashMap<String, Vector2d> imageAssets = new HashMap<String, Vector2d>();
-
-	public CatsAd(Context context) {
-		super(context);
+	private HashMap<String, Vector2d> imageAssets = new HashMap<String, Vector2d>();
+	
+	public CatsAd(Context context, int textSize, int textMarginLeft, int textMarginRight) {
+		super(context, textSize, textMarginLeft, textMarginRight);
 	}
-
+	
+	@Override
 	public void adLoaded(final NativeAd ad) {
 		System.out.println("ad loaded");
-		this.setAd(ad);
+		
+		this.setAssets(ad.getImageAsset("icon").sprite, ad.getTextAsset("description"));
+		
 		this.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (ad.getClickUrl() != null && !ad.getClickUrl().equals("")) {
@@ -33,8 +35,10 @@ public class CatsAd extends NativeAdView implements NativeAdListener
 				}
 			}
 		});
+		super.adLoaded(ad);
 	}
 
+	@Override
 	public void adFailedToLoad() {
 		System.out.println("ad failed");
 	}
