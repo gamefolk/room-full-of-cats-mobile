@@ -1,5 +1,6 @@
 package org.gamefolk.roomfullofcats;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.Context;
@@ -16,6 +17,7 @@ public class CatsAd extends BannerAdView
 {
 	private NativeAdManager adManager;
 	private HashMap<String, Vector2d> imageAssets = new HashMap<String, Vector2d>();
+	private ArrayList<String> textTypes = new ArrayList<String>();
 	
 	public CatsAd(Context context, int textSize, int textMarginLeft, int textMarginRight) {
 		super(context, textSize, textMarginLeft, textMarginRight);
@@ -48,7 +50,8 @@ public class CatsAd extends BannerAdView
 		super.onSizeChanged(newWidth, newHeight, oldWidth, oldHeight);
 
 		imageAssets.put("icon", new Vector2d(newHeight, newHeight));
-		adManager = new NativeAdManager(getContext(), this, "80187188f458cfde788d961b6882fd53", null, imageAssets);
+		textTypes.add("description");
+		adManager = new NativeAdManager(getContext(), this, ApiKeys.getMobFoxPublisherId(), null, textTypes, imageAssets);
 		adManager.requestAd();
 	}
 }
