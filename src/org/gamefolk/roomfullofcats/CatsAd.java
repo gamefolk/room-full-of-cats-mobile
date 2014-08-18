@@ -9,8 +9,8 @@ import android.view.View;
 
 import com.arcadeoftheabsurd.absurdengine.BannerAdView;
 import com.arcadeoftheabsurd.j_utils.Vector2d;
-import com.mobfox.adsdk.nativeads.NativeAd;
-import com.mobfox.adsdk.nativeads.NativeAdManager;
+import com.adsdk.sdk.nativeads.NativeAd;
+import com.adsdk.sdk.nativeads.NativeAdManager;
 
 public class CatsAd extends BannerAdView
 {

@@ -45,9 +45,7 @@ public class CatsGameActivity extends GameActivity
 		});
 		loaderThread.start();
 		        
-        /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
-        startActivity(browserIntent);
-        
+        /*
         try {
         	AssetFileDescriptor asset = getAssets().openFd("coin.wav");
             MediaPlayer player = new MediaPlayer();			
@@ -71,16 +69,13 @@ public class CatsGameActivity extends GameActivity
     
 	@SuppressWarnings("deprecation")
 	protected LinearLayout initializeContentView() {
-		int adTextSize = 20;
-		if (DeviceUtility.isIOS()) {
-			adTextSize = 12;
-		}
-    	adView = new CatsAd(this, adTextSize, 5, 5);
+    	adView = new CatsAd(this, DeviceUtility.isIOS() ? 12 : 20, 5, 5);
     	
     	contentView = new LinearLayout(this);
     	contentView.setOrientation(LinearLayout.VERTICAL);
     	
-    	contentView.addView(gameView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .85f));
+    	contentView.addView(gameView.scoreView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .05f));
+    	contentView.addView(gameView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .80f));
     	contentView.addView(adView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .15f));
     	
     	return contentView;
@@ -92,7 +87,7 @@ public class CatsGameActivity extends GameActivity
 		System.out.println("ad id: " + DeviceUtility.getAdId());
 		System.out.println("user agent: " + DeviceUtility.getUserAgent());
 		
-		// calls initializeGame and initializeContentView on the main thread, starting the game
+		// call initializeGame and initializeContentView on the main thread, starting the game
 		loadContent();
 	}
 }
