@@ -20,3 +20,4 @@ nbproject/build-impl.xml
 nbproject/build-Java.xml
 proguard-project.txt
 project.properties
+src/org/gamefolk/roomfullofcats/ApiKeys.java
