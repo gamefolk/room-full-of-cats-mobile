@@ -8,6 +8,7 @@ import android.widget.LinearLayout.LayoutParams;
 
 import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameActivity;
+import com.arcadeoftheabsurd.absurdengine.SoundManager;
 
 public class CatsGameActivity extends GameActivity
 {	
@@ -22,6 +23,7 @@ public class CatsGameActivity extends GameActivity
         
         super.onCreate(savedInstanceState); 
         
+        SoundManager.initializeSound(getAssets(), CatsGame.NUM_CHANNELS);
         DeviceUtility.setDeviceContext(getApplicationContext());
 		
 		System.out.println("checking ad services");
@@ -44,17 +46,6 @@ public class CatsGameActivity extends GameActivity
 			}
 		});
 		loaderThread.start();
-		        
-        /*
-        try {
-        	AssetFileDescriptor asset = getAssets().openFd("coin.wav");
-            MediaPlayer player = new MediaPlayer();			
-        	player.setDataSource(asset.getFileDescriptor(),asset.getStartOffset(),asset.getLength());
-        	player.prepare();
-        	player.start();			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
     }
     
     @Override

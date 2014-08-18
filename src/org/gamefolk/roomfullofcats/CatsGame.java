@@ -1,8 +1,8 @@
 package org.gamefolk.roomfullofcats;
 
+import java.io.IOException;
 import java.util.Random;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameView;
+import com.arcadeoftheabsurd.absurdengine.SoundManager;
 import com.arcadeoftheabsurd.absurdengine.Sprite;
 import com.arcadeoftheabsurd.absurdengine.Timer;
 import com.arcadeoftheabsurd.j_utils.Delegate;
@@ -17,8 +18,14 @@ import com.arcadeoftheabsurd.j_utils.Vector2d;
 
 public class CatsGame extends GameView
 {
+	ScoreView scoreView;
+	
+	static final int NUM_CHANNELS = 3;
+	private static final int SONG_CHANNEL = 0;
+	private static final int BLIP_CHANNEL = 1;
+	private static final int SCORE_CHANNEL = 2;
+	
 	private final Vector2d mapSize = new Vector2d(2, 5); // in columns, rows
-	//private final int bucketSpace = 60; // vertical pixels between the bottom of the columns and the buckets
 	private final int incSize = 10; // the amount by which to increase the size of things as they collect
 	private final Cat[][] map = new Cat[mapSize.x][mapSize.y];
 	
@@ -28,7 +35,6 @@ public class CatsGame extends GameView
 	private final int fallTime = 1; // interval after which things fall, in seconds
 	private final int thingsLimit = 3; // the target number of things of the same type to collect
 	private int score = 0;
-	ScoreView scoreView;
 	private Timer fallTimer;
 	
 	private final Random rGen = new Random();
@@ -40,6 +46,7 @@ public class CatsGame extends GameView
 			setTextSize(DeviceUtility.isIOS() ? 12 : 20);
 			printScore();
 		}
+		
 		public void printScore() {
 			setText("Score: " + score);
 		}
@@ -94,6 +101,9 @@ public class CatsGame extends GameView
 								
 								if (current.things == thingsLimit) {
 									score++;
+									if (!SoundManager.isPlaying(SCORE_CHANNEL)) {
+										SoundManager.playSound(SCORE_CHANNEL);
+									}
 									map[x][mapSize.y-1] = null;
 								}
 							} else {
@@ -121,11 +131,11 @@ public class CatsGame extends GameView
 					CatType type = CatType.values()[rGen.nextInt(4)];					
 					map[x][0] = new Cat(type, makeSprite(type.bitmapId, mapLoc.x + (x * catSize.x), mapLoc.y));
 				}
+				//soundManager.playSound(BLIP_CHANNEL);
 			}
 		});
 	}
 	
-	@SuppressLint("ClickableViewAccessibility") 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		for (int x = 0; x < mapSize.x; x++) {
@@ -169,11 +179,20 @@ public class CatsGame extends GameView
 		CatType.GRAYCAT.setBitmap  (loadBitmapResource(CatType.GRAYCAT.resourceId,   catSize));
 		CatType.PINKCAT.setBitmap  (loadBitmapResource(CatType.PINKCAT.resourceId,   catSize));
 		CatType.STRIPECAT.setBitmap(loadBitmapResource(CatType.STRIPECAT.resourceId, catSize));
+		
+		try {
+        	SoundManager.loadSound("song.mp3", SONG_CHANNEL);	
+        	SoundManager.loadSound("blip.wav", BLIP_CHANNEL);	
+        	SoundManager.loadSound("score.wav", SCORE_CHANNEL);	
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	protected void startGame() {
 		fallTimer.start();	
+		SoundManager.playSound(SONG_CHANNEL);
 	}
 	
 	@Override
