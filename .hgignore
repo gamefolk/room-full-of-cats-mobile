@@ -3,6 +3,7 @@ bin
 build
 dist
 gen
+gen_ios
 libs
 .settings
 .classpath
