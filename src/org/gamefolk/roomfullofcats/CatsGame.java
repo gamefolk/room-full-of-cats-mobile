@@ -12,8 +12,8 @@ import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameView;
 import com.arcadeoftheabsurd.absurdengine.SoundManager;
 import com.arcadeoftheabsurd.absurdengine.Sprite;
-import com.arcadeoftheabsurd.absurdengine.TimerAsync;
-import com.arcadeoftheabsurd.absurdengine.TimerUI;
+import com.arcadeoftheabsurd.absurdengine.Timer.TimerAsync;
+import com.arcadeoftheabsurd.absurdengine.Timer.TimerUI;
 import com.arcadeoftheabsurd.j_utils.Delegate;
 import com.arcadeoftheabsurd.j_utils.Vector2d;
 
