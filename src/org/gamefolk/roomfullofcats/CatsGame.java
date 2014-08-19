@@ -12,7 +12,8 @@ import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameView;
 import com.arcadeoftheabsurd.absurdengine.SoundManager;
 import com.arcadeoftheabsurd.absurdengine.Sprite;
-import com.arcadeoftheabsurd.absurdengine.Timer;
+import com.arcadeoftheabsurd.absurdengine.TimerAsync;
+import com.arcadeoftheabsurd.absurdengine.TimerUI;
 import com.arcadeoftheabsurd.j_utils.Delegate;
 import com.arcadeoftheabsurd.j_utils.Vector2d;
 
@@ -35,7 +36,7 @@ public class CatsGame extends GameView
 	private final int fallTime = 1; // interval after which things fall, in seconds
 	private final int thingsLimit = 3; // the target number of things of the same type to collect
 	private int score = 0;
-	private Timer fallTimer;
+	private TimerAsync fallTimer;
 	
 	private final Random rGen = new Random();
 	
@@ -58,9 +59,22 @@ public class CatsGame extends GameView
 		public CatType type;
 		public Sprite sprite;
 		
+		int curFrame = 0;
+				
 		public Cat (CatType type, Sprite sprite) {
 			this.type = type;
 			this.sprite = sprite;
+			
+			if (type == CatType.GRAYCAT) {
+				new TimerUI(.2f, CatsGame.this, new Delegate() {
+					public void function(Object... args) {
+						CatsGame.this.swapSprite(Cat.this.sprite, Cat.this.type.bitmapFrames[curFrame++]);
+						if (curFrame == Cat.this.type.bitmapFrames.length) {
+							curFrame = 0;
+						}
+					}
+				}).start();
+			}
 		}
 	}
 
@@ -70,6 +84,8 @@ public class CatsGame extends GameView
 		
 		private int resourceId;
 		private int bitmapId = -1;
+		
+		public int[] bitmapFrames;
 		
 		private CatType(int resourceId) {
 			this.resourceId = resourceId;
@@ -85,7 +101,7 @@ public class CatsGame extends GameView
 		
 		scoreView = new ScoreView(context);
 		
-		fallTimer = new Timer(fallTime, this, new Delegate() {
+		fallTimer = new TimerAsync(fallTime, this, new Delegate() {
 			public void function(Object... args) {		
 				// move bottom row into buckets  
 				for (int x = 0; x < mapSize.x; x++) {
@@ -131,7 +147,6 @@ public class CatsGame extends GameView
 					CatType type = CatType.values()[rGen.nextInt(4)];					
 					map[x][0] = new Cat(type, makeSprite(type.bitmapId, mapLoc.x + (x * catSize.x), mapLoc.y));
 				}
-				//soundManager.playSound(BLIP_CHANNEL);
 			}
 		});
 	}
@@ -176,9 +191,16 @@ public class CatsGame extends GameView
 		mapLoc = new Vector2d((screenWidth - (mapSize.x * catSize.x)) / 2, (screenHeight - ((mapSize.y + 1) * catSize.y)) / 2);
 		
 		CatType.BLUECAT.setBitmap  (loadBitmapResource(CatType.BLUECAT.resourceId,   catSize));
-		CatType.GRAYCAT.setBitmap  (loadBitmapResource(CatType.GRAYCAT.resourceId,   catSize));
+		//CatType.GRAYCAT.setBitmap  (loadBitmapResource(CatType.GRAYCAT.resourceId,   catSize));
 		CatType.PINKCAT.setBitmap  (loadBitmapResource(CatType.PINKCAT.resourceId,   catSize));
 		CatType.STRIPECAT.setBitmap(loadBitmapResource(CatType.STRIPECAT.resourceId, catSize));
+		
+		int frame1 = loadBitmapResource(R.drawable.graycat1,   catSize);
+		int frame2 = loadBitmapResource(R.drawable.graycat2,   catSize);
+		int frame3 = loadBitmapResource(R.drawable.graycat3,   catSize);
+		
+		CatType.GRAYCAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
+		CatType.GRAYCAT.setBitmap(frame1);
 		
 		try {
         	SoundManager.loadSound("song.mp3", SONG_CHANNEL);	
@@ -192,7 +214,7 @@ public class CatsGame extends GameView
 	@Override
 	protected void startGame() {
 		fallTimer.start();	
-		SoundManager.playSound(SONG_CHANNEL);
+		SoundManager.loopSound(SONG_CHANNEL);
 	}
 	
 	@Override
