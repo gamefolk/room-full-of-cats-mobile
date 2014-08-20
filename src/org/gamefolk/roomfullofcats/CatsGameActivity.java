@@ -6,6 +6,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
+import com.adsdk.sdk.IdentifierUtility;
 import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameActivity;
 import com.arcadeoftheabsurd.absurdengine.SoundManager;
@@ -27,7 +28,7 @@ public class CatsGameActivity extends GameActivity
         DeviceUtility.setDeviceContext(getApplicationContext());
 		
 		System.out.println("checking ad services");
-		DeviceUtility.requireAdService(this);
+		IdentifierUtility.requireAdService(this);
 		System.out.println("ad services available");
 		
 		System.out.println("getting device info...");
@@ -38,7 +39,7 @@ public class CatsGameActivity extends GameActivity
 		Thread loaderThread = new Thread(new Runnable() {
 			public void run() {
 				try {
-					DeviceUtility.setAdId();
+					IdentifierUtility.setAdId();
 				} catch (InterruptedException e) {
 					System.out.println("error getting ip");
 				}
@@ -75,7 +76,7 @@ public class CatsGameActivity extends GameActivity
     private void finishedLoading() {
 		System.out.println("finished loading!");
 		System.out.println("ip: " + DeviceUtility.getLocalIp());
-		System.out.println("ad id: " + DeviceUtility.getAdId());
+		System.out.println("ad id: " + IdentifierUtility.getAdId());
 		System.out.println("user agent: " + DeviceUtility.getUserAgent());
 		
 		// call initializeGame and initializeContentView on the main thread, starting the game
