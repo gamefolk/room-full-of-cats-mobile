@@ -1,6 +1,10 @@
 package org.gamefolk.roomfullofcats;
 
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -10,12 +14,44 @@ import com.adsdk.sdk.IdentifierUtility;
 import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameActivity;
 import com.arcadeoftheabsurd.absurdengine.SoundManager;
+import com.arcadeoftheabsurd.absurdengine.Sprite;
 
 public class CatsGameActivity extends GameActivity
 {	
 	private LinearLayout contentView;
 	private CatsGame gameView;
 	private CatsAd adView;
+	
+	private class SplashView extends View
+	{
+		private Sprite logo;
+		
+		public SplashView(Context context) {
+			super(context);
+			setBackgroundColor(Color.BLACK);
+			
+			this.setOnClickListener(new OnClickListener() {
+				public void onClick(View arg0) {
+					loadGame();
+				}
+			});
+		}
+		
+		@Override
+		protected void onSizeChanged(int newWidth, int newHeight, int oldWidth, int oldHeight) {
+			logo = Sprite.fromResource(getResources(), R.drawable.gamefolklogo, newWidth, newWidth);
+			logo.setLocation(0, (newHeight - logo.getHeight()) / 2);
+			invalidate();
+		}
+		
+		@Override
+		protected void onDraw(Canvas canvas) {
+			if (logo != null) {
+				logo.draw(canvas);
+			}
+			super.onDraw(canvas);
+		}
+	}
 		
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -24,7 +60,11 @@ public class CatsGameActivity extends GameActivity
         
         super.onCreate(savedInstanceState); 
         
-        SoundManager.initializeSound(getAssets(), CatsGame.NUM_CHANNELS);
+        setContentView(new SplashView(this));        
+    }
+    
+    private void loadGame() {
+    	SoundManager.initializeSound(getAssets(), CatsGame.NUM_CHANNELS);
         DeviceUtility.setDeviceContext(getApplicationContext());
 		
 		System.out.println("checking ad services");
@@ -61,7 +101,7 @@ public class CatsGameActivity extends GameActivity
     
 	@SuppressWarnings("deprecation")
 	protected LinearLayout initializeContentView() {
-    	adView = new CatsAd(this, DeviceUtility.isIOS() ? 12 : 20, 5, 5);
+    	adView = new CatsAd(this);
     	
     	contentView = new LinearLayout(this);
     	contentView.setOrientation(LinearLayout.VERTICAL);
