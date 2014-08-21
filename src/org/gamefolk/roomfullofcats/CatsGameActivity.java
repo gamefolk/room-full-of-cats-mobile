@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -22,6 +23,9 @@ public class CatsGameActivity extends GameActivity
 	private CatsGame gameView;
 	private CatsAd adView;
 	
+	private boolean finishedLoading = false;
+	private boolean gameStartRequested = false;
+	
 	private class SplashView extends View
 	{
 		private Sprite logo;
@@ -29,12 +33,6 @@ public class CatsGameActivity extends GameActivity
 		public SplashView(Context context) {
 			super(context);
 			setBackgroundColor(Color.BLACK);
-			
-			this.setOnClickListener(new OnClickListener() {
-				public void onClick(View arg0) {
-					loadGame();
-				}
-			});
 		}
 		
 		@Override
@@ -60,30 +58,50 @@ public class CatsGameActivity extends GameActivity
         
         super.onCreate(savedInstanceState); 
         
-        setContentView(new SplashView(this));        
+        final CatsMenu catsMenu = new CatsMenu(this, 
+            	new OnClickListener() {
+    				public void onClick(View arg0) {
+    					if (finishedLoading) {
+    						startGame();
+    					} else {
+    						gameStartRequested = true;
+    					}
+    				}
+            	}, null);        
+        
+        SplashView splashView = new SplashView(this);
+        splashView.setOnClickListener(new OnClickListener() {
+			public void onClick(View arg0) {
+				setContentView(catsMenu);        
+				loadGame();
+			}
+		});
+        setContentView(splashView);        
     }
     
     private void loadGame() {
-    	SoundManager.initializeSound(getAssets(), CatsGame.NUM_CHANNELS);
-        DeviceUtility.setDeviceContext(getApplicationContext());
-		
 		System.out.println("checking ad services");
 		IdentifierUtility.requireAdService(this);
 		System.out.println("ad services available");
 		
 		System.out.println("getting device info...");
 		
-		DeviceUtility.setUserAgent();
-		DeviceUtility.setLocalIp();
+		DeviceUtility.setUserAgent(this);
 		
 		Thread loaderThread = new Thread(new Runnable() {
 			public void run() {
+				SoundManager.initializeSound(getAssets(), CatsGame.NUM_CHANNELS);
+				DeviceUtility.setLocalIp();
 				try {
 					IdentifierUtility.setAdId();
 				} catch (InterruptedException e) {
 					System.out.println("error getting ip");
 				}
-				finishedLoading();
+				if (gameStartRequested) {
+					startGame();
+				} else {
+					finishedLoading = true;
+				}
 			}
 		});
 		loaderThread.start();
@@ -113,7 +131,7 @@ public class CatsGameActivity extends GameActivity
     	return contentView;
     }
     
-    private void finishedLoading() {
+    private void startGame() {
 		System.out.println("finished loading!");
 		System.out.println("ip: " + DeviceUtility.getLocalIp());
 		System.out.println("ad id: " + IdentifierUtility.getAdId());
