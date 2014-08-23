@@ -5,33 +5,99 @@ import com.arcadeoftheabsurd.absurdengine.Sprite;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 public class CatsMenu extends LinearLayout
 {
 	private Button startButton;
 	private Button tutorialButton;
 	
-	static class SettingsView extends LinearLayout
+	static class SettingsView extends TableLayout
 	{
-		private Button musicButton;
-		private Button soundButton;
+		// I am truly sorry about the black magic that goes into centering these damn checkboxes
+		private TableRow boxRow;
+		private CheckBox musicBox;
+		private CheckBox soundBox;
 		
+		private TableRow textRow;
+		private TextView musicText;
+		private TextView soundText;
+		
+		private TableLayout.LayoutParams rowParams;
+		private TableRow.LayoutParams boxParams;
+		private TableRow.LayoutParams textParams;
+		
+		@SuppressWarnings("deprecation")
 		public SettingsView(Context context) {
 			super(context);
-			setOrientation(HORIZONTAL);
+			setStretchAllColumns(true);
+						
+			rowParams = new TableLayout.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT); 
 			
-			musicButton = new Button(context);
-			musicButton.setText("Music off");
+			boxParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT); 
+			boxParams.gravity = Gravity.RIGHT;
 			
-			soundButton = new Button(context);
-			soundButton.setText("Sound off");
+			textParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT); 
+			textParams.gravity = Gravity.CENTER;
 			
-			addView(musicButton);
-			addView(soundButton);
+			boxRow = new TableRow(context);
+			
+			musicBox = new CheckBox(context);
+			musicBox.setChecked(true);
+			
+			musicBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				public void onCheckedChanged(CompoundButton arg0, boolean checked) {
+					// ...
+				}
+			});
+			
+			soundBox = new CheckBox(context);
+			soundBox.setChecked(true);
+			
+			soundBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				public void onCheckedChanged(CompoundButton arg0, boolean checked) {
+					// ...
+				}
+			});
+			
+			boxRow.addView(musicBox, boxParams);
+			boxRow.addView(soundBox, boxParams);
+			
+			textRow = new TableRow(context);
+			
+			musicText = new TextView(context);
+			musicText.setText("Music");
+			musicText.setTextSize(14);
+			musicText.setTextColor(Color.BLACK);
+			
+			soundText = new TextView(context);
+			soundText.setText("Sound");	
+			soundText.setTextSize(14);
+			soundText.setTextColor(Color.BLACK);
+			
+			textRow.addView(musicText, textParams);
+			textRow.addView(soundText, textParams);
+			
+			addView(boxRow, rowParams);
+			addView(textRow, rowParams);
 		}
+		
+		/*@Override
+		protected void onSizeChanged(int newWidth, int newHeight, int oldWidth, int oldHeight) {			
+			musicBox.setPadding(newWidth / 8, 0, 0, 0);
+			soundBox.setPadding(newWidth / 8, 0, 0, 0);
+			super.onSizeChanged(newWidth, newHeight, oldWidth, oldHeight);
+			invalidate();
+		}*/
 	}
 	
 	private class TitleView extends View
@@ -40,7 +106,6 @@ public class CatsMenu extends LinearLayout
 		
 		public TitleView(Context context) {
 			super(context);
-			setBackgroundColor(Color.BLACK);
 		}
 		
 		@Override
@@ -63,6 +128,7 @@ public class CatsMenu extends LinearLayout
 	public CatsMenu(Context context, OnClickListener startClick, OnClickListener tutorialClick) {
 		super(context);
 		setOrientation(VERTICAL);
+		setBackgroundColor(Color.WHITE);
 		
 		startButton = new Button(context);
 		startButton.setText("Start");
