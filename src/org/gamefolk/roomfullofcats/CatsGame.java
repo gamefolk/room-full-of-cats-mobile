@@ -65,31 +65,24 @@ public class CatsGame extends GameView
 			this.type = type;
 			this.sprite = sprite;
 			
-			if (type == CatType.GRAYCAT) {
-				new TimerUI(.2f, CatsGame.this, new Delegate() {
-					public void function(Object... args) {
-						CatsGame.this.swapSprite(Cat.this.sprite, Cat.this.type.bitmapFrames[curFrame++]);
-						if (curFrame == Cat.this.type.bitmapFrames.length) {
-							curFrame = 0;
-						}
+			new TimerUI(.2f, CatsGame.this, new Delegate() {
+				public void function(Object... args) {
+					CatsGame.this.swapSprite(Cat.this.sprite, Cat.this.type.bitmapFrames[curFrame++]);
+					if (curFrame == Cat.this.type.bitmapFrames.length) {
+						curFrame = 0;
 					}
-				}).start();
-			}
+				}
+			}).start();
 		}
 	}
 
 	private enum CatType
 	{
-		BLUECAT(R.drawable.bluecat), GRAYCAT(R.drawable.graycat), PINKCAT(R.drawable.pinkcat), STRIPECAT(R.drawable.stripecat);
+		BLUECAT, GRAYCAT, PINKCAT, STRIPECAT;
 		
-		private int resourceId;
 		private int bitmapId = -1;
 		
 		public int[] bitmapFrames;
-		
-		private CatType(int resourceId) {
-			this.resourceId = resourceId;
-		}
 		
 		public void setBitmap(int bitmapId) {
 			this.bitmapId = bitmapId;
@@ -124,11 +117,11 @@ public class CatsGame extends GameView
 								}
 							} else {
 								current = null;
-								candidate.sprite.translate(0, catSize.y * 2);
+								candidate.sprite.translate(0, catSize.y);
 								map[x][mapSize.y-1] = candidate;
 							}
 						} else {
-							candidate.sprite.translate(0, catSize.y * 2);
+							candidate.sprite.translate(0, catSize.y);
 							map[x][mapSize.y-1] = candidate;
 						}
 					}
@@ -179,28 +172,44 @@ public class CatsGame extends GameView
 
 	@Override
 	protected void setupGame(int screenWidth, int screenHeight) {
-		// room for each column of cats + 1 cat-width worth of margin on the sides
+		// room for each row/column of cats + 1 cat worth of margin on the sides
 		int tempX = screenWidth / (mapSize.x + 1); 
-		// room for each row of cats + 2 cat-heights worth of margin on the top and bottom, 
-		// plus the gap between the last row of cats and the cat buckets
-		int tempY = screenHeight / (mapSize.y + 2);
+		int tempY = screenHeight / (mapSize.y + 1);
 		
 		int catXY = tempX < tempY ? tempX : tempY;
 		
 		catSize = new Vector2d(catXY, catXY);
-		mapLoc = new Vector2d((screenWidth - (mapSize.x * catSize.x)) / 2, (screenHeight - ((mapSize.y + 1) * catSize.y)) / 2);
+		mapLoc = new Vector2d((screenWidth - (mapSize.x * catSize.x)) / 2, (screenHeight - (mapSize.y * catSize.y)) / 2);
 		
-		CatType.BLUECAT.setBitmap  (loadBitmapResource(CatType.BLUECAT.resourceId,   catSize));
-		//CatType.GRAYCAT.setBitmap  (loadBitmapResource(CatType.GRAYCAT.resourceId,   catSize));
-		CatType.PINKCAT.setBitmap  (loadBitmapResource(CatType.PINKCAT.resourceId,   catSize));
-		CatType.STRIPECAT.setBitmap(loadBitmapResource(CatType.STRIPECAT.resourceId, catSize));
+		int frame1, frame2, frame3;
 		
-		int frame1 = loadBitmapResource(R.drawable.graycat1,   catSize);
-		int frame2 = loadBitmapResource(R.drawable.graycat2,   catSize);
-		int frame3 = loadBitmapResource(R.drawable.graycat3,   catSize);
+		frame1 = loadBitmapResource(R.drawable.bluecat1,   catSize);
+		frame2 = loadBitmapResource(R.drawable.bluecat2,   catSize);
+		frame3 = loadBitmapResource(R.drawable.bluecat3,   catSize);
+		
+		CatType.BLUECAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
+		CatType.BLUECAT.setBitmap(frame1);
+		
+		frame1 = loadBitmapResource(R.drawable.graycat1,   catSize);
+		frame2 = loadBitmapResource(R.drawable.graycat2,   catSize);
+		frame3 = loadBitmapResource(R.drawable.graycat3,   catSize);
 		
 		CatType.GRAYCAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
 		CatType.GRAYCAT.setBitmap(frame1);
+		
+		frame1 = loadBitmapResource(R.drawable.pinkcat1,   catSize);
+		frame2 = loadBitmapResource(R.drawable.pinkcat2,   catSize);
+		frame3 = loadBitmapResource(R.drawable.pinkcat3,   catSize);
+		
+		CatType.PINKCAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
+		CatType.PINKCAT.setBitmap(frame1);
+		
+		frame1 = loadBitmapResource(R.drawable.stripecat1,   catSize);
+		frame2 = loadBitmapResource(R.drawable.stripecat2,   catSize);
+		frame3 = loadBitmapResource(R.drawable.stripecat3,   catSize);
+		
+		CatType.STRIPECAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
+		CatType.STRIPECAT.setBitmap(frame1);
 		
 		try {
         	SoundManager.loadSound("song.mp3", SONG_CHANNEL);	

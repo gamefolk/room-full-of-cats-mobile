@@ -1,5 +1,6 @@
 package org.gamefolk.roomfullofcats;
 
+import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.Sprite;
 
 import android.content.Context;
@@ -44,7 +45,7 @@ public class CatsMenu extends LinearLayout
 			rowParams = new TableLayout.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT); 
 			
 			boxParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT); 
-			boxParams.gravity = Gravity.RIGHT;
+			boxParams.gravity = DeviceUtility.isIOS() ? Gravity.RIGHT : Gravity.CENTER;
 			
 			textParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT); 
 			textParams.gravity = Gravity.CENTER;
