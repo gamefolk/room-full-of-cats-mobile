@@ -106,11 +106,6 @@ public class CatsGameActivity extends GameActivity
 		});
 		loaderThread.start();
     }
-    
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
 
     protected CatsGame initializeGame() {
         gameView = new CatsGame(this, this);
