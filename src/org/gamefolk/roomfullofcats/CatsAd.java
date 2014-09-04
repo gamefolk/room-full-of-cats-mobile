@@ -38,7 +38,7 @@ public class CatsAd extends BannerAdView
 		borderWidth = DeviceUtility.isIOS() ? 1 : 3;
 		backgroundRadius = DeviceUtility.isIOS() ? 20 : 50;
 		backgroundPaint.setAntiAlias(true);
-		backgroundPaint.setARGB(255, 247, 247, 247); // iOS7ish gray color 
+		backgroundPaint.setColor(0xFFF7F7F7); // iOS7ish gray color 
 		borderPaint.setColor(Color.BLACK);
 	}
 	

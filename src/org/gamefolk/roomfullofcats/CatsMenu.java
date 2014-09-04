@@ -21,6 +21,7 @@ public class CatsMenu extends LinearLayout
 {
 	private Button startButton;
 	private Button tutorialButton;
+	private Sprite menu;
 	
 	static class SettingsView extends TableLayout
 	{
@@ -40,6 +41,7 @@ public class CatsMenu extends LinearLayout
 		@SuppressWarnings("deprecation")
 		public SettingsView(Context context) {
 			super(context);
+			setBackgroundColor(0xAA1E1E1E);
 			setStretchAllColumns(true);
 						
 			rowParams = new TableLayout.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT); 
@@ -74,16 +76,16 @@ public class CatsMenu extends LinearLayout
 			boxRow.addView(soundBox, boxParams);
 			
 			textRow = new TableRow(context);
-			
+
 			musicText = new TextView(context);
 			musicText.setText("Music");
 			musicText.setTextSize(14);
-			musicText.setTextColor(Color.BLACK);
+			musicText.setTextColor(Color.WHITE);
 			
 			soundText = new TextView(context);
 			soundText.setText("Sound");	
 			soundText.setTextSize(14);
-			soundText.setTextColor(Color.BLACK);
+			soundText.setTextColor(Color.WHITE);
 			
 			textRow.addView(musicText, textParams);
 			textRow.addView(soundText, textParams);
@@ -129,19 +131,42 @@ public class CatsMenu extends LinearLayout
 	public CatsMenu(Context context, OnClickListener startClick, OnClickListener tutorialClick) {
 		super(context);
 		setOrientation(VERTICAL);
-		setBackgroundColor(Color.WHITE);
+		setBackgroundColor(0xFF2F5BA6); // same color as top of menu background image
 		
 		startButton = new Button(context);
 		startButton.setText("Start");
+		startButton.setTextColor(Color.WHITE);
+		startButton.setBackgroundColor(0xAAAAAAAA);
 		startButton.setOnClickListener(startClick);
 		
 		tutorialButton = new Button(context);
 		tutorialButton.setText("Tutorial");
+		tutorialButton.setTextColor(Color.WHITE);
+		tutorialButton.setBackgroundColor(0xAAAAAAAA);
 		tutorialButton.setOnClickListener(tutorialClick);
 		
-		addView(new TitleView(context), new LayoutParams(LayoutParams.FILL_PARENT, 0, .40f));
-		addView(startButton, new LayoutParams(LayoutParams.FILL_PARENT, 0, .20f));
-		addView(tutorialButton, new LayoutParams(LayoutParams.FILL_PARENT, 0, .20f));
-		addView(new SettingsView(context), new LayoutParams(LayoutParams.FILL_PARENT, 0, .20f));
+		addView(new TitleView(context),    new LayoutParams(LayoutParams.FILL_PARENT, 0, .40f));
+		addView(new View(context),         new LayoutParams(LayoutParams.FILL_PARENT, 0, .05f));
+		addView(startButton,               new LayoutParams(LayoutParams.FILL_PARENT, 0, .15f));
+		addView(new View(context),         new LayoutParams(LayoutParams.FILL_PARENT, 0, .01f));
+		addView(tutorialButton,            new LayoutParams(LayoutParams.FILL_PARENT, 0, .15f));
+		addView(new View(context),         new LayoutParams(LayoutParams.FILL_PARENT, 0, .085f));
+		addView(new SettingsView(context), new LayoutParams(LayoutParams.FILL_PARENT, 0, .125f));				
+	}
+	
+	@Override
+	protected void onSizeChanged(int newWidth, int newHeight, int oldWidth, int oldHeight) {
+		menu = Sprite.fromResource(getResources(), R.drawable.menu, newWidth, -1);
+		menu.setLocation(0, newHeight - menu.getHeight());
+		super.onSizeChanged(newWidth, newHeight, oldWidth, oldHeight);
+		invalidate();
+	}
+	
+	@Override
+	protected void dispatchDraw(Canvas canvas) {
+		if (menu != null) {
+			menu.draw(canvas);
+		}
+		super.dispatchDraw(canvas);
 	}
 }
