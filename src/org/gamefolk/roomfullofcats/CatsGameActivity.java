@@ -23,8 +23,7 @@ public class CatsGameActivity extends GameActivity
 	private CatsGame gameView;
 	private CatsAd adView;
 	
-	private boolean finishedLoading = false;
-	private boolean gameStartRequested = false;
+	private Thread loaderThread;
 	
 	private class SplashView extends View
 	{
@@ -58,16 +57,16 @@ public class CatsGameActivity extends GameActivity
         
         super.onCreate(savedInstanceState); 
         
-        final CatsMenu catsMenu = new CatsMenu(this, 
-            	new OnClickListener() {
-    				public void onClick(View arg0) {
-    					if (finishedLoading) {
-    						startGame();
-    					} else {
-    						gameStartRequested = true;
-    					}
-    				}
-            	}, null);        
+        final CatsMenu catsMenu = new CatsMenu(this, new OnClickListener() {
+        	public void onClick(View arg0) {
+        		try {
+					loaderThread.join();
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+    			startGame();
+    		}
+    	}, null);        
         
         SplashView splashView = new SplashView(this);
         splashView.setOnClickListener(new OnClickListener() {
@@ -88,19 +87,14 @@ public class CatsGameActivity extends GameActivity
 		
 		DeviceUtility.setUserAgent(this);
 		
-		Thread loaderThread = new Thread(new Runnable() {
+		loaderThread = new Thread(new Runnable() {
 			public void run() {
 				SoundManager.initializeSound(getAssets(), CatsGame.NUM_CHANNELS);
 				DeviceUtility.setLocalIp();
 				try {
 					IdentifierUtility.setAdId();
 				} catch (InterruptedException e) {
-					System.out.println("error getting ip");
-				}
-				if (gameStartRequested) {
-					startGame();
-				} else {
-					finishedLoading = true;
+					Thread.currentThread().interrupt();
 				}
 			}
 		});
