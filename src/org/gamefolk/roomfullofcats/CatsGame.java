@@ -71,7 +71,7 @@ public class CatsGame extends GameView
 			
 			animationTimer = new TimerUI(.2f, CatsGame.this, new Delegate() {
 				public void function(Object... args) {
-					CatsGame.this.swapSprite(Cat.this.sprite, Cat.this.type.bitmapFrames[curFrame++]);
+					CatsGame.this.setSpriteBitmap(Cat.this.sprite, Cat.this.type.bitmapFrames[curFrame++]);
 					if (curFrame == Cat.this.type.bitmapFrames.length) {
 						curFrame = 0;
 					}
@@ -83,12 +83,12 @@ public class CatsGame extends GameView
 		public void toggleGlitch() {
 			if (glitched) {
 				glitched = false;
-				CatsGame.this.swapSprite(Cat.this.sprite, Cat.this.type.bitmapFrames[curFrame]);
+				CatsGame.this.setSpriteBitmap(Cat.this.sprite, Cat.this.type.bitmapFrames[curFrame]);
 				animationTimer.resume();
 			} else {
 				glitched = true;
 				animationTimer.pause();
-				CatsGame.this.swapSprite(Cat.this.sprite, Cat.this.type.glitchFrame);
+				CatsGame.this.setSpriteBitmap(Cat.this.sprite, Cat.this.type.glitchFrame);
 			}
 			
 		}
