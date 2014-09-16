@@ -21,10 +21,12 @@ public class CatsGame extends GameView
 {
 	ScoreView scoreView;
 	
-	static final int NUM_CHANNELS = 3;
+	static final int NUM_CHANNELS = 4;
 	private static final int SONG_CHANNEL = 0;
 	private static final int BLIP_CHANNEL = 1;
 	private static final int SCORE_CHANNEL = 2;
+	private static final int GLITCH_CHANNEL = 3;
+	private boolean soundGlitching = false;
 	
 	private final Vector2d mapSize = new Vector2d(2, 5); // in columns, rows
 	private final int incSize = 10; // the amount by which to increase the size of things as they collect
@@ -59,20 +61,36 @@ public class CatsGame extends GameView
 		public CatType type;
 		public Sprite sprite;
 		
-		int curFrame = 0;
+		private TimerUI animationTimer;
+		private int curFrame = 0;
+		private boolean glitched = false;
 				
 		public Cat (CatType type, Sprite sprite) {
 			this.type = type;
 			this.sprite = sprite;
 			
-			new TimerUI(.2f, CatsGame.this, new Delegate() {
+			animationTimer = new TimerUI(.2f, CatsGame.this, new Delegate() {
 				public void function(Object... args) {
 					CatsGame.this.swapSprite(Cat.this.sprite, Cat.this.type.bitmapFrames[curFrame++]);
 					if (curFrame == Cat.this.type.bitmapFrames.length) {
 						curFrame = 0;
 					}
 				}
-			}).start();
+			});
+			animationTimer.start();
+		}
+		
+		public void toggleGlitch() {
+			if (glitched) {
+				glitched = false;
+				CatsGame.this.swapSprite(Cat.this.sprite, Cat.this.type.bitmapFrames[curFrame]);
+				animationTimer.resume();
+			} else {
+				glitched = true;
+				animationTimer.pause();
+				CatsGame.this.swapSprite(Cat.this.sprite, Cat.this.type.glitchFrame);
+			}
+			
 		}
 	}
 
@@ -83,6 +101,7 @@ public class CatsGame extends GameView
 		private int bitmapId = -1;
 		
 		public int[] bitmapFrames;
+		public int glitchFrame;
 		
 		public void setBitmap(int bitmapId) {
 			this.bitmapId = bitmapId;
@@ -181,40 +200,53 @@ public class CatsGame extends GameView
 		catSize = new Vector2d(catXY, catXY);
 		mapLoc = new Vector2d((screenWidth - (mapSize.x * catSize.x)) / 2, (screenHeight - (mapSize.y * catSize.y)) / 2);
 		
-		int frame1, frame2, frame3;
+		int frame1, frame2, frame3, glitchFrame;
 		
 		frame1 = loadBitmapResource(R.drawable.bluecat1,   catSize);
 		frame2 = loadBitmapResource(R.drawable.bluecat2,   catSize);
 		frame3 = loadBitmapResource(R.drawable.bluecat3,   catSize);
 		
+		glitchFrame = loadBitmapResource(R.drawable.bluecatgb, catSize);
+		
 		CatType.BLUECAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
+		CatType.BLUECAT.glitchFrame = glitchFrame;
 		CatType.BLUECAT.setBitmap(frame1);
 		
 		frame1 = loadBitmapResource(R.drawable.graycat1,   catSize);
 		frame2 = loadBitmapResource(R.drawable.graycat2,   catSize);
 		frame3 = loadBitmapResource(R.drawable.graycat3,   catSize);
 		
+		glitchFrame = loadBitmapResource(R.drawable.graycatgb, catSize);
+		
 		CatType.GRAYCAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
+		CatType.GRAYCAT.glitchFrame = glitchFrame;
 		CatType.GRAYCAT.setBitmap(frame1);
 		
 		frame1 = loadBitmapResource(R.drawable.pinkcat1,   catSize);
 		frame2 = loadBitmapResource(R.drawable.pinkcat2,   catSize);
 		frame3 = loadBitmapResource(R.drawable.pinkcat3,   catSize);
 		
+		glitchFrame = loadBitmapResource(R.drawable.pinkcatgb, catSize);
+		
 		CatType.PINKCAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
+		CatType.PINKCAT.glitchFrame = glitchFrame;
 		CatType.PINKCAT.setBitmap(frame1);
 		
-		frame1 = loadBitmapResource(R.drawable.stripecat1,   catSize);
-		frame2 = loadBitmapResource(R.drawable.stripecat2,   catSize);
-		frame3 = loadBitmapResource(R.drawable.stripecat3,   catSize);
+		frame1 = loadBitmapResource(R.drawable.stripecat1, catSize);
+		frame2 = loadBitmapResource(R.drawable.stripecat2, catSize);
+		frame3 = loadBitmapResource(R.drawable.stripecat3, catSize);
+		
+		glitchFrame = loadBitmapResource(R.drawable.stripecatgb, catSize);
 		
 		CatType.STRIPECAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
+		CatType.STRIPECAT.glitchFrame = glitchFrame;
 		CatType.STRIPECAT.setBitmap(frame1);
 		
 		try {
-        	SoundManager.loadSound("song.mp3", SONG_CHANNEL);	
-        	SoundManager.loadSound("blip.wav", BLIP_CHANNEL);	
-        	SoundManager.loadSound("score.wav", SCORE_CHANNEL);	
+        	SoundManager.loadSound(  "catsphone.mp3", SONG_CHANNEL);	
+        	SoundManager.loadSound("catsgbphone.mp3", GLITCH_CHANNEL);
+        	SoundManager.loadSound(       "blip.wav", BLIP_CHANNEL);	
+        	SoundManager.loadSound(      "score.wav", SCORE_CHANNEL);	
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -223,9 +255,37 @@ public class CatsGame extends GameView
 	@Override
 	protected void startGame() {
 		fallTimer.start();	
+		SoundManager.setVolume(GLITCH_CHANNEL, 0, 0);
 		SoundManager.loopSound(SONG_CHANNEL);
+		SoundManager.loopSound(GLITCH_CHANNEL);
 	}
 	
 	@Override
-	protected void updateGame() {}
+	protected void updateGame() {
+		if (soundGlitching && rGen.nextFloat() > .95) {
+			soundGlitching = false;
+			SoundManager.setVolume(GLITCH_CHANNEL, 0, 0);
+			SoundManager.setVolume(SONG_CHANNEL, 1, 1);
+			
+			for (int x = 0; x < mapSize.x; x++) {
+				for (int y = 0; y < mapSize.y; y++) {
+					if (map[x][y] != null) {
+						map[x][y].toggleGlitch();
+					}
+				}
+			}
+		} else if (rGen.nextFloat() > .99) {
+			soundGlitching = true;
+			SoundManager.setVolume(GLITCH_CHANNEL, 1, 1);
+			SoundManager.setVolume(SONG_CHANNEL, 0, 0);
+			
+			for (int x = 0; x < mapSize.x; x++) {
+				for (int y = 0; y < mapSize.y; y++) {
+					if (map[x][y] != null) {
+						map[x][y].toggleGlitch();
+					}
+				}
+			}
+		}
+	}
 }
