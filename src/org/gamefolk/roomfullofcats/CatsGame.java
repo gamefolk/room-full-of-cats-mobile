@@ -1,10 +1,14 @@
 package org.gamefolk.roomfullofcats;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.CountDownTimer;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
@@ -31,6 +35,7 @@ public class CatsGame extends GameView
 	private final Vector2d mapSize = new Vector2d(2, 5); // in columns, rows
 	private final int incSize = 10; // the amount by which to increase the size of things as they collect
 	private final Cat[][] map = new Cat[mapSize.x][mapSize.y];
+	private long millisRemaining;
 	
 	private Vector2d mapLoc; // in pixels, the top left corner of the top left column of things on the screen
 	private Vector2d catSize; // in pixels, set according to the size of the screen in onSizeChanged()
@@ -40,6 +45,7 @@ public class CatsGame extends GameView
 	private int score = 0;
 	private TimerAsync fallTimer;
 	private TimerUI animationTimer;
+	private CountDownTimer levelTimer;
 	
 	private final Random rGen = new Random();
 	
@@ -52,7 +58,10 @@ public class CatsGame extends GameView
 		}
 		
 		public void printScore() {
-			setText("Score: " + score);
+			String time = String.format("%d:%02d",
+					TimeUnit.MILLISECONDS.toMinutes(millisRemaining),
+					TimeUnit.MILLISECONDS.toSeconds(millisRemaining));
+			setText("Score: " + score + " Time: " + time);
 		}
 	}
 	
@@ -101,6 +110,28 @@ public class CatsGame extends GameView
 		super(context, loadListener);
 		
 		scoreView = new ScoreView(context);
+		
+		levelTimer = new CountDownTimer(5000, 1000) {
+			@Override
+			public void onTick(long millisUntilFinished) {
+				millisRemaining = millisUntilFinished;
+			}
+			
+			@Override
+			public void onFinish() {
+				millisRemaining = 0;
+				System.out.println("Game over");
+				animationTimer.pause();
+				fallTimer.pause();
+				for (Cat[] row : map) {
+					Arrays.fill(row, null);
+				}
+				
+				LevelInterimView liv = new LevelInterimView(CatsGame.this.getContext());
+				((Activity) CatsGame.this.getContext()).setContentView(liv);
+				
+			}
+		};
 		
 		animationTimer = new TimerUI(.2f, CatsGame.this, new Delegate() {
 			public void function(Object... args) {
@@ -261,6 +292,7 @@ public class CatsGame extends GameView
 	protected void startGame() {
 		fallTimer.start();	
 		animationTimer.start();
+		levelTimer.start();
 		//SoundManager.setVolume(GLITCH_CHANNEL, 0, 0);
 		SoundManager.loopSound(SONG_CHANNEL);
 		//SoundManager.loopSound(GLITCH_CHANNEL);
