@@ -39,6 +39,7 @@ public class CatsGame extends GameView
 	private final int thingsLimit = 3; // the target number of things of the same type to collect
 	private int score = 0;
 	private TimerAsync fallTimer;
+	private TimerUI animationTimer;
 	
 	private final Random rGen = new Random();
 	
@@ -61,26 +62,15 @@ public class CatsGame extends GameView
 		public CatType type;
 		public Sprite sprite;
 		
-		private TimerUI animationTimer;
 		private int curFrame = 0;
 		private boolean glitched = false;
 				
 		public Cat (CatType type, Sprite sprite) {
 			this.type = type;
 			this.sprite = sprite;
-			
-			animationTimer = new TimerUI(.2f, CatsGame.this, new Delegate() {
-				public void function(Object... args) {
-					CatsGame.this.setSpriteBitmap(Cat.this.sprite, Cat.this.type.bitmapFrames[curFrame++]);
-					if (curFrame == Cat.this.type.bitmapFrames.length) {
-						curFrame = 0;
-					}
-				}
-			});
-			animationTimer.start();
 		}
 		
-		public void toggleGlitch() {
+		/*public void toggleGlitch() {
 			if (glitched) {
 				glitched = false;
 				CatsGame.this.setSpriteBitmap(Cat.this.sprite, Cat.this.type.bitmapFrames[curFrame]);
@@ -90,8 +80,7 @@ public class CatsGame extends GameView
 				animationTimer.pause();
 				CatsGame.this.setSpriteBitmap(Cat.this.sprite, Cat.this.type.glitchFrame);
 			}
-			
-		}
+		}*/
 	}
 
 	private enum CatType
@@ -112,6 +101,22 @@ public class CatsGame extends GameView
 		super(context, loadListener);
 		
 		scoreView = new ScoreView(context);
+		
+		animationTimer = new TimerUI(.2f, CatsGame.this, new Delegate() {
+			public void function(Object... args) {
+				for (int x = 0; x < mapSize.x; x++) {
+					for (int y = 0; y < mapSize.y; y++) {
+						Cat cat = map[x][y];
+						if (cat != null) {
+							CatsGame.this.setSpriteBitmap(cat.sprite, cat.type.bitmapFrames[cat.curFrame++]);
+							if (cat.curFrame == cat.type.bitmapFrames.length) {
+								cat.curFrame = 0;
+							}
+						}
+					}
+				}
+			}
+		});
 		
 		fallTimer = new TimerAsync(fallTime, this, new Delegate() {
 			public void function(Object... args) {		
@@ -255,14 +260,15 @@ public class CatsGame extends GameView
 	@Override
 	protected void startGame() {
 		fallTimer.start();	
-		SoundManager.setVolume(GLITCH_CHANNEL, 0, 0);
+		animationTimer.start();
+		//SoundManager.setVolume(GLITCH_CHANNEL, 0, 0);
 		SoundManager.loopSound(SONG_CHANNEL);
-		SoundManager.loopSound(GLITCH_CHANNEL);
+		//SoundManager.loopSound(GLITCH_CHANNEL);
 	}
 	
 	@Override
 	protected void updateGame() {
-		if (soundGlitching && rGen.nextFloat() > .95) {
+		/*if (soundGlitching && rGen.nextFloat() > .95) {
 			soundGlitching = false;
 			SoundManager.setVolume(GLITCH_CHANNEL, 0, 0);
 			SoundManager.setVolume(SONG_CHANNEL, 1, 1);
@@ -286,6 +292,6 @@ public class CatsGame extends GameView
 					}
 				}
 			}
-		}
+		}*/
 	}
 }
