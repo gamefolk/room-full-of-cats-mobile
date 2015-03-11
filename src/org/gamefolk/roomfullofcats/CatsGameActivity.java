@@ -92,7 +92,7 @@ public class CatsGameActivity extends GameActivity
 				SoundManager.initializeSound(getAssets(), CatsGame.NUM_CHANNELS);
 				DeviceUtility.setLocalIp();
 				try {
-					IdentifierUtility.setAdId();
+					IdentifierUtility.prepareAdId();
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 				}
@@ -124,6 +124,7 @@ public class CatsGameActivity extends GameActivity
 		System.out.println("finished loading!");
 		System.out.println("ip: " + DeviceUtility.getLocalIp());
 		System.out.println("ad id: " + IdentifierUtility.getAdId());
+		System.out.println("do not track: " + IdentifierUtility.getAdDoNotTrack());
 		System.out.println("user agent: " + DeviceUtility.getUserAgent());
 		
 		// call initializeGame and initializeContentView on the main thread, starting the game
