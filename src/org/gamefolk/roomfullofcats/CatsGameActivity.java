@@ -1,8 +1,5 @@
 package org.gamefolk.roomfullofcats;
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,7 +12,6 @@ import com.adsdk.sdk.IdentifierUtility;
 import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameActivity;
 import com.arcadeoftheabsurd.absurdengine.SoundManager;
-import com.arcadeoftheabsurd.absurdengine.Sprite;
 
 public class CatsGameActivity extends GameActivity
 {	
@@ -24,31 +20,6 @@ public class CatsGameActivity extends GameActivity
 	private CatsAd adView;
 	
 	private Thread loaderThread;
-	
-	private class SplashView extends View
-	{
-		private Sprite logo;
-		
-		public SplashView(Context context) {
-			super(context);
-			setBackgroundColor(Color.BLACK);
-		}
-		
-		@Override
-		protected void onSizeChanged(int newWidth, int newHeight, int oldWidth, int oldHeight) {
-			logo = Sprite.fromResource(getResources(), R.drawable.gamefolklogo, newWidth, newWidth);
-			logo.setLocation(0, (newHeight - logo.getHeight()) / 2);
-			invalidate();
-		}
-		
-		@Override
-		protected void onDraw(Canvas canvas) {
-			if (logo != null) {
-				logo.draw(canvas);
-			}
-			super.onDraw(canvas);
-		}
-	}
 		
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -66,16 +37,10 @@ public class CatsGameActivity extends GameActivity
 				}
     			startGame();
     		}
-    	}, null);        
+    	}, null);     
         
-        SplashView splashView = new SplashView(this);
-        splashView.setOnClickListener(new OnClickListener() {
-			public void onClick(View arg0) {
-				setContentView(catsMenu);        
-				loadGame();
-			}
-		});
-        setContentView(splashView);        
+        setContentView(catsMenu);        
+		loadGame();     
     }
     
     private void loadGame() {
