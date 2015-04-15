@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.AttributeSet;
 import android.view.View;
 
 public class LevelInterimView extends View {
@@ -12,6 +11,7 @@ public class LevelInterimView extends View {
 	
 	public LevelInterimView(Context context) {
 		super(context);
+		this.invalidate();
 	}
 	
 	@Override
@@ -19,6 +19,5 @@ public class LevelInterimView extends View {
 		paint.setColor(Color.WHITE);
 		paint.setStyle(Paint.Style.FILL);
 		canvas.drawText("GAME OVER", 0, 0, paint);
-		this.setBackgroundColor(Color.RED);
 	}
 }

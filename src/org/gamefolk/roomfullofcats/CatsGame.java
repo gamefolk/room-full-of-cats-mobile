@@ -3,7 +3,6 @@ package org.gamefolk.roomfullofcats;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
 import android.content.Context;
@@ -29,22 +28,23 @@ public class CatsGame extends GameView
     private static final int BLIP_CHANNEL = 1;
     private static final int SCORE_CHANNEL = 2;
     private static final int GLITCH_CHANNEL = 3;
-    private boolean soundGlitching = false;
     
-    private final Vector2d mapSize = new Vector2d(2, 5); // in columns, rows
-    private final int incSize = 10; // the amount by which to increase the size of things as they collect
-    private final Cat[][] map = new Cat[mapSize.x][mapSize.y];
+    private final int incSize = 10; // the amount by which to increase the size of cats as they collect    
     
-    private Vector2d mapLoc; // in pixels, the top left corner of the top left column of things on the screen
+    private Cat[][] map;
+    
+    private int mapWidth;
+    private int mapHeight;
+    
+    private Vector2d mapLoc; // in pixels, the top left corner of the top left column of cats on the screen
     private Vector2d catSize; // in pixels, set according to the size of the screen in onSizeChanged()
     
-    private final int fallTime = 1; // interval after which things fall, in seconds
-    private final int thingsLimit = 3; // the target number of things of the same type to collect
-    private int score = 0;
+    private int score;
+    private int curLevelTime;
+    
     private TimerAsync fallTimer;
     private TimerUI animationTimer;
     private CountdownTimer levelTimer;
-    private int levelTime = 5;
     
     private final Random rGen = new Random();
     
@@ -57,7 +57,7 @@ public class CatsGame extends GameView
         }
         
         public void printScore() {
-            setText("Score: " + score + " Time: " + levelTime);
+            setText("Score: " + score + " Time: " + curLevelTime);
         }
     }
     
@@ -102,12 +102,21 @@ public class CatsGame extends GameView
         }
     }
     
-    public CatsGame(Context context, GameLoadListener loadListener) {
+    public CatsGame(Context context, GameLoadListener loadListener, Level level) {
         super(context, loadListener);
         
         scoreView = new ScoreView(context);
         
-        levelTimer = new CountdownTimer(levelTime, 1f, CatsGame.this) {
+        makeLevel(level);
+    }
+    
+    public void makeLevel(final Level level) {
+    	this.mapWidth = level.mapWidth;
+    	this.mapHeight = level.mapHeight;
+    	
+    	map = new Cat[mapWidth][mapHeight];
+    	
+    	levelTimer = new CountdownTimer(level.levelTime, 1f, CatsGame.this) {
             @Override
             public void onFinish() {
                 System.out.println("Game over");
@@ -123,14 +132,14 @@ public class CatsGame extends GameView
 
             @Override
             public void onTic(int remaining) {
-                levelTime = remaining;
+            	curLevelTime = remaining;
             }
         };
         
         animationTimer = new TimerUI(.2f, CatsGame.this, new Delegate() {
             public void function(Object... args) {
-                for (int x = 0; x < mapSize.x; x++) {
-                    for (int y = 0; y < mapSize.y; y++) {
+                for (int x = 0; x < mapWidth; x++) {
+                    for (int y = 0; y < mapHeight; y++) {
                         Cat cat = map[x][y];
                         if (cat != null) {
                             CatsGame.this.setSpriteBitmap(cat.sprite, cat.type.bitmapFrames[cat.curFrame++]);
@@ -143,41 +152,41 @@ public class CatsGame extends GameView
             }
         });
         
-        fallTimer = new TimerAsync(fallTime, this, new Delegate() {
+        fallTimer = new TimerAsync(level.fallTime, this, new Delegate() {
             public void function(Object... args) {      
                 // move bottom row into buckets  
-                for (int x = 0; x < mapSize.x; x++) {
-                    Cat candidate = map[x][mapSize.y-2];
+                for (int x = 0; x < mapWidth; x++) {
+                    Cat candidate = map[x][mapHeight-2];
 
                     if (candidate != null) {
-                        Cat current = map[x][mapSize.y-1];
+                        Cat current = map[x][mapHeight-1];
                         
                         if (current != null) {  
                             if (candidate.type == current.type) {                               
                                 current.sprite.resize(current.sprite.getWidth() + incSize, current.sprite.getHeight() + incSize);
                                 current.things++;
                                 
-                                if (current.things == thingsLimit) {
+                                if (current.things == level.catsLimit) {
                                     score++;
                                     if (!SoundManager.isPlaying(SCORE_CHANNEL)) {
                                         SoundManager.playSound(SCORE_CHANNEL);
                                     }
-                                    map[x][mapSize.y-1] = null;
+                                    map[x][mapHeight-1] = null;
                                 }
                             } else {
                                 current = null;
                                 candidate.sprite.translate(0, catSize.y);
-                                map[x][mapSize.y-1] = candidate;
+                                map[x][mapHeight-1] = candidate;
                             }
                         } else {
                             candidate.sprite.translate(0, catSize.y);
-                            map[x][mapSize.y-1] = candidate;
+                            map[x][mapHeight-1] = candidate;
                         }
                     }
                 }
                 // descend cats in all other rows 
-                for (int y = mapSize.y-2; y > 0; y--) {
-                    for (int x = 0; x < mapSize.x; x++) {
+                for (int y = mapHeight-2; y > 0; y--) {
+                    for (int x = 0; x < mapWidth; x++) {
                         if (map[x][y-1] != null) {
                             map[x][y-1].sprite.translate(0, catSize.y);
                         }
@@ -185,7 +194,7 @@ public class CatsGame extends GameView
                     }
                 }
                 // fill the top row with new cats
-                for (int x = 0; x < mapSize.x; x++) {
+                for (int x = 0; x < mapWidth; x++) {
                     CatType type = CatType.values()[rGen.nextInt(4)];                   
                     map[x][0] = new Cat(type, makeSprite(type.bitmapId, mapLoc.x + (x * catSize.x), mapLoc.y));
                 }
@@ -195,8 +204,8 @@ public class CatsGame extends GameView
     
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        for (int x = 0; x < mapSize.x; x++) {
-            for (int y = 0; y < mapSize.y-1; y++) {
+        for (int x = 0; x < mapWidth; x++) {
+            for (int y = 0; y < mapHeight-1; y++) {
                 if (map[x][y] != null) {
                     if (map[x][y].sprite.getBounds().contains((int)event.getX(), (int)event.getY())) {
                         map[x][y] = null;
@@ -209,8 +218,8 @@ public class CatsGame extends GameView
     
     @Override
     protected void onDraw(Canvas canvas) {              
-        for (int x = 0; x < mapSize.x; x++) {
-            for (int y = 0; y < mapSize.y; y++) {
+        for (int x = 0; x < mapWidth; x++) {
+            for (int y = 0; y < mapHeight; y++) {
                 if (map[x][y] != null) {
                     map[x][y].sprite.draw(canvas);
                 }
@@ -222,13 +231,13 @@ public class CatsGame extends GameView
     @Override
     protected void setupGame(int screenWidth, int screenHeight) {
         // room for each row/column of cats + 1 cat worth of margin on the sides
-        int tempX = screenWidth / (mapSize.x + 1); 
-        int tempY = screenHeight / (mapSize.y + 1);
+        int tempX = screenWidth / (mapWidth + 1); 
+        int tempY = screenHeight / (mapHeight + 1);
         
         int catXY = tempX < tempY ? tempX : tempY;
         
         catSize = new Vector2d(catXY, catXY);
-        mapLoc = new Vector2d((screenWidth - (mapSize.x * catSize.x)) / 2, (screenHeight - (mapSize.y * catSize.y)) / 2);
+        mapLoc = new Vector2d((screenWidth - (mapWidth * catSize.x)) / 2, (screenHeight - (mapHeight * catSize.y)) / 2);
         
         int frame1, frame2, frame3, glitchFrame;
         

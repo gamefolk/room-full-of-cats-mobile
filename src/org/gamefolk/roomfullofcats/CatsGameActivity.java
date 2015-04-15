@@ -67,7 +67,7 @@ public class CatsGameActivity extends GameActivity
     }
 
     protected CatsGame initializeGame() {
-        gameView = new CatsGame(this, this);
+        gameView = new CatsGame(this, this, CatsGameManager.loadLevel());
     	return gameView;
     }
     
