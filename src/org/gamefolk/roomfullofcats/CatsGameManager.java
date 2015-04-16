@@ -17,11 +17,18 @@ public class CatsGameManager
 	static Level loadLevel() {
 		Level level = new Level();
 		
+		level.number = curLevel;
+		
 		if (curLevel == 1) {
-			level.number = 1;
 			level.mapWidth = 2;
 			level.mapHeight = 5;
 			level.levelTime = 5;
+			level.fallTime = 1;
+			level.catsLimit = 3;
+		} else if (curLevel == 2) {
+			level.mapWidth = 2;
+			level.mapHeight = 5;
+			level.levelTime = 10;
 			level.fallTime = 1;
 			level.catsLimit = 3;
 		}

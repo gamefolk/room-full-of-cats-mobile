@@ -102,15 +102,13 @@ public class CatsGame extends GameView
         }
     }
     
-    public CatsGame(Context context, GameLoadListener loadListener, Level level) {
+    public CatsGame(Context context, GameLoadListener loadListener) {
         super(context, loadListener);
         
         scoreView = new ScoreView(context);
-        
-        makeLevel(level);
     }
     
-    public void makeLevel(final Level level) {
+    public void makeLevel(final Level level) {    	
     	this.mapWidth = level.mapWidth;
     	this.mapHeight = level.mapHeight;
     	

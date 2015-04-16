@@ -1,11 +1,15 @@
 package org.gamefolk.roomfullofcats;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 
 import com.adsdk.sdk.IdentifierUtility;
@@ -19,7 +23,8 @@ public class CatsGameActivity extends GameActivity
 	private CatsGame gameView;
 	private CatsAd adView;
 	
-	private Thread loaderThread;
+	private Thread deviceLoaderThread;
+	private Thread gameLoaderThread;
 		
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -31,7 +36,7 @@ public class CatsGameActivity extends GameActivity
         final CatsMenu catsMenu = new CatsMenu(this, new OnClickListener() {
         	public void onClick(View arg0) {
         		try {
-					loaderThread.join();
+					deviceLoaderThread.join();
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 				}
@@ -52,7 +57,7 @@ public class CatsGameActivity extends GameActivity
 		
 		DeviceUtility.setUserAgent(this);
 		
-		loaderThread = new Thread(new Runnable() {
+		deviceLoaderThread = new Thread(new Runnable() {
 			public void run() {
 				SoundManager.initializeSound(getAssets(), CatsGame.NUM_CHANNELS);
 				DeviceUtility.setLocalIp();
@@ -63,17 +68,22 @@ public class CatsGameActivity extends GameActivity
 				}
 			}
 		});
-		loaderThread.start();
+		deviceLoaderThread.start();
     }
 
     protected CatsGame initializeGame() {
-        gameView = new CatsGame(this, this, CatsGameManager.loadLevel());
+		try {
+			gameLoaderThread.join();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		
     	return gameView;
     }
     
 	@SuppressWarnings("deprecation")
 	protected LinearLayout initializeContentView() {
-    	adView = new CatsAd(this);
+    	/*adView = new CatsAd(this);
     	
     	contentView = new LinearLayout(this);
     	contentView.setOrientation(LinearLayout.VERTICAL);
@@ -81,9 +91,25 @@ public class CatsGameActivity extends GameActivity
     	contentView.addView(gameView.scoreView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .05f));
     	contentView.addView(gameView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .80f));
     	contentView.addView(adView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .15f));
-    	
+    	*/
     	return contentView;
     }
+	
+	class ToastView extends TextView
+	{
+		public ToastView(Context context, String message) {
+			super(context);
+			setTextSize(DeviceUtility.isIOS() ? 12 : 20);
+			setText(message);
+		}
+		
+		/*@Override
+		protected void onVisibilityChanged (View changedView, int visibility) {
+			if (changedView == this && visibility == GONE) {
+				loadContent();
+			}
+		}*/
+	}
     
     private void startGame() {
 		System.out.println("finished loading!");
@@ -91,6 +117,34 @@ public class CatsGameActivity extends GameActivity
 		System.out.println("ad id: " + IdentifierUtility.getAdId());
 		System.out.println("do not track: " + IdentifierUtility.getAdDoNotTrack());
 		System.out.println("user agent: " + DeviceUtility.getUserAgent());
+
+		runOnUiThread(new Runnable() {
+	        public void run() {
+	        	Toast toast = new Toast(getApplicationContext());
+	    		toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+	    		toast.setDuration(Toast.LENGTH_LONG);
+	    		toast.setView(new ToastView(getApplicationContext(), "Level " + CatsGameManager.curLevel));
+	    		toast.show();
+	        }
+	    });
+		
+		gameView = new CatsGame(this, this);
+		
+		adView = new CatsAd(this);
+    	
+    	contentView = new LinearLayout(this);
+    	contentView.setOrientation(LinearLayout.VERTICAL);
+		
+		gameLoaderThread = new Thread(new Runnable() {
+			public void run() {
+				gameView.makeLevel(CatsGameManager.loadLevel());
+				
+				contentView.addView(gameView.scoreView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .05f));
+		    	contentView.addView(gameView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .80f));
+		    	contentView.addView(adView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .15f));
+			}
+		});
+		gameLoaderThread.start();
 		
 		// call initializeGame and initializeContentView on the main thread, starting the game
 		loadContent();
