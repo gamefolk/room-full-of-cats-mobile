@@ -117,6 +117,8 @@ public class CatsGameActivity extends GameActivity
 		System.out.println("ad id: " + IdentifierUtility.getAdId());
 		System.out.println("do not track: " + IdentifierUtility.getAdDoNotTrack());
 		System.out.println("user agent: " + DeviceUtility.getUserAgent());
+		
+		CatsGameManager.context = this;
 
 		runOnUiThread(new Runnable() {
 	        public void run() {
