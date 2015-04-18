@@ -77,40 +77,14 @@ public class CatsGameActivity extends GameActivity
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
-		
     	return gameView;
     }
     
-	@SuppressWarnings("deprecation")
 	protected LinearLayout initializeContentView() {
-    	/*adView = new CatsAd(this);
-    	
-    	contentView = new LinearLayout(this);
-    	contentView.setOrientation(LinearLayout.VERTICAL);
-    	
-    	contentView.addView(gameView.scoreView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .05f));
-    	contentView.addView(gameView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .80f));
-    	contentView.addView(adView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .15f));
-    	*/
     	return contentView;
     }
-	
-	class ToastView extends TextView
-	{
-		public ToastView(Context context, String message) {
-			super(context);
-			setTextSize(DeviceUtility.isIOS() ? 12 : 20);
-			setText(message);
-		}
-		
-		/*@Override
-		protected void onVisibilityChanged (View changedView, int visibility) {
-			if (changedView == this && visibility == GONE) {
-				loadContent();
-			}
-		}*/
-	}
     
+	@SuppressWarnings("deprecation")
     private void startGame() {
 		System.out.println("finished loading!");
 		System.out.println("ip: " + DeviceUtility.getLocalIp());
@@ -118,19 +92,11 @@ public class CatsGameActivity extends GameActivity
 		System.out.println("do not track: " + IdentifierUtility.getAdDoNotTrack());
 		System.out.println("user agent: " + DeviceUtility.getUserAgent());
 		
-		CatsGameManager.context = this;
-
-		runOnUiThread(new Runnable() {
-	        public void run() {
-	        	Toast toast = new Toast(getApplicationContext());
-	    		toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-	    		toast.setDuration(Toast.LENGTH_LONG);
-	    		toast.setView(new ToastView(getApplicationContext(), "Level " + CatsGameManager.curLevel));
-	    		toast.show();
-	        }
-	    });
-		
 		gameView = new CatsGame(this, this);
+		
+		CatsGameManager.initialize(this, gameView);
+		
+		CatsGameManager.displayLevelMessage();
 		
 		adView = new CatsAd(this);
     	

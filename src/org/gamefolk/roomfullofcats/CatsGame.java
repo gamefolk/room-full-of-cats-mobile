@@ -123,9 +123,11 @@ public class CatsGame extends GameView
                 for (Cat[] row : map) {
                     Arrays.fill(row, null);
                 }
+                CatsGameManager.curLevel++;
+                CatsGameManager.startLevel();
                 
-                LevelInterimView liv = new LevelInterimView(CatsGame.this.getContext());
-                ((Activity) CatsGame.this.getContext()).setContentView(liv);
+                /*LevelInterimView liv = new LevelInterimView(CatsGame.this.getContext());
+                ((Activity) CatsGame.this.getContext()).setContentView(liv);*/
             }
 
             @Override

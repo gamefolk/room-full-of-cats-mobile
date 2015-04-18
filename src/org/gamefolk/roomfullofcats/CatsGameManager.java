@@ -8,9 +8,14 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.eclipsesource.json.JsonObject;
 
+import android.app.Activity;
 import android.content.Context;
+import android.view.Gravity;
+import android.widget.TextView;
+import android.widget.Toast;
 
 class Level
 {
@@ -25,7 +30,40 @@ class Level
 public class CatsGameManager 
 {
 	static int curLevel = 1;
-	static Context context;
+	private static Context context;
+	private static CatsGame game;
+	
+	static class ToastView extends TextView
+	{
+		public ToastView(Context context, String message) {
+			super(context);
+			setTextSize(DeviceUtility.isIOS() ? 12 : 20);
+			setText(message);
+		}
+	}
+	
+	static void initialize(Context context, CatsGame game) {
+		CatsGameManager.context = context;
+		CatsGameManager.game = game;
+	}
+	
+	static void displayLevelMessage() {
+		((Activity)context).runOnUiThread(new Runnable() {
+	        public void run() {
+	        	Toast toast = new Toast(context.getApplicationContext());
+	    		toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+	    		toast.setDuration(Toast.LENGTH_LONG);
+	    		toast.setView(new ToastView(context.getApplicationContext(), "Level " + CatsGameManager.curLevel));
+	    		toast.show();
+	        }
+	    });
+	}
+	
+	static void startLevel() {
+		displayLevelMessage();
+		game.makeLevel(loadLevel());
+		game.startGame();
+	}
 	
 	static Level loadLevel() {
 		Level level = new Level();
