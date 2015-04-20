@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
@@ -125,9 +124,6 @@ public class CatsGame extends GameView
                 }
                 CatsGameManager.curLevel++;
                 CatsGameManager.startLevel();
-                
-                /*LevelInterimView liv = new LevelInterimView(CatsGame.this.getContext());
-                ((Activity) CatsGame.this.getContext()).setContentView(liv);*/
             }
 
             @Override
