@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 
 import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
@@ -30,6 +31,8 @@ public class CatsAd extends BannerAdView
 	private int borderWidth;
 	private int backgroundRadius; 
 	
+	private static final String TAG = "RoomFullOfCats";
+	
 	public CatsAd(Context context) {
 		super(context, 
 			DeviceUtility.isIOS() ? 12 : 19, // text size
@@ -44,7 +47,7 @@ public class CatsAd extends BannerAdView
 	
 	@Override
 	public void adLoaded(final NativeAd ad) {
-		System.out.println("ad loaded");
+		Log.v(TAG, "ad loaded");
 		
 		adLoaded = true;
 		this.setAssets(ad.getImageAsset("icon").sprite, ad.getTextAsset("description"));
@@ -62,7 +65,7 @@ public class CatsAd extends BannerAdView
 
 	@Override
 	public void adFailedToLoad() {
-		System.out.println("ad failed");
+		Log.e(TAG, "ad failed");
 	}
 	
 	@Override

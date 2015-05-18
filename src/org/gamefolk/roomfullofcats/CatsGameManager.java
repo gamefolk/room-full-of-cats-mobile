@@ -13,6 +13,7 @@ import com.eclipsesource.json.JsonObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,8 @@ public class CatsGameManager
 	static int curLevel = 1;
 	private static Context context;
 	private static CatsGame game;
+	
+	private static final String TAG = "RoomFullOfCats";
 	
 	static class ToastView extends TextView
 	{
@@ -86,13 +89,12 @@ public class CatsGameManager
 				}
 			}
 			catch (IOException e) {
-				System.out.println("error loading level");
-			}
-			
-			System.out.println("json: " + writer.toString());
+				Log.e(TAG, "error reading level json");
+			}			
+			Log.v(TAG, "json: " + writer.toString());
 			JsonObject mainObject = JsonObject.readFrom(writer.toString());
 			
-			System.out.println("level title: " + mainObject.get("levelTitle").asString());
+			Log.v(TAG, "level: " + mainObject.get("levelTitle").asString());
 			
 			level.mapWidth = mainObject.get("columns").asInt();
 			level.mapHeight = mainObject.get("rows").asInt();

@@ -6,6 +6,7 @@ import java.util.Random;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
@@ -46,6 +47,8 @@ public class CatsGame extends GameView
     private CountdownTimer levelTimer;
     
     private final Random rGen = new Random();
+    
+    private static final String TAG = "RoomFullOfCats";
     
     class ScoreView extends TextView
     {
@@ -116,7 +119,7 @@ public class CatsGame extends GameView
     	levelTimer = new CountdownTimer(level.levelTime, 1f, CatsGame.this) {
             @Override
             public void onFinish() {
-                System.out.println("Game over");
+                Log.v(TAG, "game over");
                 animationTimer.pause();
                 fallTimer.pause();
                 for (Cat[] row : map) {

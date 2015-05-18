@@ -1,6 +1,7 @@
 package org.gamefolk.roomfullofcats;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -21,6 +22,8 @@ public class CatsGameActivity extends GameActivity
 	
 	private Thread deviceLoaderThread;
 	private Thread gameLoaderThread;
+	
+	private static final String TAG = "RoomFullOfCats";
 		
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -45,11 +48,11 @@ public class CatsGameActivity extends GameActivity
     }
     
     private void loadGame() {
-		System.out.println("checking ad services");
+		Log.v(TAG, "checking ad services");
 		IdentifierUtility.requireAdService(this);
-		System.out.println("ad services available");
+		Log.v(TAG, "ad services available");
 		
-		System.out.println("getting device info...");
+		Log.v(TAG, "getting device info");
 		
 		DeviceUtility.setUserAgent(this);
 		
@@ -82,11 +85,11 @@ public class CatsGameActivity extends GameActivity
     
 	@SuppressWarnings("deprecation")
     private void startGame() {
-		System.out.println("finished loading!");
-		System.out.println("ip: " + DeviceUtility.getLocalIp());
-		System.out.println("ad id: " + IdentifierUtility.getAdId());
-		System.out.println("do not track: " + IdentifierUtility.getAdDoNotTrack());
-		System.out.println("user agent: " + DeviceUtility.getUserAgent());
+		Log.v(TAG, "finished loading");
+		Log.v(TAG, "ip: " + DeviceUtility.getLocalIp());
+		Log.v(TAG, "ad id: " + IdentifierUtility.getAdId());
+		Log.v(TAG, "do not track: " + IdentifierUtility.getAdDoNotTrack());
+		Log.v(TAG, "user agent: " + DeviceUtility.getUserAgent());
 		
 		gameView = new CatsGame(this, this);
 		
