@@ -26,6 +26,8 @@ class Level
 	int levelTime;
 	int fallTime;  // interval after which cats fall, in seconds
 	int catsLimit; // the target number of cats of the same type to collect
+	String message;
+	String title;
 }
 
 public class CatsGameManager 
@@ -50,21 +52,22 @@ public class CatsGameManager
 		CatsGameManager.game = game;
 	}
 	
-	static void displayLevelMessage() {
+	static void displayLevelMessage(final String message) {
 		((Activity)context).runOnUiThread(new Runnable() {
 	        public void run() {
 	        	Toast toast = new Toast(context.getApplicationContext());
 	    		toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
 	    		toast.setDuration(Toast.LENGTH_LONG);
-	    		toast.setView(new ToastView(context.getApplicationContext(), "Level " + CatsGameManager.curLevel));
+	    		toast.setView(new ToastView(context.getApplicationContext(), message));
 	    		toast.show();
 	        }
 	    });
 	}
 	
 	static void startLevel() {
-		displayLevelMessage();
-		game.makeLevel(loadLevel());
+		Level level = loadLevel();
+		displayLevelMessage(level.message);
+		game.makeLevel(level);
 		game.startGame();
 	}
 	
@@ -74,7 +77,7 @@ public class CatsGameManager
 		level.number = curLevel;
 		
 		if (curLevel == 1) {
-			InputStream input = context.getResources().openRawResource(R.raw.scoretest);
+			InputStream input = context.getResources().openRawResource(context.getResources().getIdentifier("level1", "raw", "org.gamefolk.roomfullofcats"));
 			Writer writer = new StringWriter();
 			char[] buffer = new char[1024];
 			try {
@@ -101,6 +104,8 @@ public class CatsGameManager
 			level.levelTime = mainObject.get("timeLimit").asInt();
 			level.fallTime = 1;
 			level.catsLimit = 3;
+			level.message = mainObject.get("levelDescription").asString();
+			level.title = mainObject.get("levelTitle").asString();
 		} else if (curLevel == 2) {
 			level.mapWidth = 2;
 			level.mapHeight = 5;

@@ -95,7 +95,9 @@ public class CatsGameActivity extends GameActivity
 		
 		CatsGameManager.initialize(this, gameView);
 		
-		CatsGameManager.displayLevelMessage();
+		final Level level1 = CatsGameManager.loadLevel();
+		
+		CatsGameManager.displayLevelMessage(level1.message);
 		
 		adView = new CatsAd(this);
     	
@@ -104,9 +106,9 @@ public class CatsGameActivity extends GameActivity
 		
 		gameLoaderThread = new Thread(new Runnable() {
 			public void run() {
-				gameView.makeLevel(CatsGameManager.loadLevel());
+				gameView.makeLevel(level1);
 				
-				contentView.addView(gameView.scoreView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .05f));
+				contentView.addView(gameView.levelUIView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .05f));
 		    	contentView.addView(gameView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .80f));
 		    	contentView.addView(adView, new LayoutParams(LayoutParams.FILL_PARENT, 0, .15f));
 			}
