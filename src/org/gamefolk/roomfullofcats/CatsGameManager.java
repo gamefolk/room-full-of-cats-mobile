@@ -68,6 +68,7 @@ public class CatsGameManager
 		Level level = loadLevel();
 		displayLevelMessage(level.message);
 		game.makeLevel(level);
+		game.setupGraphics();
 		game.startGame();
 	}
 	
@@ -107,11 +108,12 @@ public class CatsGameManager
 			level.message = mainObject.get("levelDescription").asString();
 			level.title = mainObject.get("levelTitle").asString();
 		} else if (curLevel == 2) {
-			level.mapWidth = 2;
+			level.mapWidth = 5;
 			level.mapHeight = 5;
 			level.levelTime = 10;
 			level.fallTime = 1;
 			level.catsLimit = 3;
+			level.message = "... but those people are fucking stupid.";
 		}
 		return level;
 	}
