@@ -114,7 +114,7 @@ public class CatsGame extends GameView
         timeView.setTextSize(DeviceUtility.isIOS() ? 12 : 20);
         
         bitmapResources = new BitmapResourceManager(16);
-        loadGraphics();
+        loadResources();
     }
     
     private void drawUI() {
@@ -241,7 +241,7 @@ public class CatsGame extends GameView
         drawUI();
     }
 
-    private void loadGraphics() {
+    private void loadResources() {
     	bitmapResources.loadBitmap(getResources(), R.drawable.bluecat1);
     	bitmapResources.loadBitmap(getResources(), R.drawable.bluecat2);
     	bitmapResources.loadBitmap(getResources(), R.drawable.bluecat3);
@@ -258,6 +258,15 @@ public class CatsGame extends GameView
     	bitmapResources.loadBitmap(getResources(), R.drawable.stripecat2);
     	bitmapResources.loadBitmap(getResources(), R.drawable.stripecat3);
     	bitmapResources.loadBitmap(getResources(), R.drawable.stripecatgb);
+    	
+    	try {
+            SoundManager.loadSound(  "catsphone.mp3", SONG_CHANNEL);    
+            SoundManager.loadSound("catsgbphone.mp3", GLITCH_CHANNEL);
+            SoundManager.loadSound(       "blip.wav", BLIP_CHANNEL);    
+            SoundManager.loadSound(      "score.wav", SCORE_CHANNEL);   
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     @Override
@@ -314,15 +323,6 @@ public class CatsGame extends GameView
         CatType.STRIPECAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
         CatType.STRIPECAT.glitchFrame = glitchFrame;
         CatType.STRIPECAT.setBitmap(frame1);
-        
-        try {
-            SoundManager.loadSound(  "catsphone.mp3", SONG_CHANNEL);    
-            SoundManager.loadSound("catsgbphone.mp3", GLITCH_CHANNEL);
-            SoundManager.loadSound(       "blip.wav", BLIP_CHANNEL);    
-            SoundManager.loadSound(      "score.wav", SCORE_CHANNEL);   
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     
     @Override
