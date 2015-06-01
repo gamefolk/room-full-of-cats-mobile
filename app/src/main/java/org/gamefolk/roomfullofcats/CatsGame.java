@@ -260,6 +260,10 @@ public class CatsGame extends GameView
         }
     }
     
+    void setupGraphics() {
+    	setupGame(this.getWidth(), this.getHeight());
+    }
+    
     @Override
     protected void setupGame(int screenWidth, int screenHeight) {    	
         // room for each row/column of cats + 1 cat worth of margin on the sides
