@@ -12,7 +12,6 @@ import android.view.MotionEvent;
 import android.view.ViewGroup;
 
 import com.arcadeoftheabsurd.absurdengine.BitmapResourceManager;
-import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameView;
 import com.arcadeoftheabsurd.absurdengine.SoundManager;
 import com.arcadeoftheabsurd.absurdengine.Sprite;
@@ -51,7 +50,7 @@ public class CatsGame extends GameView
     private BitmapResourceManager bitmapResources;
     
     private final Random rGen = new Random();
-        
+            
     private static final String TAG = "RoomFullOfCats";
     
     private class Cat
@@ -99,10 +98,6 @@ public class CatsGame extends GameView
         super(context, loadListener);
         
         levelUIView = new LevelUIView(context);
-        
-        scoreView.setTextSize(DeviceUtility.isIOS() ? 12 : 20);
-        titleView.setTextSize(DeviceUtility.isIOS() ? 12 : 20);
-        timeView.setTextSize(DeviceUtility.isIOS() ? 12 : 20);
         
         bitmapResources = new BitmapResourceManager(16);
         loadResources();
