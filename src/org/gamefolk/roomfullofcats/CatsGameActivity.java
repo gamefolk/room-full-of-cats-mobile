@@ -91,7 +91,7 @@ public class CatsGameActivity extends GameActivity
 		Log.v(TAG, "do not track: " + IdentifierUtility.getAdDoNotTrack());
 		Log.v(TAG, "user agent: " + DeviceUtility.getUserAgent());
 		
-		gameView = new CatsGame(this, this);
+		gameView = new CatsGame(this, this, contentView);
 		
 		CatsGameManager.initialize(this, gameView);
 		

@@ -9,11 +9,9 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.TextView;
+import android.view.ViewGroup;
 
 import com.arcadeoftheabsurd.absurdengine.BitmapResourceManager;
-import com.arcadeoftheabsurd.absurdengine.DeviceUtility;
 import com.arcadeoftheabsurd.absurdengine.GameView;
 import com.arcadeoftheabsurd.absurdengine.SoundManager;
 import com.arcadeoftheabsurd.absurdengine.Sprite;
@@ -24,11 +22,7 @@ import com.arcadeoftheabsurd.j_utils.Vector2d;
 
 public class CatsGame extends GameView
 {
-	View levelUIView;
-	
-	private TextView scoreView;
-	private TextView titleView;
-	private TextView timeView;
+	LevelUIView levelUIView;
     
     static final int NUM_CHANNELS = 4;
     private static final int SONG_CHANNEL = 0;
@@ -56,7 +50,7 @@ public class CatsGame extends GameView
     private BitmapResourceManager bitmapResources;
     
     private final Random rGen = new Random();
-        
+            
     private static final String TAG = "RoomFullOfCats";
     
     private class Cat
@@ -100,33 +94,25 @@ public class CatsGame extends GameView
         }
     }
     
-    public CatsGame(Context context, GameLoadListener loadListener) {
+    public CatsGame(Context context, GameLoadListener loadListener, ViewGroup viewRoot) {
         super(context, loadListener);
         
-        levelUIView = View.inflate(context, R.layout.level_ui, null);
-        
-        scoreView = (TextView) levelUIView.findViewById(R.id.levelScoreView);
-        titleView = (TextView) levelUIView.findViewById(R.id.levelTitleView);
-        timeView = (TextView) levelUIView.findViewById(R.id.levelTimeView);
-        
-        scoreView.setTextSize(DeviceUtility.isIOS() ? 12 : 20);
-        titleView.setTextSize(DeviceUtility.isIOS() ? 12 : 20);
-        timeView.setTextSize(DeviceUtility.isIOS() ? 12 : 20);
+        levelUIView = new LevelUIView(context);
         
         bitmapResources = new BitmapResourceManager(16);
         loadResources();
     }
     
     private void drawUI() {
-    	scoreView.setText("Score: " + score);
-    	timeView.setText("Time: " + curLevelTime);
+    	levelUIView.scoreView.setText("Score: " + score);
+    	levelUIView.timeView.setText("Time: " + curLevelTime);
     }
     
     public void makeLevel(final Level level) {    	
     	this.mapWidth = level.mapWidth;
     	this.mapHeight = level.mapHeight;
     	
-    	titleView.setText(level.title);
+    	levelUIView.titleView.setText(level.title);
     	
     	map = new Cat[mapWidth][mapHeight];
     	
