@@ -99,7 +99,7 @@ public class CatsGame extends GameView
         
         levelUIView = new LevelUIView(context);
         
-        bitmapResources = new BitmapResourceManager(16);
+        bitmapResources = new BitmapResourceManager(getResources(), 16);
         loadResources();
     }
     
@@ -228,22 +228,22 @@ public class CatsGame extends GameView
     }
 
     private void loadResources() {
-    	bitmapResources.loadBitmap(getResources(), R.drawable.bluecat1);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.bluecat2);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.bluecat3);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.bluecatgb);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.graycat1);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.graycat2);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.graycat3);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.graycatgb);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.pinkcat1);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.pinkcat2);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.pinkcat3);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.pinkcatgb);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.stripecat1);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.stripecat2);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.stripecat3);
-    	bitmapResources.loadBitmap(getResources(), R.drawable.stripecatgb);
+    	bitmapResources.loadBitmap(R.drawable.bluecat1);
+    	bitmapResources.loadBitmap(R.drawable.bluecat2);
+    	bitmapResources.loadBitmap(R.drawable.bluecat3);
+    	bitmapResources.loadBitmap(R.drawable.bluecatgb);
+    	bitmapResources.loadBitmap(R.drawable.graycat1);
+    	bitmapResources.loadBitmap(R.drawable.graycat2);
+    	bitmapResources.loadBitmap(R.drawable.graycat3);
+    	bitmapResources.loadBitmap(R.drawable.graycatgb);
+    	bitmapResources.loadBitmap(R.drawable.pinkcat1);
+    	bitmapResources.loadBitmap(R.drawable.pinkcat2);
+    	bitmapResources.loadBitmap(R.drawable.pinkcat3);
+    	bitmapResources.loadBitmap(R.drawable.pinkcatgb);
+    	bitmapResources.loadBitmap(R.drawable.stripecat1);
+    	bitmapResources.loadBitmap(R.drawable.stripecat2);
+    	bitmapResources.loadBitmap(R.drawable.stripecat3);
+    	bitmapResources.loadBitmap(R.drawable.stripecatgb);
     	
     	try {
             SoundManager.loadSound(  "catsphone.mp3", SONG_CHANNEL);    
@@ -274,41 +274,41 @@ public class CatsGame extends GameView
         
         Resources res = getResources();
         
-        frame1 = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.bluecat1)),   catSize);
-        frame2 = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.bluecat2)),   catSize);
-        frame3 = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.bluecat3)),   catSize);
+        frame1 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.bluecat1),   catSize);
+        frame2 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.bluecat2),   catSize);
+        frame3 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.bluecat3),   catSize);
         
-        glitchFrame = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.bluecatgb)), catSize);
+        glitchFrame = loadBitmapResource(bitmapResources.getBitmap(R.drawable.bluecatgb), catSize);
         
         CatType.BLUECAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
         CatType.BLUECAT.glitchFrame = glitchFrame;
         CatType.BLUECAT.setBitmap(frame1);
         
-        frame1 = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.graycat1)),   catSize);
-        frame2 = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.graycat2)),   catSize);
-        frame3 = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.graycat3)),   catSize);
+        frame1 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.graycat1),   catSize);
+        frame2 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.graycat2),   catSize);
+        frame3 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.graycat3),   catSize);
         
-        glitchFrame = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.graycatgb)), catSize);
+        glitchFrame = loadBitmapResource(bitmapResources.getBitmap(R.drawable.graycatgb), catSize);
         
         CatType.GRAYCAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
         CatType.GRAYCAT.glitchFrame = glitchFrame;
         CatType.GRAYCAT.setBitmap(frame1);
         
-        frame1 = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.pinkcat1)),   catSize);
-        frame2 = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.pinkcat2)),   catSize);
-        frame3 = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.pinkcat3)),   catSize);
+        frame1 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.pinkcat1),   catSize);
+        frame2 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.pinkcat2),   catSize);
+        frame3 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.pinkcat3),   catSize);
         
-        glitchFrame = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.pinkcatgb)), catSize);
+        glitchFrame = loadBitmapResource(bitmapResources.getBitmap(R.drawable.pinkcatgb), catSize);
         
         CatType.PINKCAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
         CatType.PINKCAT.glitchFrame = glitchFrame;
         CatType.PINKCAT.setBitmap(frame1);
         
-        frame1 = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.stripecat1)), catSize);
-        frame2 = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.stripecat2)), catSize);
-        frame3 = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.stripecat3)), catSize);
+        frame1 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.stripecat1), catSize);
+        frame2 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.stripecat2), catSize);
+        frame3 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.stripecat3), catSize);
         
-        glitchFrame = loadBitmapResource(bitmapResources.getBitmap(res.getString(R.drawable.stripecatgb)), catSize);
+        glitchFrame = loadBitmapResource(bitmapResources.getBitmap(R.drawable.stripecatgb), catSize);
         
         CatType.STRIPECAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
         CatType.STRIPECAT.glitchFrame = glitchFrame;
