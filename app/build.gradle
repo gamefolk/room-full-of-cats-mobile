@@ -1,23 +1,30 @@
-apply plugin: 'com.android.application'
-android {
-    compileSdkVersion 22
-    buildToolsVersion "23.0.0 rc1"
-
-    defaultConfig {
-        applicationId "org.gamefolk.roomfullofcats"
-        minSdkVersion 9
-        targetSdkVersion 15
+buildscript {
+    repositories {
+        jcenter()
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
+    dependencies {
+        classpath 'org.javafxports:jfxmobile-plugin:1.0.0-b9'
     }
 }
 
+apply plugin: 'org.javafxports.jfxmobile'
+
+mainClassName = 'org.gamefolk.roomfullofcats.RoomFullOfCatsApp'
+
+jfxmobile {
+    ios {
+        forceLinkClasses = ['roomfullofcats.**.*']
+    }
+    android {
+        applicationPackage = 'org.javafxports.roomfullofcats'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
 dependencies {
-    compile 'com.google.android.gms:play-services:7.5.0'
-    compile 'com.android.support:appcompat-v7:20.2.0'
+    compile 'com.eclipsesource.minimal-json:minimal-json:0.9.1'
 }

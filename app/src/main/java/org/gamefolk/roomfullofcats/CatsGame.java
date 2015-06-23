@@ -1,356 +1,322 @@
 package org.gamefolk.roomfullofcats;
 
-import java.io.IOException;
-import java.util.Arrays;
+import com.eclipsesource.json.JsonObject;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Canvas;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.ViewGroup;
+public class CatsGame {
+    private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
-import com.arcadeoftheabsurd.absurdengine.BitmapResourceManager;
-import com.arcadeoftheabsurd.absurdengine.GameView;
-import com.arcadeoftheabsurd.absurdengine.SoundManager;
-import com.arcadeoftheabsurd.absurdengine.Sprite;
-import com.arcadeoftheabsurd.absurdengine.Timer.TimerAsync;
-import com.arcadeoftheabsurd.absurdengine.Timer.TimerUI;
-import com.arcadeoftheabsurd.j_utils.Delegate;
-import com.arcadeoftheabsurd.j_utils.Vector2d;
+    private long lastCatFall = 0;
 
-public class CatsGame extends GameView
-{
-	LevelUIView levelUIView;
-    
-    static final int NUM_CHANNELS = 4;
-    private static final int SONG_CHANNEL = 0;
-    private static final int BLIP_CHANNEL = 1;
-    private static final int SCORE_CHANNEL = 2;
-    private static final int GLITCH_CHANNEL = 3;
-    
-    private final int incSize = 10; // the amount by which to increase the size of cats as they collect    
-    
+    private Level currentLevel;
+    private Bucket[] buckets;
+
     private Cat[][] map;
-    
-    private int mapWidth;
-    private int mapHeight;
-    
-    private Vector2d mapLoc; // in pixels, the top left corner of the top left column of cats on the screen
-    private Vector2d catSize; // in pixels, set according to the size of the screen in onSizeChanged()
-    
     private int score;
-    private int curLevelTime;
-    
-    private TimerAsync fallTimer;
-    private TimerUI animationTimer;
-    private CountdownTimer levelTimer;
-        
-    private BitmapResourceManager bitmapResources;
-    
-    private final Random rGen = new Random();
-            
-    private static final String TAG = "RoomFullOfCats";
-    
-    private class Cat
-    {
-        public int things = 0;
-        public CatType type;
-        public Sprite sprite;
-        
-        private int curFrame = 0;
-        private boolean glitched = false;
-                
-        public Cat (CatType type, Sprite sprite) {
-            this.type = type;
-            this.sprite = sprite;
-        }
-        
-        /*public void toggleGlitch() {
-            if (glitched) {
-                glitched = false;
-                CatsGame.this.setSpriteBitmap(Cat.this.sprite, Cat.this.type.bitmapFrames[curFrame]);
-                animationTimer.resume();
-            } else {
-                glitched = true;
-                animationTimer.pause();
-                CatsGame.this.setSpriteBitmap(Cat.this.sprite, Cat.this.type.glitchFrame);
-            }
-        }*/
-    }
 
-    private enum CatType
-    {
-        BLUECAT, GRAYCAT, PINKCAT, STRIPECAT;
-        
-        private int bitmapId = -1;
-        
-        public int[] bitmapFrames;
-        public int glitchFrame;
-        
-        public void setBitmap(int bitmapId) {
-            this.bitmapId = bitmapId;
-        }
-    }
-    
-    public CatsGame(Context context, GameLoadListener loadListener, ViewGroup viewRoot) {
-        super(context, loadListener);
-        
-        levelUIView = new LevelUIView(context);
-        
-        bitmapResources = new BitmapResourceManager(getResources(), 16);
+    private CatsGameLayout gameLayout;
+
+    private MediaPlayer songPlayer;
+    private AudioClip blipClip;
+    private AudioClip scoreClip;
+
+    public CatsGame(double width, double height) {
+        this.gameLayout = new CatsGameLayout(width, height);
+
         loadResources();
     }
-    
-    private void drawUI() {
-    	levelUIView.scoreView.setText("Score: " + score);
-    	levelUIView.timeView.setText("Time: " + curLevelTime);
-    }
-    
-    public void makeLevel(final Level level) {    	
-    	this.mapWidth = level.mapWidth;
-    	this.mapHeight = level.mapHeight;
-    	
-    	levelUIView.titleView.setText(level.title);
-    	
-    	map = new Cat[mapWidth][mapHeight];
-    	
-    	levelTimer = new CountdownTimer(level.levelTime, 1f, CatsGame.this) {
-            @Override
-            public void onFinish() {
-                Log.v(TAG, "game over");
-                animationTimer.pause();
-                fallTimer.pause();
-                for (Cat[] row : map) {
-                    Arrays.fill(row, null);
-                }
-                CatsGameManager.curLevel++;
-                CatsGameManager.startLevel();
-            }
 
-            @Override
-            public void onTic(int remaining) {
-            	curLevelTime = remaining;
-            }
-        };
-        
-        animationTimer = new TimerUI(.2f, CatsGame.this, new Delegate() {
-            public void function(Object... args) {
-                for (int x = 0; x < mapWidth; x++) {
-                    for (int y = 0; y < mapHeight; y++) {
-                        Cat cat = map[x][y];
-                        if (cat != null) {
-                            CatsGame.this.setSpriteBitmap(cat.sprite, cat.type.bitmapFrames[cat.curFrame++]);
-                            if (cat.curFrame == cat.type.bitmapFrames.length) {
-                                cat.curFrame = 0;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-        
-        fallTimer = new TimerAsync(level.fallTime, this, new Delegate() {
-            public void function(Object... args) {      
-                // move bottom row into buckets  
-                for (int x = 0; x < mapWidth; x++) {
-                    Cat candidate = map[x][mapHeight-2];
-
-                    if (candidate != null) {
-                        Cat current = map[x][mapHeight-1];
-                        
-                        if (current != null) {  
-                            if (candidate.type == current.type) {                               
-                                current.sprite.resize(current.sprite.getWidth() + incSize, current.sprite.getHeight() + incSize);
-                                current.things++;
-                                
-                                if (current.things == level.catsLimit) {
-                                    score++;
-                                    if (!SoundManager.isPlaying(SCORE_CHANNEL)) {
-                                        SoundManager.playSound(SCORE_CHANNEL);
-                                    }
-                                    map[x][mapHeight-1] = null;
-                                }
-                            } else {
-                                current = null;
-                                candidate.sprite.translate(0, catSize.y);
-                                map[x][mapHeight-1] = candidate;
-                            }
-                        } else {
-                            candidate.sprite.translate(0, catSize.y);
-                            map[x][mapHeight-1] = candidate;
-                        }
-                    }
-                }
-                // descend cats in all other rows 
-                for (int y = mapHeight-2; y > 0; y--) {
-                    for (int x = 0; x < mapWidth; x++) {
-                        if (map[x][y-1] != null) {
-                            map[x][y-1].sprite.translate(0, catSize.y);
-                        }
-                        map[x][y] = map[x][y-1];
-                    }
-                }
-                // fill the top row with new cats
-                for (int x = 0; x < mapWidth; x++) {
-                    CatType type = CatType.values()[rGen.nextInt(4)];                   
-                    map[x][0] = new Cat(type, makeSprite(type.bitmapId, mapLoc.x + (x * catSize.x), mapLoc.y));
-                }
-            }
-        });
+    private static Image loadImage(String path) {
+        return new Image(RoomFullOfCatsApp.class.getResource(path).toString());
     }
-    
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        for (int x = 0; x < mapWidth; x++) {
-            for (int y = 0; y < mapHeight-1; y++) {
-                if (map[x][y] != null) {
-                    if (map[x][y].sprite.getBounds().contains((int)event.getX(), (int)event.getY())) {
-                        map[x][y] = null;
+
+    private static AudioClip loadAudioClip(String path) {
+        return new AudioClip(RoomFullOfCatsApp.class.getResource(path).toString());
+    }
+
+    private static Media loadMedia(String path) {
+        return new Media(RoomFullOfCatsApp.class.getResource(path).toString());
+    }
+
+    private static Rectangle2D getSpriteBounds(FrameAnimation sprite, int x, int y) {
+        double xCoordinate = sprite.getWidth() * (x + 1);
+        double yCoordinate = sprite.getHeight() * (y + 1);
+        return new Rectangle2D(xCoordinate, yCoordinate, sprite.getWidth(), sprite.getHeight());
+    }
+
+    private void updateSprites() {
+        long currentTime = System.currentTimeMillis();
+        // Only make the cats fall when we need to.
+        if (currentTime - lastCatFall < 2000) {
+            return;
+        }
+
+        // move bottom row into buckets
+        for (int x = 0; x < map.length; x++) {
+            Cat candidate = map[x][map[x].length - 1];
+
+            if (candidate != null) {
+                Bucket current = buckets[x];
+
+                if (current != null) {
+                    if (candidate.type == current.type) {
+                        current.things++;
+
+                        if (current.things == currentLevel.catsLimit) {
+                            score++;
+                            if (!scoreClip.isPlaying()) {
+                                scoreClip.play();
+                            }
+                            buckets[x] = null;
+                        }
+                    } else {
+                        Bucket newBucket = new Bucket(candidate.type);
+                        buckets[x] = newBucket;
                     }
+                } else {
+                    Bucket newBucket = new Bucket(candidate.type);
+                    buckets[x] = newBucket;
                 }
             }
         }
-        return true;
-    }
-    
-    @Override
-    protected void onDraw(Canvas canvas) {              
-        for (int x = 0; x < mapWidth; x++) {
-            for (int y = 0; y < mapHeight; y++) {
-                if (map[x][y] != null) {
-                    map[x][y].sprite.draw(canvas);
-                }
+
+        // descend cats in all other rows
+        for (int y = map[0].length - 1; y > 0; y--) {
+            for (int x = 0; x < map.length; x++) {
+                map[x][y] = map[x][y - 1];
             }
         }
-        drawUI();
+        // fill the top row with new cats
+        for (int x = 0; x < map.length; x++) {
+            map[x][0] = new Cat(CatType.getRandomCat());
+        }
+
+        lastCatFall = currentTime;
+    }
+
+    public void makeLevel(Level level) {
+        currentLevel = level;
+
+        map = new Cat[level.mapWidth][level.mapHeight];
+        buckets = new Bucket[level.mapWidth];
+    }
+
+    public Parent getLayout() {
+        return this.gameLayout;
     }
 
     private void loadResources() {
-    	bitmapResources.loadBitmap(R.drawable.bluecat1);
-    	bitmapResources.loadBitmap(R.drawable.bluecat2);
-    	bitmapResources.loadBitmap(R.drawable.bluecat3);
-    	bitmapResources.loadBitmap(R.drawable.bluecatgb);
-    	bitmapResources.loadBitmap(R.drawable.graycat1);
-    	bitmapResources.loadBitmap(R.drawable.graycat2);
-    	bitmapResources.loadBitmap(R.drawable.graycat3);
-    	bitmapResources.loadBitmap(R.drawable.graycatgb);
-    	bitmapResources.loadBitmap(R.drawable.pinkcat1);
-    	bitmapResources.loadBitmap(R.drawable.pinkcat2);
-    	bitmapResources.loadBitmap(R.drawable.pinkcat3);
-    	bitmapResources.loadBitmap(R.drawable.pinkcatgb);
-    	bitmapResources.loadBitmap(R.drawable.stripecat1);
-    	bitmapResources.loadBitmap(R.drawable.stripecat2);
-    	bitmapResources.loadBitmap(R.drawable.stripecat3);
-    	bitmapResources.loadBitmap(R.drawable.stripecatgb);
-    	
-    	try {
-            SoundManager.loadSound(  "catsphone.mp3", SONG_CHANNEL);    
-            SoundManager.loadSound("catsgbphone.mp3", GLITCH_CHANNEL);
-            SoundManager.loadSound(       "blip.wav", BLIP_CHANNEL);    
-            SoundManager.loadSound(      "score.wav", SCORE_CHANNEL);   
-        } catch (IOException e) {
-            e.printStackTrace();
+        CatType.BLUE_CAT.loadFrames(
+                "/img/bluecat1.png",
+                "/img/bluecat2.png",
+                "/img/bluecat3.png"
+        );
+
+        CatType.GRAY_CAT.loadFrames(
+                "/img/graycat1.png",
+                "/img/graycat2.png",
+                "/img/graycat3.png"
+        );
+
+        CatType.PINK_CAT.loadFrames(
+                "/img/pinkcat1.png",
+                "/img/pinkcat2.png",
+                "/img/pinkcat3.png"
+        );
+
+        CatType.STRIPE_CAT.loadFrames(
+                "/img/stripecat1.png",
+                "/img/stripecat2.png",
+                "/img/stripecat3.png"
+        );
+
+        // TODO: Fix with https://bitbucket.org/javafxports/android/issue/47/app-crashes-with-media-api
+        if (PlatformFeatures.MEDIA_SUPPORTED) {
+            songPlayer = new MediaPlayer(loadMedia("/audio/catsphone.mp3"));
+            blipClip = loadAudioClip("/audio/blip.wav");
+            scoreClip = loadAudioClip("/audio/score.wav");
         }
     }
-    
-    void setupGraphics() {
-    	setupGame(this.getWidth(), this.getHeight());
+
+    public void drawSprites(GraphicsContext gc) {
+        // Erase canvas
+        gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+
+        // Draw falling cats
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
+                if (map[i][j] == null) {
+                    continue;
+                }
+
+                FrameAnimation sprite = map[i][j].sprite;
+                Rectangle2D bounds = getSpriteBounds(sprite, i, j);
+                gc.drawImage(sprite.getCurrentFrame(), bounds.getMinX(), bounds.getMinY());
+            }
+        }
     }
-    
-    @Override
-    protected void setupGame(int screenWidth, int screenHeight) {    	
-        // room for each row/column of cats + 1 cat worth of margin on the sides
-        int tempX = screenWidth / (mapWidth + 1); 
-        int tempY = screenHeight / (mapHeight + 1);
-        
-        int catXY = tempX < tempY ? tempX : tempY;
-        
-        catSize = new Vector2d(catXY, catXY);
-        mapLoc = new Vector2d((screenWidth - (mapWidth * catSize.x)) / 2, (screenHeight - (mapHeight * catSize.y)) / 2);
-        
-        int frame1, frame2, frame3, glitchFrame;
-        
-        Resources res = getResources();
-        
-        frame1 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.bluecat1),   catSize);
-        frame2 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.bluecat2),   catSize);
-        frame3 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.bluecat3),   catSize);
-        
-        glitchFrame = loadBitmapResource(bitmapResources.getBitmap(R.drawable.bluecatgb), catSize);
-        
-        CatType.BLUECAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
-        CatType.BLUECAT.glitchFrame = glitchFrame;
-        CatType.BLUECAT.setBitmap(frame1);
-        
-        frame1 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.graycat1),   catSize);
-        frame2 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.graycat2),   catSize);
-        frame3 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.graycat3),   catSize);
-        
-        glitchFrame = loadBitmapResource(bitmapResources.getBitmap(R.drawable.graycatgb), catSize);
-        
-        CatType.GRAYCAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
-        CatType.GRAYCAT.glitchFrame = glitchFrame;
-        CatType.GRAYCAT.setBitmap(frame1);
-        
-        frame1 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.pinkcat1),   catSize);
-        frame2 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.pinkcat2),   catSize);
-        frame3 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.pinkcat3),   catSize);
-        
-        glitchFrame = loadBitmapResource(bitmapResources.getBitmap(R.drawable.pinkcatgb), catSize);
-        
-        CatType.PINKCAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
-        CatType.PINKCAT.glitchFrame = glitchFrame;
-        CatType.PINKCAT.setBitmap(frame1);
-        
-        frame1 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.stripecat1), catSize);
-        frame2 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.stripecat2), catSize);
-        frame3 = loadBitmapResource(bitmapResources.getBitmap(R.drawable.stripecat3), catSize);
-        
-        glitchFrame = loadBitmapResource(bitmapResources.getBitmap(R.drawable.stripecatgb), catSize);
-        
-        CatType.STRIPECAT.bitmapFrames = new int[] {frame1, frame2, frame3, frame2};
-        CatType.STRIPECAT.glitchFrame = glitchFrame;
-        CatType.STRIPECAT.setBitmap(frame1);
+
+    private Level loadLevel(String path) {
+        Level level = new Level();
+
+        // TODO: Handle more level numbers
+        level.number = 1;
+
+        InputStream input = RoomFullOfCatsApp.class.getResourceAsStream(path);
+        Writer writer = new StringWriter();
+        char[] buffer = new char[1024];
+        try (Reader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"))) {
+            int n;
+            while ((n = reader.read(buffer)) != -1) {
+                writer.write(buffer, 0, n);
+            }
+        } catch (IOException e) {
+            Log.severe("error reading level json");
+            throw new RuntimeException(e);
+        }
+        Log.info("json: " + writer.toString());
+        JsonObject mainObject = JsonObject.readFrom(writer.toString());
+        Log.info("level: " + mainObject.get("levelTitle").asString());
+
+        level.mapWidth = mainObject.get("columns").asInt();
+        level.mapHeight = mainObject.get("rows").asInt();
+        level.levelTime = mainObject.get("timeLimit").asInt();
+        level.fallTime = 1;
+        level.catsLimit = 3;
+        level.message = mainObject.get("levelDescription").asString();
+        level.title = mainObject.get("levelTitle").asString();
+
+        return level;
     }
-    
-    @Override
-    protected void startGame() {
-        fallTimer.start();  
-        animationTimer.start();
-        levelTimer.start();
-        //SoundManager.setVolume(GLITCH_CHANNEL, 0, 0);
-        SoundManager.loopSound(SONG_CHANNEL);
-        //SoundManager.loopSound(GLITCH_CHANNEL);
-    }
-    
-    @Override
-    protected void updateGame() {
-        /*if (soundGlitching && rGen.nextFloat() > .95) {
-            soundGlitching = false;
-            SoundManager.setVolume(GLITCH_CHANNEL, 0, 0);
-            SoundManager.setVolume(SONG_CHANNEL, 1, 1);
-            
-            for (int x = 0; x < mapSize.x; x++) {
-                for (int y = 0; y < mapSize.y; y++) {
-                    if (map[x][y] != null) {
-                        map[x][y].toggleGlitch();
+
+    public void startGame() {
+        currentLevel = loadLevel("/levels/level1");
+        makeLevel(currentLevel);
+
+        final GraphicsContext gc = gameLayout.getGraphicsContext2D();
+
+        // Create the game loop
+        final Duration oneFrameDuration = Duration.millis(1000 / 60);   // 60 FPS
+        final KeyFrame oneLoop = new KeyFrame(oneFrameDuration, actionEvent -> {
+            updateSprites();
+
+            drawSprites(gc);
+        });
+        Timeline gameLoop = new Timeline(oneLoop);
+        gameLoop.setCycleCount(Timeline.INDEFINITE);
+        gameLoop.play();
+
+        // Handle user input
+        gc.getCanvas().setOnMouseClicked(mouseEvent -> {
+            Log.info("Click at " + mouseEvent.getScreenX() + " " + mouseEvent.getScreenY());
+            // Set any cats that intersect the event to null
+            for (int i = 0; i < map.length; i++) {
+                for (int j = 0; j < map[i].length; j++) {
+                    if (map[i][j] == null) {
+                        continue;
+                    }
+
+                    FrameAnimation sprite = map[i][j].sprite;
+                    Rectangle2D bounds = getSpriteBounds(sprite, i, j);
+                    Log.info("Cat " + i + ", " + j + ": " + bounds.toString());
+                    if (bounds.contains(mouseEvent.getX(), mouseEvent.getY())) {
+                        map[i][j] = null;
+                        Log.info("setting cat " + i + " " + j + " to null");
                     }
                 }
             }
-        } else if (rGen.nextFloat() > .99) {
-            soundGlitching = true;
-            SoundManager.setVolume(GLITCH_CHANNEL, 1, 1);
-            SoundManager.setVolume(SONG_CHANNEL, 0, 0);
-            
-            for (int x = 0; x < mapSize.x; x++) {
-                for (int y = 0; y < mapSize.y; y++) {
-                    if (map[x][y] != null) {
-                        map[x][y].toggleGlitch();
-                    }
-                }
+
+        });
+
+        // Play music
+        // TODO: Fix with https://bitbucket.org/javafxports/android/issue/47/app-crashes-with-media-api
+        if (PlatformFeatures.MEDIA_SUPPORTED) {
+            songPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            songPlayer.play();
+        }
+    }
+
+    private enum CatType {
+        BLUE_CAT, GRAY_CAT, PINK_CAT, STRIPE_CAT;
+
+        private static final Random RAND = new Random();
+
+        private List<Image> frames;
+
+        public static CatType getRandomCat() {
+            return CatType.values()[RAND.nextInt(CatType.values().length)];
+        }
+
+        public void loadFrames(String... paths) {
+            this.frames = new ArrayList<>();
+            for (String path : paths) {
+                frames.add(loadImage(path));
             }
-        }*/
+        }
+
+        public double getWidth() {
+            return frames.get(0).getWidth();
+        }
+
+        public double getHeight() {
+            return frames.get(0).getHeight();
+        }
+    }
+
+    private class Level {
+        int number;
+        int mapWidth;
+        int mapHeight;
+        int levelTime;
+        int fallTime;       // interval after which cats fall, in seconds
+        int catsLimit;      // the target number of cats of the same type to collect
+        String message;
+        String title;
+    }
+
+    private class Bucket {
+        public CatType type = null;
+        public int things = 0;
+        public FrameAnimation sprite;
+
+        public Bucket(CatType type) {
+            this.type = type;
+            this.sprite = new FrameAnimation(null, Duration.millis(1000), type.getWidth(), type.getHeight(),
+                    type.frames.toArray(new Image[type.frames.size()]));
+        }
+    }
+
+    private class Cat {
+        public CatType type;
+        public FrameAnimation sprite;
+
+        public Cat(CatType type) {
+            this.type = type;
+            this.sprite = new FrameAnimation(null, Duration.millis(1000), type.getWidth(), type.getHeight(),
+                    type.frames.toArray(new Image[type.frames.size()]));
+            this.sprite.setCycleCount(Animation.INDEFINITE);
+            this.sprite.play();
+        }
+
+        @Override
+        public String toString() {
+            return this.type.name();
+        }
     }
 }

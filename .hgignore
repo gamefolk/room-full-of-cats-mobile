@@ -4,6 +4,5 @@
 /.idea/libraries
 .DS_Store
 /build
-app/src/main/assets/
+app/src/main/resources
 app/src/main/java/org/gamefolk/roomfullofcats/ApiKeys.java
-app/src/main/res/
