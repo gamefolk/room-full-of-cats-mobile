@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.canvas.*?>
+
+<StackPane fx:id="root" fx:controller="org.gamefolk.roomfullofcats.GameController"
+    xmlns:fx="http://javafx.com/fxml" styleClass="root">
+  <children>
+    <Canvas fx:id="canvas" onMouseClicked="#handleInput"/>
+  </children>
+  <stylesheets>
+    <URL value="@styles/game.css" />
+  </stylesheets>
+</StackPane>
