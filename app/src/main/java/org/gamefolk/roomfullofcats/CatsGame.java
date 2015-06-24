@@ -1,22 +1,18 @@
 package org.gamefolk.roomfullofcats;
 
 import com.eclipsesource.json.JsonObject;
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import org.gamefolk.roomfullofcats.game.*;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import java.util.logging.Logger;
 
 public class CatsGame {
@@ -40,10 +36,6 @@ public class CatsGame {
         this.gameLayout = new CatsGameLayout(width, height);
 
         loadResources();
-    }
-
-    private static Image loadImage(String path) {
-        return new Image(RoomFullOfCatsApp.class.getResource(path).toString());
     }
 
     private static AudioClip loadAudioClip(String path) {
@@ -110,7 +102,7 @@ public class CatsGame {
         lastCatFall = currentTime;
     }
 
-    public void makeLevel(Level level) {
+    private void makeLevel(Level level) {
         currentLevel = level;
 
         map = new Cat[level.mapWidth][level.mapHeight];
@@ -154,7 +146,7 @@ public class CatsGame {
         }
     }
 
-    public void drawSprites(GraphicsContext gc) {
+    private void drawSprites(GraphicsContext gc) {
         // Erase canvas
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
 
@@ -173,11 +165,6 @@ public class CatsGame {
     }
 
     private Level loadLevel(String path) {
-        Level level = new Level();
-
-        // TODO: Handle more level numbers
-        level.number = 1;
-
         InputStream input = RoomFullOfCatsApp.class.getResourceAsStream(path);
         Writer writer = new StringWriter();
         char[] buffer = new char[1024];
@@ -194,15 +181,15 @@ public class CatsGame {
         JsonObject mainObject = JsonObject.readFrom(writer.toString());
         Log.info("level: " + mainObject.get("levelTitle").asString());
 
-        level.mapWidth = mainObject.get("columns").asInt();
-        level.mapHeight = mainObject.get("rows").asInt();
-        level.levelTime = mainObject.get("timeLimit").asInt();
-        level.fallTime = 1;
-        level.catsLimit = 3;
-        level.message = mainObject.get("levelDescription").asString();
-        level.title = mainObject.get("levelTitle").asString();
+        String message = mainObject.get("levelDescription").asString();
+        String title = mainObject.get("levelTitle").asString();
 
-        return level;
+        // TODO: Handle more level numbers
+        return new Level.Builder(1, message, title)
+                .mapWidth(mainObject.get("columns").asInt())
+                .mapHeight(mainObject.get("rows").asInt())
+                .levelTime(mainObject.get("timeLimit").asInt())
+                .build();
     }
 
     public void startGame() {
@@ -249,74 +236,6 @@ public class CatsGame {
         if (PlatformFeatures.MEDIA_SUPPORTED) {
             songPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             songPlayer.play();
-        }
-    }
-
-    private enum CatType {
-        BLUE_CAT, GRAY_CAT, PINK_CAT, STRIPE_CAT;
-
-        private static final Random RAND = new Random();
-
-        private List<Image> frames;
-
-        public static CatType getRandomCat() {
-            return CatType.values()[RAND.nextInt(CatType.values().length)];
-        }
-
-        public void loadFrames(String... paths) {
-            this.frames = new ArrayList<>();
-            for (String path : paths) {
-                frames.add(loadImage(path));
-            }
-        }
-
-        public double getWidth() {
-            return frames.get(0).getWidth();
-        }
-
-        public double getHeight() {
-            return frames.get(0).getHeight();
-        }
-    }
-
-    private class Level {
-        int number;
-        int mapWidth;
-        int mapHeight;
-        int levelTime;
-        int fallTime;       // interval after which cats fall, in seconds
-        int catsLimit;      // the target number of cats of the same type to collect
-        String message;
-        String title;
-    }
-
-    private class Bucket {
-        public CatType type = null;
-        public int things = 0;
-        public FrameAnimation sprite;
-
-        public Bucket(CatType type) {
-            this.type = type;
-            this.sprite = new FrameAnimation(null, Duration.millis(1000), type.getWidth(), type.getHeight(),
-                    type.frames.toArray(new Image[type.frames.size()]));
-        }
-    }
-
-    private class Cat {
-        public CatType type;
-        public FrameAnimation sprite;
-
-        public Cat(CatType type) {
-            this.type = type;
-            this.sprite = new FrameAnimation(null, Duration.millis(1000), type.getWidth(), type.getHeight(),
-                    type.frames.toArray(new Image[type.frames.size()]));
-            this.sprite.setCycleCount(Animation.INDEFINITE);
-            this.sprite.play();
-        }
-
-        @Override
-        public String toString() {
-            return this.type.name();
         }
     }
 }

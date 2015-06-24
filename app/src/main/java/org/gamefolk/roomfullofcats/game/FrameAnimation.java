@@ -1,4 +1,4 @@
-package org.gamefolk.roomfullofcats;
+package org.gamefolk.roomfullofcats.game;
 
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
