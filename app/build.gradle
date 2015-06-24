@@ -14,7 +14,7 @@ mainClassName = 'org.gamefolk.roomfullofcats.RoomFullOfCatsApp'
 
 jfxmobile {
     ios {
-        forceLinkClasses = ['roomfullofcats.**.*']
+        forceLinkClasses = ['org.gamefolk.roomfullofcats.**.*']
     }
     android {
         applicationPackage = 'org.javafxports.roomfullofcats'
