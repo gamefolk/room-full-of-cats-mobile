@@ -14,16 +14,11 @@ import java.util.logging.Logger;
 public class RoomFullOfCatsApp extends Application {
     private Stage stage;
 
-	private CatsGame game;
-    private MainMenuLayout mainMenuLayout;
-	
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
     @Override
     public void init() throws Exception {
         Log.info("OS: " + System.getProperty("os.name"));
-
-        mainMenuLayout = new MainMenuLayout(actionEvent -> startGame(), null);
     }
 
 	@Override
@@ -47,13 +42,4 @@ public class RoomFullOfCatsApp extends Application {
 
         stage.show();
     }
-
-    private void startGame() {
-		Log.info("finished loading");
-
-		game = new CatsGame(stage.getWidth(), stage.getHeight());
-
-        stage.setScene(new Scene(game.getLayout(), stage.getWidth(), stage.getHeight()));
-        game.startGame();
-	}
 }

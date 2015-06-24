@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root" fx:controller="org.gamefolk.roomfullofcats.MainMenuController"
+    xmlns:fx="http://javafx.com/fxml" styleClass="root">
+  <center>
+    <VBox styleClass="menu">
+      <children>
+        <ImageView fx:id="logo" preserveRatio="true">
+          <image>
+            <Image url="@/img/catslogo.png"/>
+          </image>
+        </ImageView>
+        <Button text="Start" onAction="#startGame" />
+        <Button text="Tutorial" />
+      </children>
+    </VBox>
+  </center>
+  <bottom>
+    <HBox fx:id="settings" styleClass="settings">
+      <CheckBox text="Music" selected="true" />
+      <CheckBox text="Sound" selected="true" />
+    </HBox>
+  </bottom>
+  <stylesheets>
+    <URL value="@styles/mainMenu.css" />
+  </stylesheets>
+</BorderPane>

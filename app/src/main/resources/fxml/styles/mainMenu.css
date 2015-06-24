@@ -1,0 +1,28 @@
+.root {
+  -fx-background-image: url('/img/menu.png');
+  -fx-background-position: center center;
+  -fx-background-repeat: stretch;
+}
+
+.settings {
+  -fx-background-color: rgba(30, 30, 30, 0.75);
+}
+
+.settings CheckBox {
+  -fx-alignment: center;
+  -fx-label-padding: 10;
+  -fx-max-width: Infinity;
+  -fx-text-fill: #ffffff;
+}
+
+.menu {
+  -fx-alignment: top-center;
+  -fx-padding: 0;
+}
+
+.menu Button {
+  -fx-base: rgba(170, 170, 170, 0.25);
+  -fx-label-padding: 20;
+  -fx-max-width: Infinity;
+  -fx-text-fill: #ffffff;
+}
