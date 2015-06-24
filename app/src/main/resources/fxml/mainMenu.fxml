@@ -12,7 +12,7 @@
       <children>
         <ImageView fx:id="logo" preserveRatio="true">
           <image>
-            <Image url="@/img/catslogo.png"/>
+            <Image url="@/assets/img/catslogo.png"/>
           </image>
         </ImageView>
         <Button text="Start" onAction="#startGame" />

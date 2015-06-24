@@ -1,5 +1,5 @@
 .root {
-  -fx-background-image: url('/img/menu.png');
+  -fx-background-image: url('/assets/img/menu.png');
   -fx-background-position: center center;
   -fx-background-repeat: stretch;
 }

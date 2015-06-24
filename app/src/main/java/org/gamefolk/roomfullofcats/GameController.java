@@ -29,7 +29,7 @@ public class GameController implements Initializable {
 
     public void startGame() {
         game = new Game(getGraphicsContext2D());
-        game.setLevel("/levels/level1");
+        game.setLevel("/assets/levels/level1");
 
         // Create the game loop
         final Duration oneFrameDuration = Duration.millis(1000 / 60);   // 60 FPS
@@ -57,27 +57,27 @@ public class GameController implements Initializable {
 
     private void loadResources() {
         CatType.BLUE_CAT.loadFrames(
-                "/img/bluecat1.png",
-                "/img/bluecat2.png",
-                "/img/bluecat3.png"
+                "/assets/img/bluecat1.png",
+                "/assets/img/bluecat2.png",
+                "/assets/img/bluecat3.png"
         );
 
         CatType.GRAY_CAT.loadFrames(
-                "/img/graycat1.png",
-                "/img/graycat2.png",
-                "/img/graycat3.png"
+                "/assets/img/graycat1.png",
+                "/assets/img/graycat2.png",
+                "/assets/img/graycat3.png"
         );
 
         CatType.PINK_CAT.loadFrames(
-                "/img/pinkcat1.png",
-                "/img/pinkcat2.png",
-                "/img/pinkcat3.png"
+                "/assets/img/pinkcat1.png",
+                "/assets/img/pinkcat2.png",
+                "/assets/img/pinkcat3.png"
         );
 
         CatType.STRIPE_CAT.loadFrames(
-                "/img/stripecat1.png",
-                "/img/stripecat2.png",
-                "/img/stripecat3.png"
+                "/assets/img/stripecat1.png",
+                "/assets/img/stripecat2.png",
+                "/assets/img/stripecat3.png"
         );
     }
 }

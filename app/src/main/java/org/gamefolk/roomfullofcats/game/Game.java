@@ -42,9 +42,9 @@ public class Game {
 
         // TODO: Fix with https://bitbucket.org/javafxports/android/issue/47/app-crashes-with-media-api
         if (PlatformFeatures.MEDIA_SUPPORTED) {
-            songPlayer = new MediaPlayer(loadMedia("/audio/catsphone.mp3"));
-            blipClip = loadAudioClip("/audio/blip.wav");
-            scoreClip = loadAudioClip("/audio/score.wav");
+            songPlayer = new MediaPlayer(loadMedia("/assets/audio/catsphone.mp3"));
+            blipClip = loadAudioClip("/assets/audio/blip.wav");
+            scoreClip = loadAudioClip("/assets/audio/score.wav");
         }
     }
 
