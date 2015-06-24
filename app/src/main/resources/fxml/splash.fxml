@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane fx:id="root" fx:controller="org.gamefolk.roomfullofcats.SplashController"
+    xmlns:fx="http://javafx.com/fxml" onMouseClicked="#transitionToMainMenu" styleClass="root">
+  <stylesheets>
+    <URL value="@styles/splash.css" />
+  </stylesheets>
+</Pane>

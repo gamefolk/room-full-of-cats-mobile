@@ -1,7 +1,9 @@
 package org.gamefolk.roomfullofcats;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
@@ -13,7 +15,6 @@ public class RoomFullOfCatsApp extends Application {
     private Stage stage;
 
 	private CatsGame game;
-    private SplashLayout splashLayout;
     private MainMenuLayout mainMenuLayout;
 	
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
@@ -22,7 +23,6 @@ public class RoomFullOfCatsApp extends Application {
     public void init() throws Exception {
         Log.info("OS: " + System.getProperty("os.name"));
 
-        splashLayout = new SplashLayout(event -> stage.getScene().setRoot(mainMenuLayout));
         mainMenuLayout = new MainMenuLayout(actionEvent -> startGame(), null);
     }
 
@@ -30,7 +30,8 @@ public class RoomFullOfCatsApp extends Application {
     public void start(final Stage primaryStage) throws Exception {
         stage = primaryStage;
 
-        stage.setScene(new Scene(splashLayout, 1024, 768, Color.BLACK));
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/splash.fxml"));
+        stage.setScene(new Scene(root, 360, 640, Color.BLACK));
 
         // Start full screen
         Log.info("Full screen support: " + PlatformFeatures.START_FULL_SCREEN);
@@ -41,6 +42,8 @@ public class RoomFullOfCatsApp extends Application {
             stage.setWidth(primaryScreenBounds.getWidth());
             stage.setHeight(primaryScreenBounds.getHeight());
         }
+
+        stage.setResizable(false);
 
         stage.show();
     }
