@@ -20,15 +20,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library name="com.eclipsesource.minimal-json:minimal-json:0.9.1" type="repository">
-        <properties maven-id="com.eclipsesource.minimal-json:minimal-json:0.9.1" />
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/com/eclipsesource/minimal-json/minimal-json/0.9.1/minimal-json-0.9.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" exported="" name="Gradle: com.eclipsesource.minimal-json:minimal-json:0.9.1" level="project" />
   </component>
 </module>
