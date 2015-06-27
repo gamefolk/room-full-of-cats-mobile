@@ -1,0 +1,18 @@
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<?import java.net.URL?>
+<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml" styleClass="root">
+  <center>
+    <VBox fx:id="descriptionContainer" >
+      <Text fx:id="description" />
+    </VBox>
+  </center>
+  <left>
+    <ImageView fx:id="icon" fitHeight="50" fitWidth="50" styleClass="icon" />
+  </left>
+  <stylesheets>
+    <URL value="@styles/ad.css" />
+  </stylesheets>
+</fx:root>

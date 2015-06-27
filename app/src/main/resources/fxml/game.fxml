@@ -3,6 +3,7 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
+<?import org.gamefolk.roomfullofcats.Ad?>
 <?import java.net.URL?>
 <BorderPane fx:id="root" fx:controller="org.gamefolk.roomfullofcats.GameController"
     xmlns:fx="http://javafx.com/fxml" styleClass="root">
@@ -11,6 +12,9 @@
       <Canvas fx:id="canvas" onMouseClicked="#handleInput"/>
     </Pane>
   </center>
+  <bottom>
+    <Ad />
+  </bottom>
   <stylesheets>
     <URL value="@styles/game.css" />
   </stylesheets>
