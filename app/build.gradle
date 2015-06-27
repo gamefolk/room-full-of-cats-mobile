@@ -17,7 +17,9 @@ jfxmobile {
         forceLinkClasses = ['org.gamefolk.roomfullofcats.**.*']
     }
     android {
-        applicationPackage = 'org.javafxports.roomfullofcats'
+        applicationPackage = 'org.gamefolk.roomfullofcats'
+        manifest = 'src/android/AndroidManifest.xml'
+        resDirectory = 'src/android/resources'
     }
 }
 
