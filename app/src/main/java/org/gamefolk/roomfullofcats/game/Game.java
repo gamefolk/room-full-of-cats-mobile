@@ -40,6 +40,8 @@ public class Game {
         this.canvasWidth = (int) gc.getCanvas().getWidth();
         this.canvasHeight = (int) gc.getCanvas().getHeight();
 
+        Log.info("Canvas dimensions are " + new Dimension2D(canvasWidth, canvasHeight));
+
         // TODO: Fix with https://bitbucket.org/javafxports/android/issue/47/app-crashes-with-media-api
         if (PlatformFeatures.MEDIA_SUPPORTED) {
             songPlayer = new MediaPlayer(loadMedia("/assets/audio/catsphone.mp3"));
@@ -107,6 +109,9 @@ public class Game {
         }
         catSize = new Dimension2D(catWidth, catWidth);
         mapOrigin = new Point2D(catWidth, catWidth);
+
+        Log.info("Cat size set to " + catSize);
+        Log.info("Map origin set to " + mapOrigin);
 
         // TODO: Fix with https://bitbucket.org/javafxports/android/issue/47/app-crashes-with-media-api
         if (PlatformFeatures.MEDIA_SUPPORTED && !songPlayer.isAutoPlay()) {

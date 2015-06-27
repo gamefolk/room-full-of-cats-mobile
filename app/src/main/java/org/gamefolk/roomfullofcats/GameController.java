@@ -7,7 +7,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import org.gamefolk.roomfullofcats.game.CatType;
 import org.gamefolk.roomfullofcats.game.Game;
@@ -20,7 +21,8 @@ public class GameController implements Initializable {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
     private Game game;
 
-    @FXML private StackPane root;
+    @FXML private BorderPane root;
+    @FXML private Pane gameView;
     @FXML private Canvas canvas;
 
     public GraphicsContext getGraphicsContext2D() {
@@ -28,6 +30,8 @@ public class GameController implements Initializable {
     }
 
     public void startGame() {
+        Log.info("Starting game.");
+
         game = new Game(getGraphicsContext2D());
         game.setLevel("/assets/levels/level1");
 
@@ -51,8 +55,8 @@ public class GameController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadResources();
 
-        canvas.heightProperty().bind(root.heightProperty());
-        canvas.widthProperty().bind(root.widthProperty());
+        canvas.heightProperty().bind(gameView.heightProperty());
+        canvas.widthProperty().bind(gameView.widthProperty());
     }
 
     private void loadResources() {

@@ -32,6 +32,9 @@ public class MainMenuController implements Initializable {
             throw new RuntimeException(ioe);
         }
         stage.getScene().setRoot(game);
+
+        // Ensure that the canvas is the correct size before starting the game.
+        stage.getScene().getRoot().layout();
         ((GameController) loader.getController()).startGame();
     }
 

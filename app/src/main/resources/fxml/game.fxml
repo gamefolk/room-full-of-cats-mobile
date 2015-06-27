@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.canvas.*?>
-
-<StackPane fx:id="root" fx:controller="org.gamefolk.roomfullofcats.GameController"
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import java.net.URL?>
+<BorderPane fx:id="root" fx:controller="org.gamefolk.roomfullofcats.GameController"
     xmlns:fx="http://javafx.com/fxml" styleClass="root">
-  <children>
-    <Canvas fx:id="canvas" onMouseClicked="#handleInput"/>
-  </children>
+  <center>
+    <Pane fx:id="gameView">
+      <Canvas fx:id="canvas" onMouseClicked="#handleInput"/>
+    </Pane>
+  </center>
   <stylesheets>
     <URL value="@styles/game.css" />
   </stylesheets>
-</StackPane>
+</BorderPane>
