@@ -23,6 +23,9 @@ public class RoomFullOfCatsApp extends Application {
 
 	@Override
     public void start(final Stage primaryStage) throws Exception {
+        PlatformService provider = PlatformService.getInstance();
+        Log.info("Platform name: " + provider.getName());
+
         stage = primaryStage;
 
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/splash.fxml"));
