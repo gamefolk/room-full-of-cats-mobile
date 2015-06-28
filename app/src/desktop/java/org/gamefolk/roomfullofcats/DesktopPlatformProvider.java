@@ -2,7 +2,8 @@ package org.gamefolk.roomfullofcats;
 
 public class DesktopPlatformProvider implements PlatformProvider {
 
-    public String getName() {
-        return "Desktop";
+    @Override
+    public Platform getPlatform() {
+        return Platform.DESKTOP;
     }
 }

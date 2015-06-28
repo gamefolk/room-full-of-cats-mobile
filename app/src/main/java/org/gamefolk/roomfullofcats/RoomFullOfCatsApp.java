@@ -23,8 +23,8 @@ public class RoomFullOfCatsApp extends Application {
 
 	@Override
     public void start(final Stage primaryStage) throws Exception {
-        PlatformService provider = PlatformService.getInstance();
-        Log.info("Platform name: " + provider.getName());
+        PlatformService platformService = PlatformService.getInstance();
+        Log.info("Platform name: " + platformService.getPlatform());
 
         stage = primaryStage;
 

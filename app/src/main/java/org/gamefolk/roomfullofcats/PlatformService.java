@@ -36,7 +36,7 @@ public class PlatformService {
         }
     }
 
-    public String getName() {
-        return provider.getName();
+    public PlatformProvider.Platform getPlatform() {
+        return provider.getPlatform();
     }
 }

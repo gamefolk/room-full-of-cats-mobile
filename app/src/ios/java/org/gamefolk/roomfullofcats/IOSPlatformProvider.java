@@ -2,7 +2,8 @@ package org.gamefolk.roomfullofcats;
 
 public class IOSPlatformProvider implements PlatformProvider {
 
-    public String getName() {
-        return "iOS";
+    @Override
+    public Platform getPlatform() {
+        return Platform.IOS;
     }
 }
