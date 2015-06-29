@@ -44,7 +44,10 @@ public class Ad extends BorderPane implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         description.wrappingWidthProperty().bind(descriptionContainer.widthProperty());
-        requestAd();
+
+        if (PlatformFeatures.ADS_SUPPORTED) {
+            requestAd();
+        }
     }
 
     private void requestAd() {

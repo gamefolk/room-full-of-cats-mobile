@@ -54,6 +54,7 @@ public class PlatformFeatures {
     public static final boolean USE_EMBEDDED_FILTER = EMBEDDED || IOS || ANDROID;
     public static final boolean WEB_SUPPORTED = Platform.isSupported(ConditionalFeature.WEB);
     public static final boolean MEDIA_SUPPORTED = !(ANDROID || IOS);
+    public static final boolean ADS_SUPPORTED = ANDROID || IOS;
 
     private PlatformFeatures(){}
 }

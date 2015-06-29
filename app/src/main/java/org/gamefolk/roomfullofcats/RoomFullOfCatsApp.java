@@ -25,8 +25,11 @@ public class RoomFullOfCatsApp extends Application {
     public void start(final Stage primaryStage) throws Exception {
         PlatformService platformService = PlatformService.getInstance();
         Log.info("Platform name: " + platformService.getPlatform());
-        AdvertisingService advertisingService = AdvertisingService.getInstance();
-        advertisingService.initializeAdService();
+
+        if (PlatformFeatures.ADS_SUPPORTED) {
+            AdvertisingService advertisingService = AdvertisingService.getInstance();
+            advertisingService.initializeAdService();
+        }
 
         if (PlatformFeatures.ADS_SUPPORTED) {
             AdvertisingService advertisingService = AdvertisingService.getInstance();
