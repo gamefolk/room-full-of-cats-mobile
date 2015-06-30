@@ -1,33 +1,58 @@
 # Room Full of Cats
 
-*Room Full of Cats* is a native game for Android and iOS devices.
+*Room Full of Cats* is a native game for Android, iOS, and desktop devices.
 
-## Compiling
+## Running the game
 
-Room Full of Cats is based on the [Absurd Engine], which cross-compiles its Android Java code to native iOS code.
-To compile for Android, import the project into your IDE of choice and run as usual.
-To compile for iOS, install the Absurd Engine and in the project root create a file `local.properties` with the following properties:
+To build the game, you must have a Java version of at least 8u40, and an Oracle
+JDK. If you use OpenJDK, you must install OpenJFX as well.
 
-```
-sdk.dir=[path of Android SDK]
-xmlvm.sdk.jar=[path of XMLVM binary]
+Runtime dependencies are handled by the gradle build system.
 
-src.absurdengine.dir=[path of Absurd Engine]/src
-src_native.absurdengine.dir=[path of Absurd Engine]/src_ios
+### Android
 
-src.java.dir=src
-src.gen.dir=gen_ios
-resource.dir=res
+Running on Android requires an installation of the [Android SDK], with Android
+Platform Lollipop downloaded (API Level 21).
 
-manifest.ios=androidmanifest_ios/AndroidManifest.xml
+```sh
+$ ./gradlew androidInstall            # launch on attached Android device
 ```
 
-Finally, run `ant` in the project root - this will generate an Xcode project that you can run as usual.
+### iOS
+
+Running on iOS requires an up-to-date Mac with the latest version of [Xcode]
+installed.
+
+```sh
+$ ./gradlew launchIPhoneSimulator     # launch on iPhone emulator
+$ ./gradlew launchIPadSimulator       # launch on iPad emulator
+$ ./gradlew launchIOSDevice           # launch on attached iOS device
+```
+
+### Desktop (Experimental)
+
+```sh
+$ ./gradlew run
+```
+
+If you experiences crashes when starting the game, please ensure that your
+computer is a [JavaFX Certified System Configuration]. See heading __JavaFX
+Media__.
+
+## Background
+
+Room Full of Cats is based on the [javafxports] and [robovm] projects, which
+allow JavaFX 8 to run on Java and iOS through cross-compilation of Java
+bytecode.
 
 ## Notes
 
-Music (/assets), graphics (/res/drawable), and API keys (/src/org/gamefolk/roomfullofcats/ApiKeys.java) are not included in this repo.
-This repository is mirrored from my private Mercurial repo with the [Hg-Git] plugin.
+Music and graphics (`app/src/main/resources/assets`), and API keys
+(`app/src/main/java/org/gamefolk/roomfullofcats/ApiKeys.java`) are not included
+in this repository.
 
-[Absurd Engine]: https://bitbucket.org/smpsnr/absurdengine
-[Hg-Git]: https://hg-git.github.io/
+[javafxports]: http://javafxports.org
+[robovm]: http://robovm.com
+[Android SDK]: https://developer.android.com/sdk/installing/index.html
+[Xcode]: https://developer.apple.com/xcode/
+[JavaFX Certified System Configuration]: http://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations-1506746.html
