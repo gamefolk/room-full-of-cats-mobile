@@ -5,6 +5,7 @@ buildscript {
 
     dependencies {
         classpath 'org.javafxports:jfxmobile-plugin:1.0.0-b10'
+        classpath 'org.robovm:robovm-cocoatouch:1.4.0'
     }
 }
 
@@ -14,7 +15,9 @@ mainClassName = 'org.gamefolk.roomfullofcats.RoomFullOfCatsApp'
 
 jfxmobile {
     ios {
-        forceLinkClasses = ['org.gamefolk.roomfullofcats.**.*']
+        forceLinkClasses = [
+                'org.gamefolk.roomfullofcats.**.*',
+                'javax.xml.**.*']
     }
     android {
         applicationPackage = 'org.gamefolk.roomfullofcats'
