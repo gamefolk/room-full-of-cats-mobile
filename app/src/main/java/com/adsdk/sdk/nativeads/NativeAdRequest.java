@@ -7,11 +7,8 @@ package com.adsdk.sdk.nativeads;
 
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.ParseException;
-import gumi.builders.UrlBuilder;
-import org.gamefolk.roomfullofcats.AdvertisingService;
-import org.gamefolk.roomfullofcats.PlatformProvider;
-import org.gamefolk.roomfullofcats.PlatformService;
-import org.gamefolk.roomfullofcats.RoomFullOfCatsApp;
+import org.gamefolk.roomfullofcats.*;
+import org.gamefolk.roomfullofcats.utils.UrlBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
