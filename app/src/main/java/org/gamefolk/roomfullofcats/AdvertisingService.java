@@ -47,4 +47,21 @@ public class AdvertisingService {
     public String getUserAgent() {
         return provider.getUserAgent();
     }
+
+    public String getMobFoxPublisherId() {
+        if (Environment.getBooleanProperty("debug")) {
+            return Environment.getProperty("mobfox.id.test");
+        } else {
+            PlatformService platformService = PlatformService.getInstance();
+            switch (platformService.getPlatform()) {
+                case IOS:
+                    return Environment.getProperty("mobfox.id.ios");
+                case ANDROID:
+                    return Environment.getProperty("mobfox.id.android");
+                default:
+                    throw new RuntimeException("No mobfox ID exists for this platform: " + platformService
+                            .getPlatform());
+            }
+        }
+    }
 }

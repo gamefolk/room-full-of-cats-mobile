@@ -53,9 +53,8 @@ bytecode.
 
 ## Notes
 
-Music and graphics (`app/src/main/resources/assets`), and API keys
-(`app/src/main/java/org/gamefolk/roomfullofcats/ApiKeys.java`) are not included
-in this repository.
+Music, graphics, and environment (`app/src/main/resources/assets`), are not
+included in this repository.
 
 [javafxports]: http://javafxports.org
 [robovm]: http://robovm.com

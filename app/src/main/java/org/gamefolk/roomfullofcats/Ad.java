@@ -80,7 +80,9 @@ public class Ad extends BorderPane implements Initializable {
     }
 
     private NativeAdRequest getRequest() {
-        return new NativeAdRequest.Builder(ApiKeys.getMobFoxPublisherId())
+        AdvertisingService adService = AdvertisingService.getInstance();
+
+        return new NativeAdRequest.Builder(adService.getMobFoxPublisherId())
                 .setTextTypes(textTypes)
                 .setImageTypes(imageTypes)
                 .setKeywords(keywords)
