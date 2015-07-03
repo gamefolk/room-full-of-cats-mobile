@@ -6,8 +6,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
@@ -67,6 +70,7 @@ public class Ad extends BorderPane implements Initializable {
     }
 
     private void adLoaded(NativeAd nativeAd) {
+        this.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
         description.setText(nativeAd.getTextAsset("description"));
         icon.setImage(nativeAd.getImageAsset("icon"));
     }

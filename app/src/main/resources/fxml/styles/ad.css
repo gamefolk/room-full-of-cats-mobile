@@ -1,5 +1,8 @@
 .root {
-  -fx-background-color: white;
+  -fx-background-image: url('/assets/img/gamefolksidebar.png');
+  -fx-background-position: center center;
+  -fx-background-repeat: no-repeat;
+  -fx-background-size: stretch;
   -fx-text-fill: black;
 }
 
