@@ -4,6 +4,12 @@
 
 ## Running the game
 
+Get the source, making sure to pull in all the necessary submodules.
+
+```sh
+$ git clone --recursive https://github.com/gamefolk/room-full-of-cats-mobile.git
+```
+
 To build the game, you must have a Java version of at least 8u40, and an Oracle
 JDK. If you use OpenJDK, you must install OpenJFX as well.
 
