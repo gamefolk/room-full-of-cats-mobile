@@ -12,9 +12,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.gamefolk.roomfullofcats.game.CatType;
 import org.gamefolk.roomfullofcats.game.Game;
+import org.joda.time.Interval;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -28,6 +32,7 @@ public class GameController implements Initializable {
     @FXML private Pane gameView;
     @FXML private Canvas canvas;
     @FXML private Text score;
+    @FXML private Text time;
 
     public GraphicsContext getGraphicsContext2D() {
         return canvas.getGraphicsContext2D();
@@ -51,6 +56,22 @@ public class GameController implements Initializable {
         gameLoop.play();
 
         Bindings.bindBidirectional(score.textProperty(), game.scoreProperty(), new NumberStringConverter());
+        PeriodFormatter fmt = new PeriodFormatterBuilder()
+                .appendMinutes()
+                .appendSeparator(":")
+                .appendSeconds()
+                .toFormatter();
+        Bindings.bindBidirectional(time.textProperty(), game.gameLengthProperty(), new StringConverter<Interval>() {
+            @Override
+            public String toString(Interval interval) {
+                return fmt.print(interval.toPeriod());
+            }
+
+            @Override
+            public Interval fromString(String s) {
+                return new Interval(s);
+            }
+        });
     }
 
     @FXML void handleInput(MouseEvent event) {

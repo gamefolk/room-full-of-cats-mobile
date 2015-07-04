@@ -28,4 +28,5 @@ jfxmobile {
 
 dependencies {
     compile 'com.eclipsesource.minimal-json:minimal-json:0.9.1'
+    compile 'joda-time:joda-time:2.8.1'
 }

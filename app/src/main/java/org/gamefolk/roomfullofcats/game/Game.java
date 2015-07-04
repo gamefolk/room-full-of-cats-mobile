@@ -2,7 +2,9 @@ package org.gamefolk.roomfullofcats.game;
 
 import com.eclipsesource.json.JsonObject;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -12,6 +14,9 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import org.gamefolk.roomfullofcats.PlatformFeatures;
 import org.gamefolk.roomfullofcats.RoomFullOfCatsApp;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+import org.joda.time.Period;
 
 import java.io.*;
 import java.util.logging.Logger;
@@ -20,6 +25,7 @@ public class Game {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
     private IntegerProperty score = new SimpleIntegerProperty(0);
+    private ObjectProperty<Interval> gameLength = new SimpleObjectProperty<>(null);
     private Level currentLevel;
     private Cat[][] map;
     private Bucket[] buckets;
@@ -38,6 +44,10 @@ public class Game {
 
     public IntegerProperty scoreProperty() {
         return score;
+    }
+
+    public ObjectProperty<Interval> gameLengthProperty() {
+        return gameLength;
     }
 
     public Game(GraphicsContext gc) {
@@ -84,11 +94,13 @@ public class Game {
         String message = mainObject.get("levelDescription").asString();
         String title = mainObject.get("levelTitle").asString();
 
+        Period levelTime = Period.minutes(mainObject.get("timeLimit").asInt());
+
         // TODO: Handle more level numbers
         return new Level.Builder(1, message, title)
                 .mapWidth(mainObject.get("columns").asInt())
                 .mapHeight(mainObject.get("rows").asInt())
-                .levelTime(mainObject.get("timeLimit").asInt())
+                .levelTime(levelTime.toStandardDuration())
                 .build();
     }
 
@@ -124,9 +136,14 @@ public class Game {
             songPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             songPlayer.play();
         }
+
+        DateTime start = DateTime.now();
+        gameLength.set(new Interval(DateTime.now(), start.plus(currentLevel.levelTime)));
     }
 
     public void updateSprites() {
+        gameLength.set(new Interval(DateTime.now(), gameLength.get().getEnd()));
+
         long currentTime = System.currentTimeMillis();
         // Only make the cats fall when we need to.
         if (currentTime - lastCatFall < 2000) {
