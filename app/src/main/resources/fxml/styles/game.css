@@ -1,3 +1,7 @@
 .root {
   -fx-background-color: black;
 }
+
+.scorePanel Text {
+  -fx-fill: white;
+}

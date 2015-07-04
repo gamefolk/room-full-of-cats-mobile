@@ -3,10 +3,21 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Text?>
 <?import org.gamefolk.roomfullofcats.Ad?>
 <?import java.net.URL?>
 <BorderPane fx:id="root" fx:controller="org.gamefolk.roomfullofcats.GameController"
     xmlns:fx="http://javafx.com/fxml" styleClass="root">
+  <top>
+    <BorderPane styleClass="scorePanel" >
+      <left>
+        <Text fx:id="time" />
+      </left>
+      <right>
+        <Text fx:id="score" />
+      </right>
+    </BorderPane>
+  </top>
   <center>
     <Pane fx:id="gameView">
       <Canvas fx:id="canvas" onMouseClicked="#handleInput"/>

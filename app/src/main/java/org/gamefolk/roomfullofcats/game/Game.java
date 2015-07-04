@@ -1,6 +1,8 @@
 package org.gamefolk.roomfullofcats.game;
 
 import com.eclipsesource.json.JsonObject;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -17,7 +19,7 @@ import java.util.logging.Logger;
 public class Game {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
-    private int score;
+    private IntegerProperty score = new SimpleIntegerProperty(0);
     private Level currentLevel;
     private Cat[][] map;
     private Bucket[] buckets;
@@ -33,6 +35,10 @@ public class Game {
     private MediaPlayer songPlayer;
     private AudioClip blipClip;
     private AudioClip scoreClip;
+
+    public IntegerProperty scoreProperty() {
+        return score;
+    }
 
     public Game(GraphicsContext gc) {
         this.gc = gc;
@@ -139,7 +145,7 @@ public class Game {
                         current.things++;
 
                         if (current.things == currentLevel.catsLimit) {
-                            score++;
+                            score.set(score.get() + 1);
                             // TODO: Fix when Media is supported on all platforms
                             if (PlatformFeatures.MEDIA_SUPPORTED && !scoreClip.isPlaying()) {
                                  scoreClip.play();

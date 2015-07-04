@@ -2,6 +2,7 @@ package org.gamefolk.roomfullofcats;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
@@ -9,7 +10,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
+import javafx.util.converter.NumberStringConverter;
 import org.gamefolk.roomfullofcats.game.CatType;
 import org.gamefolk.roomfullofcats.game.Game;
 
@@ -24,6 +27,7 @@ public class GameController implements Initializable {
     @FXML private BorderPane root;
     @FXML private Pane gameView;
     @FXML private Canvas canvas;
+    @FXML private Text score;
 
     public GraphicsContext getGraphicsContext2D() {
         return canvas.getGraphicsContext2D();
@@ -45,6 +49,8 @@ public class GameController implements Initializable {
         Timeline gameLoop = new Timeline(oneLoop);
         gameLoop.setCycleCount(Timeline.INDEFINITE);
         gameLoop.play();
+
+        Bindings.bindBidirectional(score.textProperty(), game.scoreProperty(), new NumberStringConverter());
     }
 
     @FXML void handleInput(MouseEvent event) {
