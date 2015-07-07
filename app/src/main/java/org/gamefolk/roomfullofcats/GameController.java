@@ -42,7 +42,7 @@ public class GameController implements Initializable {
         Log.info("Starting game.");
 
         game = new Game(getGraphicsContext2D());
-        game.setLevel("/assets/levels/level1");
+        game.setLevel("/assets/levels/level1.json");
 
         // Create the game loop
         final Duration oneFrameDuration = Duration.millis(1000 / 60);   // 60 FPS
