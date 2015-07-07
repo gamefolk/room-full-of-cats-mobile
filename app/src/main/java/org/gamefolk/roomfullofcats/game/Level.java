@@ -1,6 +1,6 @@
 package org.gamefolk.roomfullofcats.game;
 
-import org.joda.time.Duration;
+import javafx.util.Duration;
 
 /**
 * A class that represents in-game levels, as defined by several parameters
