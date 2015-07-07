@@ -34,6 +34,11 @@ public class NativeAd {
         for (String imageType : imageAssetsObject.names()) {
             JsonObject assetObject = imageAssetsObject.get(imageType).asObject();
             String url = assetObject.get("url").asString();
+            if (url.isEmpty()) {
+                // Sometimes MobFox returns empty URLs. In this case, it doesn't make any sense to parse the rest of
+                // the image, because there's nothing to display.
+                continue;
+            }
             int requestedWidth = Integer.parseInt(assetObject.get("width").asString());
             int requestedHeight = Integer.parseInt(assetObject.get("height").asString());
             Image image = new Image(url, requestedWidth, requestedHeight, true, true, true);
