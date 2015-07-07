@@ -74,8 +74,12 @@ public class Game {
         return new Media(RoomFullOfCatsApp.class.getResource(path).toString());
     }
 
-    private static Level loadLevel(String path) {
+    private static Level loadLevel(String path) throws FileNotFoundException {
         InputStream input = RoomFullOfCatsApp.class.getResourceAsStream(path);
+        if (input == null) {
+            throw new FileNotFoundException("Could not find level: " + path);
+        }
+
         Writer writer = new StringWriter();
         char[] buffer = new char[1024];
         try (Reader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"))) {
@@ -111,7 +115,11 @@ public class Game {
     }
 
     public void setLevel(String path) {
-        currentLevel = loadLevel(path);
+        try {
+            currentLevel = loadLevel(path);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         map = new Cat[currentLevel.mapWidth][currentLevel.mapHeight];
         buckets = new Bucket[currentLevel.mapWidth];
 
