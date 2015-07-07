@@ -18,6 +18,7 @@ jfxmobile {
         forceLinkClasses = [
                 'org.gamefolk.roomfullofcats.**.*',
                 'javax.xml.**.*']
+        infoPList = file('src/ios/Info.plist')
     }
     android {
         applicationPackage = 'org.gamefolk.roomfullofcats'
