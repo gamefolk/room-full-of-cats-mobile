@@ -21,8 +21,8 @@
   </center>
   <bottom>
     <HBox fx:id="settings" styleClass="settings">
-      <CheckBox text="Music" selected="true" />
-      <CheckBox text="Sound" selected="true" />
+      <CheckBox fx:id="playMusic" text="Music" onAction="#setPlayMusic" />
+      <CheckBox fx:id="playSound" text="Sound" onAction="#setPlaySound" />
     </HBox>
   </bottom>
   <stylesheets>

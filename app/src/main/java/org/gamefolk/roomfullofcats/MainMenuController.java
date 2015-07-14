@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.CheckBox;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -15,11 +16,16 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 public class MainMenuController implements Initializable {
     @FXML private HBox settings;
     @FXML private BorderPane root;
     @FXML private ImageView logo;
+    @FXML private CheckBox playMusic;
+    @FXML private CheckBox playSound;
+
+    private Preferences prefs = Preferences.userNodeForPackage(RoomFullOfCatsApp.class);
 
     @FXML
     private void startGame(ActionEvent event) {
@@ -40,10 +46,22 @@ public class MainMenuController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        playMusic.setSelected(prefs.getBoolean("playMusic", true));
+        playSound.setSelected(prefs.getBoolean("playSound", true));
         for (Node checkBox : settings.getChildrenUnmodifiable()) {
             HBox.setHgrow(checkBox, Priority.ALWAYS);
         }
 
         logo.fitWidthProperty().bind(root.widthProperty());
+    }
+
+    @FXML
+    private void setPlayMusic(ActionEvent event) {
+        prefs.putBoolean("playMusic", playMusic.isSelected());
+    }
+
+    @FXML
+    private void setPlaySound(ActionEvent event) {
+        prefs.putBoolean("playSound", playSound.isSelected());
     }
 }

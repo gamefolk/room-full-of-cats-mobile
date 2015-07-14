@@ -16,6 +16,7 @@ import org.gamefolk.roomfullofcats.utils.Interval;
 
 import java.io.*;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 
 public class Game {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
@@ -38,6 +39,8 @@ public class Game {
     private MediaPlayer songPlayer;
     private AudioClip blipClip;
     private AudioClip scoreClip;
+
+    private Preferences prefs = Preferences.userNodeForPackage(RoomFullOfCatsApp.class);
 
     public Game(GraphicsContext gc) {
         this.gc = gc;
@@ -137,7 +140,7 @@ public class Game {
         Log.info("Map origin set to " + mapOrigin);
 
         // TODO: Fix with https://bitbucket.org/javafxports/android/issue/47/app-crashes-with-media-api
-        if (PlatformFeatures.MEDIA_SUPPORTED && !songPlayer.isAutoPlay()) {
+        if (PlatformFeatures.MEDIA_SUPPORTED && prefs.getBoolean("playMusic", true) && !songPlayer.isAutoPlay()) {
             songPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             songPlayer.play();
         }
@@ -183,7 +186,8 @@ public class Game {
                         if (current.things == currentLevel.catsLimit) {
                             score.set(score.get() + 1);
                             // TODO: Fix when Media is supported on all platforms
-                            if (PlatformFeatures.MEDIA_SUPPORTED && !scoreClip.isPlaying()) {
+                            if (PlatformFeatures.MEDIA_SUPPORTED && prefs.getBoolean("playSound", true)
+                                    && !scoreClip.isPlaying()) {
                                  scoreClip.play();
                             }
                             buckets[x] = null;
