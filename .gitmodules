@@ -1,3 +1,0 @@
-[submodule "app/src/android/java/org/OpenUDID"]
-	path = app/src/android/java/org/OpenUDID
-	url = https://github.com/vieux/OpenUDID
