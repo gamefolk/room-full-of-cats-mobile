@@ -22,7 +22,8 @@ public class IOSAdvertisingProvider implements AdvertisingProvider {
         return webView.evaluateJavaScript("navigator.userAgent");
     }
 
+    @Override
     public boolean getDoNotTrack() {
-        return ASIdentifierManager.getSharedManager().isAdvertisingTrackingEnabled();
+        return !ASIdentifierManager.getSharedManager().isAdvertisingTrackingEnabled();
     }
 }

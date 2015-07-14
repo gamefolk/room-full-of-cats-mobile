@@ -18,7 +18,9 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * Represents a MobFox API request
+ * Represents a MobFox API request.
+ *
+ * @see <a href="http://dev.mobfox.com/index.php?title=Ad_Request_API_-_Native">MobFox Native Ad Request API</a>
  */
 public class NativeAdRequest {
 
@@ -49,16 +51,17 @@ public class NativeAdRequest {
                 .addParameter("r_random", Integer.toString(RAND.nextInt(RANDOM_RANGE)))
                 .addParameter("v", REQUEST_API_VERSION);
 
-        // TODO: Device do not track
         // TODO: Send any device headers
 
         // Set Platform-specific request parameters
         if (platformService.getPlatform() == PlatformProvider.Platform.ANDROID) {
             urlBuilder = urlBuilder.addParameter("rt", REQUEST_TYPE_ANDROID)
-                    .addParameter("o_andadvid", advertisingService.getAdvertisingIdentifier());
+                    .addParameter("o_andadvid", advertisingService.getAdvertisingIdentifier())
+                    .addParameter("o_andadvdnt", Integer.toString(advertisingService.getDoNotTrack() ? 1 : 0));
         } else if (platformService.getPlatform() == PlatformProvider.Platform.IOS) {
             urlBuilder = urlBuilder.addParameter("rt", REQUEST_TYPE_IPHONE)
-                    .addParameter("o_iosadvid", advertisingService.getAdvertisingIdentifier());
+                    .addParameter("o_iosadvid", advertisingService.getAdvertisingIdentifier())
+                    .addParameter("o_iosadlimit", Integer.toString(advertisingService.getDoNotTrack() ? 1 : 0));
         }
 
         // Set optional headers

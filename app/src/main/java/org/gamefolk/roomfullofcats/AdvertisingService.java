@@ -48,6 +48,10 @@ public class AdvertisingService {
         return provider.getUserAgent();
     }
 
+    public boolean getDoNotTrack() {
+        return provider.getDoNotTrack();
+    }
+
     public String getMobFoxPublisherId() {
         if (Environment.getBooleanProperty("debug")) {
             return Environment.getProperty("mobfox.id.test");

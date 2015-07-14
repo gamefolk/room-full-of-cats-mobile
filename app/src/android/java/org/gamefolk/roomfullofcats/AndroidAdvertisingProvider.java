@@ -44,6 +44,7 @@ public class AndroidAdvertisingProvider implements AdvertisingProvider {
         return System.getProperty("http.agent");
     }
 
+    @Override
     public boolean getDoNotTrack() {
         return adInfo.isLimitAdTrackingEnabled();
     }
