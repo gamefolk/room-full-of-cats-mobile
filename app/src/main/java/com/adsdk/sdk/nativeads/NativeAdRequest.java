@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -31,8 +30,8 @@ public class NativeAdRequest {
     private static final String REQUEST_TYPE_IPHONE = "iphone_app";
     private static final Random RAND = new Random();
     private static final int RANDOM_RANGE = 50_000;
-    private static final String URL_ENCODING = StandardCharsets.UTF_8.name();
-    private static final String RESPONSE_ENCODING = StandardCharsets.ISO_8859_1.name();
+    private static final String URL_ENCODING = "UTF-8";
+    private static final String RESPONSE_ENCODING = "ISO-8859-1";
     private static final String REQUEST_API_VERSION = "3.0";
     private URL requestUrl;
 
