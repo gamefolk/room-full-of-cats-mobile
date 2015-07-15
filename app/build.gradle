@@ -23,6 +23,8 @@ jfxmobile {
     android {
         applicationPackage = 'org.gamefolk.roomfullofcats'
         manifest = 'src/android/AndroidManifest.xml'
+        minSdkVersion = 4
+        targetSdkVersion = 21
         resDirectory = 'src/android/resources'
     }
 }
