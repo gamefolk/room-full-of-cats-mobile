@@ -1,17 +1,20 @@
 package org.gamefolk.roomfullofcats.game;
 
 import com.eclipsesource.json.JsonObject;
-import javafx.beans.property.*;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.media.AudioClip;
-import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
-import org.gamefolk.roomfullofcats.PlatformFeatures;
+import org.gamefolk.roomfullofcats.MusicPlayer;
 import org.gamefolk.roomfullofcats.RoomFullOfCatsApp;
+import org.gamefolk.roomfullofcats.Sound;
+import org.gamefolk.roomfullofcats.SoundService;
 import org.gamefolk.roomfullofcats.utils.Interval;
 
 import java.io.*;
@@ -36,9 +39,9 @@ public class Game {
     private int canvasWidth;
     private int canvasHeight;
 
-    private MediaPlayer songPlayer;
-    private AudioClip blipClip;
-    private AudioClip scoreClip;
+    private MusicPlayer songPlayer;
+    private Sound blipClip;
+    private Sound scoreClip;
 
     private Preferences prefs = Preferences.userNodeForPackage(RoomFullOfCatsApp.class);
 
@@ -50,20 +53,10 @@ public class Game {
 
         Log.info("Canvas dimensions are " + new Dimension2D(canvasWidth, canvasHeight));
 
-        // TODO: Fix with https://bitbucket.org/javafxports/android/issue/47/app-crashes-with-media-api
-        if (PlatformFeatures.MEDIA_SUPPORTED) {
-            songPlayer = new MediaPlayer(loadMedia("/assets/audio/catsphone.mp3"));
-            blipClip = loadAudioClip("/assets/audio/blip.wav");
-            scoreClip = loadAudioClip("/assets/audio/score.wav");
-        }
-    }
-
-    private static AudioClip loadAudioClip(String path) {
-        return new AudioClip(RoomFullOfCatsApp.class.getResource(path).toString());
-    }
-
-    private static Media loadMedia(String path) {
-        return new Media(RoomFullOfCatsApp.class.getResource(path).toString());
+        SoundService soundService = SoundService.getInstance();
+        songPlayer = soundService.loadMusic("/assets/audio/catsphone.mp3");
+        blipClip = soundService.loadSound("/assets/audio/blip.wav");
+        scoreClip = soundService.loadSound("/assets/audio/score.wav");
     }
 
     private static Level loadLevel(String path) throws FileNotFoundException {
@@ -139,8 +132,7 @@ public class Game {
         Log.info("Cat size set to " + catSize);
         Log.info("Map origin set to " + mapOrigin);
 
-        // TODO: Fix with https://bitbucket.org/javafxports/android/issue/47/app-crashes-with-media-api
-        if (PlatformFeatures.MEDIA_SUPPORTED && prefs.getBoolean("playMusic", true) && !songPlayer.isAutoPlay()) {
+        if (prefs.getBoolean("playMusic", true)) {
             songPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             songPlayer.play();
         }
@@ -185,9 +177,7 @@ public class Game {
 
                         if (current.things == currentLevel.catsLimit) {
                             score.set(score.get() + 1);
-                            // TODO: Fix when Media is supported on all platforms
-                            if (PlatformFeatures.MEDIA_SUPPORTED && prefs.getBoolean("playSound", true)
-                                    && !scoreClip.isPlaying()) {
+                            if (prefs.getBoolean("playSound", true) && !scoreClip.isPlaying()) {
                                  scoreClip.play();
                             }
                             buckets[x] = null;
