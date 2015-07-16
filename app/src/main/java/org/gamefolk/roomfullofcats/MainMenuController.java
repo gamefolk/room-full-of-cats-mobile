@@ -16,6 +16,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
 public class MainMenuController implements Initializable {
@@ -26,6 +28,7 @@ public class MainMenuController implements Initializable {
     @FXML private CheckBox playSound;
 
     private Preferences prefs = Preferences.userNodeForPackage(RoomFullOfCatsApp.class);
+    private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
     @FXML
     private void startGame(ActionEvent event) {
@@ -41,7 +44,23 @@ public class MainMenuController implements Initializable {
 
         // Ensure that the canvas is the correct size before starting the game.
         stage.getScene().getRoot().layout();
-        ((GameController) loader.getController()).startGame();
+
+        // Since Android likes to cut off long stack traces, if any Exceptions are thrown in the game we determine
+        // their root cause and log it before propagating.
+        try {
+            ((GameController) loader.getController()).startGame();
+        } catch (Exception e) {
+            Throwable cause = null;
+            Throwable result = e;
+
+            while ((cause = result.getCause()) != null && result != cause) {
+                result = cause;
+            }
+
+            Log.log(Level.SEVERE,  "Caught fatal exception:", result);
+            throw e;
+        }
+
     }
 
     @Override
