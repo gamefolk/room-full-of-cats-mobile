@@ -34,6 +34,9 @@ $ ./gradlew launchIPhoneSimulator     # launch on iPhone emulator
 $ ./gradlew launchIPadSimulator       # launch on iPad emulator
 $ ./gradlew launchIOSDevice           # launch on attached iOS device
 ```
+If you get strange errors such as compilation failures due to missing files,
+unexplained crashes on startup, etc., try running `./gradlew clean` before
+building again.
 
 ### Desktop (Experimental)
 
