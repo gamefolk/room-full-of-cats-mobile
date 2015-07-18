@@ -1,5 +1,7 @@
 package org.gamefolk.roomfullofcats;
 
+import java.io.File;
+
 public interface PlatformProvider {
     enum Platform {
         ANDROID ("Android"),
@@ -19,4 +21,5 @@ public interface PlatformProvider {
     }
 
     Platform getPlatform();
+    File getCacheDir();
 }

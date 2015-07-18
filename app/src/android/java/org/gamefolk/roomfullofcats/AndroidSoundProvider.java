@@ -8,7 +8,6 @@ import android.net.Uri;
 import javafx.scene.media.MediaPlayer;
 import javafxports.android.FXActivity;
 
-import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -23,78 +22,6 @@ public class AndroidSoundProvider implements SoundProvider {
         // FIXME: This does not work
         // Use the hardware buttons to manipulate sound volume.
         ((Activity) context).setVolumeControlStream(AudioManager.STREAM_MUSIC);
-    }
-
-    /**
-     * This method allows loading a JAR resource as a File.
-     * <p>
-     * First, a brief warning:
-     * <pre>
-     *                                                 ,  ,
-     *                                                / \/ \
-     *                                               (/ //_ \_
-     *      .-._                                      \||  .  \
-     *       \  '-._                            _,:__.-"/---\_ \
-     *  ______/___  '.    .--------------------'~-'--.)__( , )\ \
-     * `'--.___  _\  /    |                         ,'    \)|\ `\|
-     *      /_.-' _\ \ _:,_       Here be dragons!        " ||   (
-     *    .'__ _.' \'-/,`-~`                                |/
-     *        '. ___.> /=,|                                 |
-     *         / .-'/_ )  '---------------------------------'
-     *    snd  )'  ( /(/
-     *              \\ "
-     *               '=='
-     * </pre>
-     * <p>
-     * Why use this deep magic?
-     * <p>
-     * On Android, we want to avoid using the R object (this would require us to copy the sound assets to the
-     * androidResources folder as well), so we use methods that load either a path or a URI, such as {@link
-     * android.media.SoundPool#load(String, int) SoundPool.load(String, int)} or
-     * {@link android.media.MediaPlayer#create(Context, Uri) MediaPlayer.create(Context, Uri)} to load sound
-     * files.
-     * <p>
-     * However, these methods can't read resources that have been packed into the JAR. Therefore, we read the
-     * resource in as a stream, and write the stream to a temporary file. This file can then be read in by the
-     * any Android method to load the sound.
-     * <p>
-     * In short, this hack lets us keep the sound resources packed into main/resources, and still have Android
-     * load them successfully.
-     *
-     * @param jarResource A String that represents a path in the JAR resources folder.
-     * @returns A File containing the absolute path of a file containing that resource's data.
-     */
-    protected static File loadJarResourceStreamAsFile(String jarResource) {
-        File file;
-        try {
-            file = convertInputStreamToFile(AndroidSoundProvider.class.getResourceAsStream(jarResource));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return file;
-    }
-
-    private static File convertInputStreamToFile(InputStream inputStream) throws IOException {
-        File tempFile;
-        OutputStream outputStream = null;
-        try {
-            Context context = FXActivity.getInstance();
-            tempFile = File.createTempFile("sound", null, context.getCacheDir());
-            outputStream = new FileOutputStream(tempFile);
-
-            byte[] buffer = new byte[10 * 1024];   // 10KB
-            int read;
-            while ((read = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, read);
-            }
-
-            Log.info("Wrote temporary file " + tempFile.getName() + " with size " + tempFile.length());
-            return tempFile;
-        } finally {
-            if (outputStream != null) {
-                outputStream.close();
-            }
-        }
     }
 
     @Override
@@ -116,7 +43,8 @@ class AndroidMusicPlayer implements MusicPlayer {
 
     public AndroidMusicPlayer(String filename) {
         Context context = FXActivity.getInstance();
-        Uri uri = Uri.fromFile(AndroidSoundProvider.loadJarResourceStreamAsFile(filename));
+        PlatformService platformService = PlatformService.getInstance();
+        Uri uri = Uri.fromFile(platformService.loadJarResourceStreamAsFile(filename));
         Log.info("Loading media file " + uri.getPath());
         mediaPlayer = android.media.MediaPlayer.create(context, uri);
     }
@@ -173,7 +101,8 @@ class AndroidSound implements Sound {
     private float volume;
 
     public AndroidSound(String filename) {
-        String path = AndroidSoundProvider.loadJarResourceStreamAsFile(filename).getAbsolutePath();
+        PlatformService platformService = PlatformService.getInstance();
+        String path = platformService.loadJarResourceStreamAsFile(filename).getAbsolutePath();
         Log.info("Loading sound file: " + path);
 
         // Create a CountDownLatch to signal when the sound has loaded.
