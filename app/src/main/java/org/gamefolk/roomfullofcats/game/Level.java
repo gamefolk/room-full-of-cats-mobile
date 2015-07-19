@@ -1,6 +1,11 @@
 package org.gamefolk.roomfullofcats.game;
 
-import javafx.util.Duration;
+import com.eclipsesource.json.JsonObject;
+import org.gamefolk.roomfullofcats.RoomFullOfCatsApp;
+import org.joda.time.Duration;
+
+import java.io.*;
+import java.util.logging.Logger;
 
 /**
 * A class that represents in-game levels, as defined by several parameters
@@ -19,8 +24,9 @@ import javafx.util.Duration;
 * @param requiredMatch4                 The minimum number of full baskets of cat type 4 the player must achieve in order to win the level
 * @param glitchTypeSpawn                Used only for levels of type "glitch", specifies which of the four types of glitch cat will spawn in the level
 */
-
 public class Level {
+    private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
+
     public final int number;
     public final int mapWidth;
     public final int mapHeight;
@@ -42,7 +48,41 @@ public class Level {
         this.title = title;
     }
 
-    public static class Builder {
+    public static Level loadLevel(String path) throws FileNotFoundException {
+        InputStream input = RoomFullOfCatsApp.class.getResourceAsStream(path);
+        if (input == null) {
+            throw new FileNotFoundException("Could not find level: " + path);
+        }
+
+        Writer writer = new StringWriter();
+        char[] buffer = new char[1024];
+        try (Reader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"))) {
+            int n;
+            while ((n = reader.read(buffer)) != -1) {
+                writer.write(buffer, 0, n);
+            }
+        } catch (IOException e) {
+            Log.severe("error reading level json");
+            throw new RuntimeException(e);
+        }
+        Log.info("json: " + writer.toString());
+        JsonObject mainObject = JsonObject.readFrom(writer.toString());
+        Log.info("level: " + mainObject.get("levelTitle").asString());
+
+        String message = mainObject.get("levelDescription").asString();
+        String title = mainObject.get("levelTitle").asString();
+
+        Duration levelTime = Duration.standardSeconds(mainObject.get("timeLimit").asLong());
+
+        // TODO: Handle more level numbers
+        return new Builder(1, message, title)
+                .mapWidth(mainObject.get("columns").asInt())
+                .mapHeight(mainObject.get("rows").asInt())
+                .levelTime(levelTime)
+                .build();
+    }
+
+    private static class Builder {
         private static final Duration DEFAULT_FALL_TIME = Duration.millis(1000);
         private static final int DEFAULT_CATS_LIMIT = 3;
 

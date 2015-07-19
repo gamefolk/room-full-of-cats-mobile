@@ -1,6 +1,5 @@
 package org.gamefolk.roomfullofcats.game;
 
-import com.eclipsesource.json.JsonObject;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -10,36 +9,35 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.media.MediaPlayer;
-import javafx.util.Duration;
 import org.gamefolk.roomfullofcats.*;
-import org.gamefolk.roomfullofcats.utils.Interval;
+import org.joda.time.Duration;
+import org.joda.time.Instant;
+import org.joda.time.Interval;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
-import java.io.*;
+import java.io.FileNotFoundException;
 import java.util.logging.Logger;
 
 public class Game {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
-
+    private final GraphicsContext gc;
+    private final MusicPlayer songPlayer;
+    private final Sound blipClip;
+    private final Sound scoreClip;
+    private final Settings settings = Settings.INSTANCE;
     private IntegerProperty score = new SimpleIntegerProperty(0);
-    private StringProperty timeLeft = new SimpleStringProperty();
+    private StringProperty timer = new SimpleStringProperty();
     private Interval gameTime;
     private Level currentLevel;
     private Cat[][] map;
     private Bucket[] buckets;
     private long lastCatFall;
-    private final GraphicsContext gc;
-
     private Dimension2D catSize;
     private Point2D mapOrigin;
-
     private int canvasWidth;
     private int canvasHeight;
-
-    private final MusicPlayer songPlayer;
-    private final Sound blipClip;
-    private final Sound scoreClip;
-
-    private final Settings settings = Settings.INSTANCE;
+    private PeriodFormatter timerFormat;
 
     public Game(GraphicsContext gc) {
         this.gc = gc;
@@ -53,40 +51,20 @@ public class Game {
         songPlayer = soundService.loadMusic("/assets/audio/catsphone.mp3");
         blipClip = soundService.loadSound("/assets/audio/blip.wav");
         scoreClip = soundService.loadSound("/assets/audio/score.wav");
+
+        timerFormat = new PeriodFormatterBuilder()
+                .printZeroAlways()
+                .minimumPrintedDigits(1)
+                .appendMinutes()
+                .appendSeparator(":")
+                .minimumPrintedDigits(2)
+                .appendSeconds()
+                .toFormatter();
+
     }
 
-    private static Level loadLevel(String path) throws FileNotFoundException {
-        InputStream input = RoomFullOfCatsApp.class.getResourceAsStream(path);
-        if (input == null) {
-            throw new FileNotFoundException("Could not find level: " + path);
-        }
-
-        Writer writer = new StringWriter();
-        char[] buffer = new char[1024];
-        try (Reader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"))) {
-            int n;
-            while ((n = reader.read(buffer)) != -1) {
-                writer.write(buffer, 0, n);
-            }
-        } catch (IOException e) {
-            Log.severe("error reading level json");
-            throw new RuntimeException(e);
-        }
-        Log.info("json: " + writer.toString());
-        JsonObject mainObject = JsonObject.readFrom(writer.toString());
-        Log.info("level: " + mainObject.get("levelTitle").asString());
-
-        String message = mainObject.get("levelDescription").asString();
-        String title = mainObject.get("levelTitle").asString();
-
-        Duration levelTime = Duration.seconds(mainObject.get("timeLimit").asDouble());
-
-        // TODO: Handle more level numbers
-        return new Level.Builder(1, message, title)
-                .mapWidth(mainObject.get("columns").asInt())
-                .mapHeight(mainObject.get("rows").asInt())
-                .levelTime(levelTime)
-                .build();
+    private String formatTimer(Duration duration) {
+        return timerFormat.print(duration.toPeriod());
     }
 
     public IntegerProperty scoreProperty() {
@@ -94,7 +72,7 @@ public class Game {
     }
 
     public StringProperty timerProperty() {
-        return timeLeft;
+        return timer;
     }
 
     private Rectangle2D getCatBounds(int x, int y) {
@@ -105,7 +83,7 @@ public class Game {
 
     public void setLevel(String path) {
         try {
-            currentLevel = loadLevel(path);
+            currentLevel = Level.loadLevel(path);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -135,27 +113,14 @@ public class Game {
             songPlayer.play();
         }
 
-        long start = System.currentTimeMillis();
-        gameTime = new Interval(start, start + (long)currentLevel.levelTime.toMillis());
-        timeLeft.set(formatTimer(start, gameTime.getEnd()));
-    }
-
-    private String formatTimer(long currentTime, long levelEndTime) {
-        long timeRemaining = levelEndTime - currentTime;
-        long seconds = (timeRemaining / 1000) % 60;
-        long minutes = (timeRemaining / 1000 - seconds) / 60;
-        String timer = "";
-
-        timer += String.format("%02d", minutes);
-        timer += ":";
-        timer += String.format("%02d", seconds);
-
-        return timer;
+        gameTime = currentLevel.levelTime.toIntervalFrom(Instant.now());
+        timer.set(formatTimer(gameTime.toDuration()));
     }
 
     public void updateSprites() {
         long currentTime = System.currentTimeMillis();
-        timeLeft.set(formatTimer(currentTime, gameTime.getEnd()));
+        Duration timeLeft = new Duration(currentTime, gameTime.getEndMillis());
+        timer.set(formatTimer(timeLeft));
 
         // Only make the cats fall when we need to.
         if (currentTime - lastCatFall < 2000) {
