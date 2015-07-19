@@ -7,8 +7,8 @@ import com.gluonhq.charm.down.common.SettingService;
 public enum Settings {
     INSTANCE;
 
-    private Platform platform = PlatformFactory.getPlatform();
-    private SettingService settingService = platform.getSettingService();
+    private final Platform platform = PlatformFactory.getPlatform();
+    private final SettingService settingService = platform.getSettingService();
 
     public boolean getBoolean(String key, boolean defaultValue) {
         String result = settingService.retrieve(key);

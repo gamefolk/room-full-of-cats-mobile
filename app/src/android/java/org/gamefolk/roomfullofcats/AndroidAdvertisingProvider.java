@@ -12,10 +12,7 @@ import java.util.logging.Logger;
 public class AndroidAdvertisingProvider implements AdvertisingProvider {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
-    private static final long UDID_TIMEOUT = 20;
-    private static final long UDID_WAIT_INC = 20;
-
-    private Context context = FXActivity.getInstance();
+    private final Context context = FXActivity.getInstance();
     private AdvertisingIdClient.Info adInfo = null;
 
     @Override

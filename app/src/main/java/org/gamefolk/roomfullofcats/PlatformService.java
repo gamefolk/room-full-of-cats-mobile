@@ -9,11 +9,10 @@ public class PlatformService {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
     private static PlatformService instance;
-    private final ServiceLoader<PlatformProvider> serviceLoader;
     private PlatformProvider provider;
 
     private PlatformService() {
-        serviceLoader = ServiceLoader.load(PlatformProvider.class);
+        ServiceLoader<PlatformProvider> serviceLoader = ServiceLoader.load(PlatformProvider.class);
 
         Iterator<PlatformProvider> iterator = serviceLoader.iterator();
         while (iterator.hasNext()) {
@@ -75,7 +74,7 @@ public class PlatformService {
      * successfully.
      *
      * @param jarResource A String that represents a path in the JAR resources folder.
-     * @returns A File containing the absolute path of a file containing that resource's data.
+     * @return A File containing the absolute path of a file containing that resource's data.
      */
     public File loadJarResourceStreamAsFile(String jarResource) {
         File file;

@@ -14,7 +14,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
 
 public class AndroidSoundProvider implements SoundProvider {
-    private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
     static {
         Context context = FXActivity.getInstance();
@@ -39,7 +38,7 @@ public class AndroidSoundProvider implements SoundProvider {
 class AndroidMusicPlayer implements MusicPlayer {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
-    private android.media.MediaPlayer mediaPlayer;
+    private final android.media.MediaPlayer mediaPlayer;
 
     public AndroidMusicPlayer(String filename) {
         Context context = FXActivity.getInstance();
@@ -123,6 +122,7 @@ class AndroidSound implements Sound {
         try {
             loadedSignal.await();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
 
     }

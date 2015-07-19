@@ -120,7 +120,7 @@ public class NativeAdRequest {
             Log.warning("Socket exception caught: " + ex.getMessage());
         }
 
-        return null;
+        return "";
     }
 
     /**
@@ -195,8 +195,8 @@ public class NativeAdRequest {
     }
 
     private static class LatLong {
-        private double latitude;
-        private double longitude;
+        private final double latitude;
+        private final double longitude;
 
         private LatLong(double latitude, double longitude) {
             this.latitude = latitude;
@@ -205,7 +205,7 @@ public class NativeAdRequest {
     }
 
     public static class Builder {
-        private String publisherId;
+        private final String publisherId;
         private List<String> imageTypes = Collections.emptyList();
         private List<String> textTypes = Collections.emptyList();
         private List<String> adTypes = Collections.emptyList();

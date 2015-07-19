@@ -46,16 +46,16 @@ public class Level {
         private static final Duration DEFAULT_FALL_TIME = Duration.millis(1000);
         private static final int DEFAULT_CATS_LIMIT = 3;
 
-        private String title;
-        private String message;
-        private int number;
+        private final String title;
+        private final String message;
+        private final int number;
         private int mapWidth;
         private int mapHeight;
         private Duration levelTime;
         private Duration fallTime = DEFAULT_FALL_TIME;
         private int catsLimit = DEFAULT_CATS_LIMIT;
 
-        public Builder(final int number, final String message, final String title) {
+        public Builder(int number, String message, String title) {
             this.number = number;
             this.message = message;
             this.title = title;

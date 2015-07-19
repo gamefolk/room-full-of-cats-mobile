@@ -9,14 +9,10 @@
     xmlns:fx="http://javafx.com/fxml" styleClass="root">
   <center>
     <VBox styleClass="menu">
-      <children>
-        <ImageView fx:id="logo" preserveRatio="true">
-          <image>
-            <Image url="@/assets/img/catslogo.png"/>
-          </image>
-        </ImageView>
-        <Button text="Start" onAction="#startGame" />
-      </children>
+      <ImageView fx:id="logo" preserveRatio="true">
+        <Image url="@/assets/img/catslogo.png"/>
+      </ImageView>
+      <Button text="Start" onAction="#startGame"/>
     </VBox>
   </center>
   <bottom>

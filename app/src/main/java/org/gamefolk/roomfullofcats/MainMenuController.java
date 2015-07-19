@@ -28,7 +28,7 @@ public class MainMenuController implements Initializable {
 
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
-    private Settings settings = Settings.INSTANCE;
+    private final Settings settings = Settings.INSTANCE;
 
     @FXML
     private void startGame(ActionEvent event) {

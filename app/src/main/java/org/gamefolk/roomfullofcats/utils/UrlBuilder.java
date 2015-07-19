@@ -13,12 +13,12 @@ import java.util.List;
  * This library has no guarantees about properly decoding non-ASCII URLs.
  */
 public class UrlBuilder {
-    private StringBuilder builder;
-    private List<Parameter> parameters;
+    private final StringBuilder builder;
+    private final List<Parameter> parameters;
 
     private static class Parameter {
-        String key;
-        String value;
+        final String key;
+        final String value;
 
         public Parameter(String key, String value) {
             this.key = key;
@@ -43,9 +43,11 @@ public class UrlBuilder {
     public URL toUrl() {
         builder.append("?");
 
+        String delimiter = "";
         for (Parameter param : parameters) {
-            builder.append(param.key + "=" + param.value);
-            builder.append("&");
+            builder.append(delimiter);
+            builder.append(param.key).append("=").append(param.value);
+            delimiter = ",";
         }
 
         try {

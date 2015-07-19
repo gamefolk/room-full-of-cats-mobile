@@ -15,7 +15,6 @@ import org.gamefolk.roomfullofcats.*;
 import org.gamefolk.roomfullofcats.utils.Interval;
 
 import java.io.*;
-import java.util.Set;
 import java.util.logging.Logger;
 
 public class Game {
@@ -28,7 +27,7 @@ public class Game {
     private Cat[][] map;
     private Bucket[] buckets;
     private long lastCatFall;
-    private GraphicsContext gc;
+    private final GraphicsContext gc;
 
     private Dimension2D catSize;
     private Point2D mapOrigin;
@@ -36,11 +35,11 @@ public class Game {
     private int canvasWidth;
     private int canvasHeight;
 
-    private MusicPlayer songPlayer;
-    private Sound blipClip;
-    private Sound scoreClip;
+    private final MusicPlayer songPlayer;
+    private final Sound blipClip;
+    private final Sound scoreClip;
 
-    private Settings settings = Settings.INSTANCE;
+    private final Settings settings = Settings.INSTANCE;
 
     public Game(GraphicsContext gc) {
         this.gc = gc;
@@ -114,17 +113,19 @@ public class Game {
         buckets = new Bucket[currentLevel.mapWidth];
 
         // Calculate the width of cats, leaving a cat length on either side for margin.
-        int catWidth;
+        int catWidth, catHeight;
         if (currentLevel.mapWidth % 2 == 0) {
             catWidth = canvasWidth / (currentLevel.mapWidth + 2);
-            mapOrigin = new Point2D(catWidth, catWidth);
+            catHeight = catWidth;
+            mapOrigin = new Point2D(catWidth, catHeight);
         } else {
             // If there are an odd number of cats, then the middle row of cats, then we do the calculation as if there is one more cat, leaving some extra space on both sides.
             catWidth = canvasWidth / ((currentLevel.mapWidth + 1) + 2);
-            mapOrigin = new Point2D(catWidth + catWidth / 2, catWidth);
+            catHeight = catWidth;
+            mapOrigin = new Point2D(catWidth + catWidth / 2, catHeight);
         }
-        catSize = new Dimension2D(catWidth, catWidth);
-        mapOrigin = new Point2D(catWidth, catWidth);
+        catSize = new Dimension2D(catWidth, catHeight);
+        mapOrigin = new Point2D(catWidth, catHeight);
 
         Log.info("Cat size set to " + catSize);
         Log.info("Map origin set to " + mapOrigin);

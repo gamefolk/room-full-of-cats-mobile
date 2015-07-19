@@ -17,11 +17,10 @@ public class AdvertisingService {
         return instance;
     }
 
-    private final ServiceLoader<AdvertisingProvider> serviceLoader;
     private AdvertisingProvider provider;
 
     private AdvertisingService() {
-        serviceLoader = ServiceLoader.load(AdvertisingProvider.class);
+        ServiceLoader<AdvertisingProvider> serviceLoader = ServiceLoader.load(AdvertisingProvider.class);
 
         Iterator<AdvertisingProvider> iterator = serviceLoader.iterator();
         while (iterator.hasNext()) {

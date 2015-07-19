@@ -20,9 +20,9 @@ import java.util.Map;
  */
 public class NativeAd {
     private String clickUrl;
-    private Map<String, Image> imageAssets = new HashMap<>();
-    private Map<String, String> textAssets = new HashMap<>();
-    private List<Tracker> trackers = new ArrayList<>();
+    private final Map<String, Image> imageAssets = new HashMap<>();
+    private final Map<String, String> textAssets = new HashMap<>();
+    private final List<Tracker> trackers = new ArrayList<>();
 
     public NativeAd(JsonObject json) throws MissingValueException {
         JsonValue imageAssetsValue = json.get("imageassets");

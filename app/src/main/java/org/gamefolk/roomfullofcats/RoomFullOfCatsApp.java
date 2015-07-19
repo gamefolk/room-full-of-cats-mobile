@@ -13,7 +13,6 @@ import javafx.stage.Stage;
 import java.util.logging.Logger;
 
 public class RoomFullOfCatsApp extends Application {
-    private Stage stage;
 
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
@@ -31,23 +30,21 @@ public class RoomFullOfCatsApp extends Application {
             advertisingService.initializeAdService();
         }
 
-        stage = primaryStage;
-
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/splash.fxml"));
-        stage.setScene(new Scene(root, 360, 640, Color.BLACK));
+        primaryStage.setScene(new Scene(root, 360, 640, Color.BLACK));
 
         // Start full screen
         Log.info("Full screen support: " + PlatformFeatures.START_FULL_SCREEN);
         if (PlatformFeatures.START_FULL_SCREEN) {
             Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-            stage.setX(primaryScreenBounds.getMinX());
-            stage.setY(primaryScreenBounds.getMinY());
-            stage.setWidth(primaryScreenBounds.getWidth());
-            stage.setHeight(primaryScreenBounds.getHeight());
+            primaryStage.setX(primaryScreenBounds.getMinX());
+            primaryStage.setY(primaryScreenBounds.getMinY());
+            primaryStage.setWidth(primaryScreenBounds.getWidth());
+            primaryStage.setHeight(primaryScreenBounds.getHeight());
         }
 
-        stage.setResizable(false);
+        primaryStage.setResizable(false);
 
-        stage.show();
+        primaryStage.show();
     }
 }

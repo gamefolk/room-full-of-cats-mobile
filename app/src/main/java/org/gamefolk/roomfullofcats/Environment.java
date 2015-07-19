@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class Environment {
-    private static Properties defaultProperties = new Properties();
+    private static final Properties defaultProperties = new Properties();
 
     static {
         try (InputStream in = Environment.class.getResourceAsStream("/assets/environment.properties")) {

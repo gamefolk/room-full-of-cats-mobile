@@ -19,19 +19,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 
 public class Ad extends BorderPane implements Initializable {
-
-    private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
     @FXML private VBox descriptionContainer;
     @FXML private Text description;
     @FXML private ImageView icon;
 
-    private List<String> imageTypes = Arrays.asList("icon", "main");
-    private List<String> textTypes = Arrays.asList("headline", "description", "cta", "advertiser", "rating");
-    private List<String> keywords = new ArrayList<>();
+    private final List<String> imageTypes = Arrays.asList("icon", "main");
+    private final List<String> textTypes = Arrays.asList("headline", "description", "cta", "advertiser", "rating");
+    private final List<String> keywords = new ArrayList<>();
 
     public Ad() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ad.fxml"));

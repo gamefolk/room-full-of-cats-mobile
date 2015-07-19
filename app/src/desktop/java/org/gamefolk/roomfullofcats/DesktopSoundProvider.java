@@ -17,7 +17,7 @@ public class DesktopSoundProvider implements SoundProvider {
 }
 
 class DesktopMusicPlayer implements MusicPlayer {
-    private MediaPlayer mediaPlayer;
+    private final MediaPlayer mediaPlayer;
 
     public DesktopMusicPlayer(String filename) {
         Media media = new Media(getClass().getResource(filename).toString());
@@ -41,7 +41,7 @@ class DesktopMusicPlayer implements MusicPlayer {
 }
 
 class DesktopSound implements Sound {
-    private AudioClip clip;
+    private final AudioClip clip;
 
     public DesktopSound(String filename) {
         clip = new AudioClip(RoomFullOfCatsApp.class.getResource(filename).toString());

@@ -26,7 +26,7 @@ public class IOSSoundProvider implements SoundProvider {
 
 class IOSSound implements Sound {
 
-    private int soundId;
+    private final int soundId;
 
     public IOSSound(String filename) {
         PlatformService platformService = PlatformService.getInstance();
@@ -63,7 +63,7 @@ class IOSSound implements Sound {
 
 class IOSMusicPlayer implements MusicPlayer {
 
-    private AVAudioPlayer audioPlayer;
+    private final AVAudioPlayer audioPlayer;
 
     public IOSMusicPlayer(String filename) {
         PlatformService platformService = PlatformService.getInstance();
