@@ -8,11 +8,6 @@ import java.util.List;
 public class IOSPlatformProvider implements PlatformProvider {
 
     @Override
-    public Platform getPlatform() {
-        return Platform.IOS;
-    }
-
-    @Override
     public File getCacheDir() {
         List<String> paths = NSPathUtilities.getSearchPathForDirectoriesInDomains(NSSearchPathDirectory
                         .CachesDirectory,

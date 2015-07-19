@@ -7,6 +7,7 @@ package com.adsdk.sdk.nativeads;
 
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.ParseException;
+import com.gluonhq.charm.down.common.PlatformFactory;
 import org.gamefolk.roomfullofcats.*;
 import org.gamefolk.roomfullofcats.utils.UrlBuilder;
 
@@ -54,14 +55,19 @@ public class NativeAdRequest {
         // TODO: Send any device headers
 
         // Set Platform-specific request parameters
-        if (platformService.getPlatform() == PlatformProvider.Platform.ANDROID) {
-            urlBuilder = urlBuilder.addParameter("rt", REQUEST_TYPE_ANDROID)
-                    .addParameter("o_andadvid", advertisingService.getAdvertisingIdentifier())
-                    .addParameter("o_andadvdnt", Integer.toString(advertisingService.getDoNotTrack() ? 1 : 0));
-        } else if (platformService.getPlatform() == PlatformProvider.Platform.IOS) {
-            urlBuilder = urlBuilder.addParameter("rt", REQUEST_TYPE_IPHONE)
-                    .addParameter("o_iosadvid", advertisingService.getAdvertisingIdentifier())
-                    .addParameter("o_iosadlimit", Integer.toString(advertisingService.getDoNotTrack() ? 1 : 0));
+        switch (PlatformFactory.getPlatform().getName()) {
+            case PlatformFactory.ANDROID:
+                urlBuilder = urlBuilder.addParameter("rt", REQUEST_TYPE_ANDROID)
+                        .addParameter("o_andadvid", advertisingService.getAdvertisingIdentifier())
+                        .addParameter("o_andadvdnt", Integer.toString(advertisingService.getDoNotTrack() ? 1 : 0));
+                break;
+            case PlatformFactory.IOS:
+                urlBuilder = urlBuilder.addParameter("rt", REQUEST_TYPE_IPHONE)
+                        .addParameter("o_iosadvid", advertisingService.getAdvertisingIdentifier())
+                        .addParameter("o_iosadlimit", Integer.toString(advertisingService.getDoNotTrack() ? 1 : 0));
+                break;
+            default:
+                throw new RuntimeException("Invalid advertising platform: " + PlatformFactory.getPlatform().getName());
         }
 
         // Set optional headers

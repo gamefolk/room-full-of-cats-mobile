@@ -1,5 +1,7 @@
 package org.gamefolk.roomfullofcats;
 
+import com.gluonhq.charm.down.common.PlatformFactory;
+
 import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
@@ -56,15 +58,14 @@ public class AdvertisingService {
         if (Environment.getBooleanProperty("debug")) {
             return Environment.getProperty("mobfox.id.test");
         } else {
-            PlatformService platformService = PlatformService.getInstance();
-            switch (platformService.getPlatform()) {
-                case IOS:
+            switch (PlatformFactory.getPlatform().getName()) {
+                case PlatformFactory.IOS:
                     return Environment.getProperty("mobfox.id.ios");
-                case ANDROID:
+                case PlatformFactory.ANDROID:
                     return Environment.getProperty("mobfox.id.android");
                 default:
-                    throw new RuntimeException("No mobfox ID exists for this platform: " + platformService
-                            .getPlatform());
+                    throw new RuntimeException("No mobfox ID exists for this platform: " +
+                            PlatformFactory.getPlatform().getName());
             }
         }
     }

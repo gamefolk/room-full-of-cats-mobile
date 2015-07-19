@@ -1,5 +1,6 @@
 package org.gamefolk.roomfullofcats;
 
+import com.gluonhq.charm.down.common.PlatformFactory;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -23,8 +24,7 @@ public class RoomFullOfCatsApp extends Application {
 
 	@Override
     public void start(final Stage primaryStage) throws Exception {
-        PlatformService platformService = PlatformService.getInstance();
-        Log.info("Platform name: " + platformService.getPlatform());
+        Log.info("Platform name: " + PlatformFactory.getPlatform().getName());
 
         if (PlatformFeatures.ADS_SUPPORTED) {
             AdvertisingService advertisingService = AdvertisingService.getInstance();

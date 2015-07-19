@@ -109,10 +109,6 @@ public class PlatformService {
         }
     }
 
-    public PlatformProvider.Platform getPlatform() {
-        return provider.getPlatform();
-    }
-
     public File getCacheDir() {
         return provider.getCacheDir();
     }
