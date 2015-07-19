@@ -20,7 +20,7 @@
     </VBox>
   </center>
   <bottom>
-    <HBox fx:id="settings" styleClass="settings">
+    <HBox fx:id="settingsRegion" styleClass="settings">
       <CheckBox fx:id="playMusic" text="Music" onAction="#setPlayMusic" />
       <CheckBox fx:id="playSound" text="Sound" onAction="#setPlaySound" />
     </HBox>

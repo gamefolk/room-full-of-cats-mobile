@@ -11,15 +11,12 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
-import org.gamefolk.roomfullofcats.MusicPlayer;
-import org.gamefolk.roomfullofcats.RoomFullOfCatsApp;
-import org.gamefolk.roomfullofcats.Sound;
-import org.gamefolk.roomfullofcats.SoundService;
+import org.gamefolk.roomfullofcats.*;
 import org.gamefolk.roomfullofcats.utils.Interval;
 
 import java.io.*;
+import java.util.Set;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 
 public class Game {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
@@ -43,7 +40,7 @@ public class Game {
     private Sound blipClip;
     private Sound scoreClip;
 
-    private Preferences prefs = Preferences.userNodeForPackage(RoomFullOfCatsApp.class);
+    private Settings settings = Settings.INSTANCE;
 
     public Game(GraphicsContext gc) {
         this.gc = gc;
@@ -132,7 +129,7 @@ public class Game {
         Log.info("Cat size set to " + catSize);
         Log.info("Map origin set to " + mapOrigin);
 
-        if (prefs.getBoolean("playMusic", true)) {
+        if (settings.getBoolean("playMusic", true)) {
             songPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             songPlayer.play();
         }
@@ -177,7 +174,7 @@ public class Game {
 
                         if (current.things == currentLevel.catsLimit) {
                             score.set(score.get() + 1);
-                            if (prefs.getBoolean("playSound", true) && !scoreClip.isPlaying()) {
+                            if (settings.getBoolean("playSound", true) && !scoreClip.isPlaying()) {
                                  scoreClip.play();
                             }
                             buckets[x] = null;

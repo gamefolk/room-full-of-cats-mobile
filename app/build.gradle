@@ -13,6 +13,12 @@ apply plugin: 'org.javafxports.jfxmobile'
 
 mainClassName = 'org.gamefolk.roomfullofcats.RoomFullOfCatsApp'
 
+repositories {
+    maven {
+        url 'http://nexus.gluonhq.com/nexus/content/repositories/releases/'
+    }
+}
+
 jfxmobile {
     ios {
         forceLinkClasses = [
@@ -31,6 +37,12 @@ jfxmobile {
 
 dependencies {
     compile 'com.eclipsesource.minimal-json:minimal-json:0.9.1'
+
+    compile 'com.gluonhq:charm-down-common:0.0.2'
+    androidRuntime 'com.gluonhq:charm-down-android:0.0.2'
+    iosRuntime 'com.gluonhq:charm-down-ios:0.0.2'
+    desktopRuntime 'com.gluonhq:charm-down-desktop:0.0.2'
+
     androidCompile files('src/android/libs/google-play-services.jar')
-    runtime fileTree(include: ['*.jar'], dir: 'src/android/libs')
+    androidRuntime fileTree(include: ['*.jar'], dir: 'src/android/libs')
 }
