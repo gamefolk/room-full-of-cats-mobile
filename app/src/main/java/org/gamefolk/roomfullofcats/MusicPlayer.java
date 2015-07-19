@@ -5,8 +5,19 @@ package org.gamefolk.roomfullofcats;
  *
  * @see javafx.scene.media.MediaPlayer
  */
-public interface MusicPlayer {
-    void play();
-    void setCycleCount(int value);
-    void stop();
+public abstract class MusicPlayer {
+
+    private static final Settings settings = Settings.INSTANCE;
+
+    public final void play() {
+        if (settings.getBoolean("playMusic", true)) {
+            playMusic();
+        }
+    }
+
+    protected abstract void playMusic();
+
+    public abstract void setCycleCount(int value);
+
+    public abstract void stop();
 }

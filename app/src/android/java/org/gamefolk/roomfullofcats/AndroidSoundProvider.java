@@ -35,7 +35,7 @@ public class AndroidSoundProvider implements SoundProvider {
 
 }
 
-class AndroidMusicPlayer implements MusicPlayer {
+class AndroidMusicPlayer extends MusicPlayer {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
     private final android.media.MediaPlayer mediaPlayer;
@@ -49,7 +49,7 @@ class AndroidMusicPlayer implements MusicPlayer {
     }
 
     @Override
-    public void play() {
+    public void playMusic() {
         mediaPlayer.start();
     }
 
@@ -74,7 +74,7 @@ class AndroidMusicPlayer implements MusicPlayer {
     }
 }
 
-class AndroidSound implements Sound {
+class AndroidSound extends Sound {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
     private static final SoundPool soundPool;
@@ -128,7 +128,7 @@ class AndroidSound implements Sound {
     }
 
     @Override
-    public void play() {
+    public void playSound() {
         Log.info("Playing sound " + soundId + " with volume " + volume + " and cycle count " + cycleCount);
         soundPool.play(soundId, volume, volume, 1, cycleCount, 1);
     }

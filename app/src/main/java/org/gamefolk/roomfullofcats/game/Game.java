@@ -108,10 +108,8 @@ public class Game {
         Log.info("Cat size set to " + catSize);
         Log.info("Map origin set to " + mapOrigin);
 
-        if (settings.getBoolean("playMusic", true)) {
-            songPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            songPlayer.play();
-        }
+        songPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        songPlayer.play();
 
         gameTime = currentLevel.levelTime.toIntervalFrom(Instant.now());
         timer.set(formatTimer(gameTime.toDuration()));
@@ -140,7 +138,7 @@ public class Game {
 
                         if (current.things == currentLevel.catsLimit) {
                             score.set(score.get() + 1);
-                            if (settings.getBoolean("playSound", true) && !scoreClip.isPlaying()) {
+                            if (!scoreClip.isPlaying()) {
                                  scoreClip.play();
                             }
                             buckets[x] = null;

@@ -6,9 +6,19 @@ package org.gamefolk.roomfullofcats;
  *
  * @see javafx.scene.media.AudioClip
  */
-public interface Sound {
-    void play();
-    void stop();
-    void setCycleCount(int count);
-    boolean isPlaying();
+public abstract class Sound {
+
+    private static final Settings settings = Settings.INSTANCE;
+
+    public final void play() {
+        playSound();
+    }
+
+    protected abstract void playSound();
+
+    public abstract void stop();
+
+    public abstract void setCycleCount(int count);
+
+    public abstract boolean isPlaying();
 }

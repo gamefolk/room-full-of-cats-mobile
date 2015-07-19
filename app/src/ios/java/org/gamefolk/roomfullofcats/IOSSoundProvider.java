@@ -24,7 +24,7 @@ public class IOSSoundProvider implements SoundProvider {
     }
 }
 
-class IOSSound implements Sound {
+class IOSSound extends Sound {
 
     private final int soundId;
 
@@ -40,7 +40,7 @@ class IOSSound implements Sound {
     }
 
     @Override
-    public void play() {
+    public void playSound() {
         AudioServices.playSystemSound(soundId);
     }
 
@@ -61,7 +61,7 @@ class IOSSound implements Sound {
     }
 }
 
-class IOSMusicPlayer implements MusicPlayer {
+class IOSMusicPlayer extends MusicPlayer {
 
     private final AVAudioPlayer audioPlayer;
 
@@ -78,7 +78,7 @@ class IOSMusicPlayer implements MusicPlayer {
     }
 
     @Override
-    public void play() {
+    public void playMusic() {
         audioPlayer.play();
     }
 
