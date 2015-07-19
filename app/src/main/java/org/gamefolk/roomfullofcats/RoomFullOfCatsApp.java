@@ -31,11 +31,6 @@ public class RoomFullOfCatsApp extends Application {
             advertisingService.initializeAdService();
         }
 
-        if (PlatformFeatures.ADS_SUPPORTED) {
-            AdvertisingService advertisingService = AdvertisingService.getInstance();
-            advertisingService.initializeAdService();
-        }
-
         stage = primaryStage;
 
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/splash.fxml"));
