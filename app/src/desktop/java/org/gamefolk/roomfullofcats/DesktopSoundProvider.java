@@ -16,7 +16,7 @@ public class DesktopSoundProvider implements SoundProvider {
     }
 }
 
-class DesktopMusicPlayer implements MusicPlayer {
+class DesktopMusicPlayer extends MusicPlayer {
     private final MediaPlayer mediaPlayer;
 
     public DesktopMusicPlayer(String filename) {
@@ -25,7 +25,7 @@ class DesktopMusicPlayer implements MusicPlayer {
     }
 
     @Override
-    public void play() {
+    public void playMusic() {
         mediaPlayer.play();
     }
 
@@ -40,7 +40,7 @@ class DesktopMusicPlayer implements MusicPlayer {
     }
 }
 
-class DesktopSound implements Sound {
+class DesktopSound extends Sound {
     private final AudioClip clip;
 
     public DesktopSound(String filename) {
@@ -48,7 +48,7 @@ class DesktopSound implements Sound {
     }
 
     @Override
-    public void play() {
+    public void playSound() {
         clip.play();
     }
 
