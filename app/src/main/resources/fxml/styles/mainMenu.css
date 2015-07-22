@@ -1,7 +1,8 @@
 .root {
   -fx-background-image: url('/assets/img/menu.png');
-  -fx-background-position: center center;
-  -fx-background-repeat: stretch;
+  -fx-background-position: center;
+  -fx-background-repeat: space;
+  -fx-background-size: cover;
 }
 
 .settings {
