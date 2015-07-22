@@ -23,7 +23,8 @@ jfxmobile {
     ios {
         forceLinkClasses = [
                 'org.gamefolk.roomfullofcats.**.*',
-                'javax.xml.**.*']
+                'javax.xml.**.*',
+                'com.gluonhq.**.*']
         infoPList = file('src/ios/Info.plist')
     }
     android {
