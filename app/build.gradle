@@ -9,6 +9,7 @@ buildscript {
     }
 }
 
+apply plugin: 'application'
 apply plugin: 'org.javafxports.jfxmobile'
 
 mainClassName = 'org.gamefolk.roomfullofcats.RoomFullOfCatsApp'
@@ -16,6 +17,12 @@ mainClassName = 'org.gamefolk.roomfullofcats.RoomFullOfCatsApp'
 repositories {
     maven {
         url 'http://nexus.gluonhq.com/nexus/content/repositories/releases/'
+    }
+}
+
+run {
+    if (project.hasProperty('args')) {
+        args project.args.split('\\s+')
     }
 }
 
