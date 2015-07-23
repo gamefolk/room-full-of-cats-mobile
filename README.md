@@ -1,4 +1,4 @@
-# Room Full of Cats
+# Room Full of Cats [![Build Status](https://travis-ci.org/gamefolk/room-full-of-cats-mobile.svg?branch=master)](https://travis-ci.org/gamefolk/room-full-of-cats-mobile)
 
 *Room Full of Cats* is a native game for Android, iOS, and desktop devices.
 
