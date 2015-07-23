@@ -2,6 +2,7 @@ package org.gamefolk.roomfullofcats.game;
 
 import com.eclipsesource.json.JsonObject;
 import org.gamefolk.roomfullofcats.RoomFullOfCatsApp;
+import org.gamefolk.roomfullofcats.utils.JsonUtils;
 import org.joda.time.Duration;
 
 import java.io.*;
@@ -48,36 +49,23 @@ public class Level {
         this.title = title;
     }
 
-    public static Level loadLevel(String path) throws FileNotFoundException {
-        InputStream input = RoomFullOfCatsApp.class.getResourceAsStream(path);
-        if (input == null) {
-            throw new FileNotFoundException("Could not find level: " + path);
-        }
-
-        Writer writer = new StringWriter();
-        char[] buffer = new char[1024];
-        try (Reader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"))) {
-            int n;
-            while ((n = reader.read(buffer)) != -1) {
-                writer.write(buffer, 0, n);
-            }
+    public static Level loadLevel(String path, int number) throws FileNotFoundException {
+        JsonObject levelObject;
+        try {
+            levelObject = JsonUtils.readJsonResource(path);
         } catch (IOException e) {
-            Log.severe("error reading level json");
             throw new RuntimeException(e);
         }
-        Log.info("json: " + writer.toString());
-        JsonObject mainObject = JsonObject.readFrom(writer.toString());
-        Log.info("level: " + mainObject.get("levelTitle").asString());
+        Log.info("level: " + levelObject.get("levelTitle").asString());
 
-        String message = mainObject.get("levelDescription").asString();
-        String title = mainObject.get("levelTitle").asString();
+        String message = levelObject.get("levelDescription").asString();
+        String title = levelObject.get("levelTitle").asString();
 
-        Duration levelTime = Duration.standardSeconds(mainObject.get("timeLimit").asLong());
+        Duration levelTime = Duration.standardSeconds(levelObject.get("timeLimit").asLong());
 
-        // TODO: Handle more level numbers
-        return new Builder(1, message, title)
-                .mapWidth(mainObject.get("columns").asInt())
-                .mapHeight(mainObject.get("rows").asInt())
+        return new Builder(number, message, title)
+                .mapWidth(levelObject.get("columns").asInt())
+                .mapHeight(levelObject.get("rows").asInt())
                 .levelTime(levelTime)
                 .build();
     }

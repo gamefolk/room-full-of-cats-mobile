@@ -16,7 +16,6 @@ import org.joda.time.Interval;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
-import java.io.FileNotFoundException;
 import java.util.logging.Logger;
 
 public class Game {
@@ -81,12 +80,9 @@ public class Game {
         return new Rectangle2D(xCoordinate, yCoordinate, catSize.getWidth(), catSize.getHeight());
     }
 
-    public void setLevel(String path) {
-        try {
-            currentLevel = Level.loadLevel(path);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+    public void setLevel(Level level) {
+        currentLevel = level;
+
         map = new Cat[currentLevel.mapWidth][currentLevel.mapHeight];
         buckets = new Bucket[currentLevel.mapWidth];
 

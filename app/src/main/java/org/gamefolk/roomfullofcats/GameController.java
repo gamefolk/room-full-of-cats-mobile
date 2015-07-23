@@ -15,6 +15,7 @@ import javafx.util.Duration;
 import javafx.util.converter.NumberStringConverter;
 import org.gamefolk.roomfullofcats.game.CatType;
 import org.gamefolk.roomfullofcats.game.Game;
+import org.gamefolk.roomfullofcats.game.Level;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -34,11 +35,11 @@ public class GameController implements Initializable {
         return canvas.getGraphicsContext2D();
     }
 
-    public void startGame() {
+    public void startGame(Level level) {
         Log.info("Starting game.");
 
         game = new Game(getGraphicsContext2D());
-        game.setLevel("/assets/levels/level1.json");
+        game.setLevel(level);
 
         // Create the game loop
         final Duration oneFrameDuration = Duration.millis(1000 / 60);   // 60 FPS
