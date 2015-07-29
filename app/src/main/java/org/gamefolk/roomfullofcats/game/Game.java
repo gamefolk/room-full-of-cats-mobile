@@ -104,10 +104,15 @@ public class Game {
         Log.info("Cat size set to " + catSize);
         Log.info("Map origin set to " + mapOrigin);
 
+    }
+
+    public void playMusic() {
         songPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         songPlayer.play();
+    }
 
-        gameTime = currentLevel.levelTime.toIntervalFrom(Instant.now());
+    public void setTimer(Instant time) {
+        gameTime = currentLevel.levelTime.toIntervalFrom(time);
         timer.set(formatTimer(gameTime.toDuration()));
     }
 
