@@ -51,6 +51,12 @@ public class LevelSelectController implements Initializable {
 
     @FXML
     private void playLevel(MouseEvent event) {
+        Level selectedLevel = root.getSelectionModel().getSelectedItem();
+        if (selectedLevel == null) {
+            // We didn't select a level that's been loaded.
+            return;
+        }
+
         FXUtils.TransitionInfo<GameController> gameTransition =
                 FXUtils.transitionScene(event, "/fxml/game.fxml");
 
@@ -60,7 +66,6 @@ public class LevelSelectController implements Initializable {
 
         // Since Android likes to cut off long stack traces, if any Exceptions are thrown in the game we determine
         // their root cause and log it before propagating.
-        Level selectedLevel = root.getSelectionModel().getSelectedItem();
         try {
             gameTransition.getController().startGame(selectedLevel);
         } catch (Exception e) {
