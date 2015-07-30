@@ -5,40 +5,38 @@
 <?import javafx.scene.text.Text?>
 <?import org.gamefolk.roomfullofcats.Ad?>
 <?import java.net.URL?>
-<StackPane fx:id="root" styleClass="root"
+<BorderPane fx:id="root" styleClass="root"
            fx:controller="org.gamefolk.roomfullofcats.GameController"
            xmlns:fx="http://javafx.com/fxml">
-  <BorderPane fx:id="gameLayout" styleClass="gameLayout">
-    <top>
-      <BorderPane fx:id="scoreView" styleClass="scoreView" visible="false">
-        <left>
-          <Text fx:id="time" />
-        </left>
-        <right>
-          <Text fx:id="score" />
-        </right>
-      </BorderPane>
-    </top>
-    <center>
-      <StackPane>
-        <Pane fx:id="gameView">
-          <Canvas fx:id="canvas" onMouseClicked="#handleInput"/>
-        </Pane>
-        <BorderPane>
-          <center>
-            <VBox alignment="CENTER">
-              <Text fx:id="title" textAlignment="CENTER"/>
-              <Text fx:id="message" textAlignment="CENTER"/>
-            </VBox>
-          </center>
-       </BorderPane>
-      </StackPane>
-    </center>
-    <bottom>
-      <Ad />
-    </bottom>
-    <stylesheets>
-      <URL value="@styles/game.css" />
-    </stylesheets>
-  </BorderPane>
-</StackPane>
+  <top>
+    <BorderPane fx:id="scoreView" styleClass="scoreView" visible="false">
+      <left>
+        <Text fx:id="time" />
+      </left>
+      <right>
+        <Text fx:id="score" />
+      </right>
+    </BorderPane>
+  </top>
+  <center>
+    <StackPane onMouseClicked="#handleInput">
+      <Pane fx:id="gameView">
+        <Canvas fx:id="canvas"/>
+      </Pane>
+      <BorderPane>
+        <center>
+          <VBox alignment="CENTER">
+            <Text fx:id="title" textAlignment="CENTER"/>
+            <Text fx:id="message" textAlignment="CENTER"/>
+          </VBox>
+        </center>
+     </BorderPane>
+    </StackPane>
+  </center>
+  <bottom>
+    <Ad />
+  </bottom>
+  <stylesheets>
+    <URL value="@styles/game.css" />
+  </stylesheets>
+</BorderPane>

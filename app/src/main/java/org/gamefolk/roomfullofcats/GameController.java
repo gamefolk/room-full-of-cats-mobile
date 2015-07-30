@@ -8,9 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import javafx.util.converter.NumberStringConverter;
@@ -27,8 +25,7 @@ public class GameController implements Initializable {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
     private Game game;
 
-    @FXML private StackPane root;
-    @FXML private BorderPane gameLayout;
+    @FXML private Pane root;
     @FXML private Parent scoreView;
     @FXML private Pane gameView;
     @FXML private Canvas canvas;
