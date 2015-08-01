@@ -9,22 +9,25 @@ import java.io.*;
 import java.util.logging.Logger;
 
 /**
-* A class that represents in-game levels, as defined by several parameters
-* @param levelTitle                     The title for the individual level, for display on level select screens etc
-* @param levelDescription               The descriptive flavor text for the level that describes its goal or mechanics
-* @param levelType                      An array of strings that describes the core level mechanic(s).  Available choices are "time", "moves", and "glitch".  Can combine multiple mechanics, such as ["time","moves"]
-* @param rows                           The number of rows for the playfield
-* @param columns                        The number of colums for the playfield
-* @param timeLimit                      Time limit for the level in seconds
-* @param fallTime                       Starting speed at which the cats fall, in milliseconds
-* @param moveLimit                      The number of cats the player is allowed to remove before failing the level
-* @param requiredScore                  The minimum score the player is required to achieve in order to win the level
-* @param requiredMatch1                 The minimum number of full baskets of cat type 1 the player must achieve in order to win the level
-* @param requiredMatch2                 The minimum number of full baskets of cat type 2 the player must achieve in order to win the level
-* @param requiredMatch3                 The minimum number of full baskets of cat type 3 the player must achieve in order to win the level
-* @param requiredMatch4                 The minimum number of full baskets of cat type 4 the player must achieve in order to win the level
-* @param glitchTypeSpawn                Used only for levels of type "glitch", specifies which of the four types of glitch cat will spawn in the level
-*/
+ * A class that represents in-game levels, as defined by several parameters in a JSON object.
+ *
+ * levelTitle (required)        The title for the individual level for display on level select screens, etc.
+ * levelDescription (required)  The descriptive flavor text for the level that describes its goal or mechanics
+ * rows (required)              The number of rows for the playfield
+ * columns (required)           The number of colums for the playfield
+ * timeLimit (required)         Time limit for the level in seconds
+ * requiredScore (required)     The minimum score the player is required to achieve in order to win the level
+ * fallTime (optional)          Starting speed at which the cats fall, in milliseconds
+ * catsLimit (optional)         The target number of cats of the same type to collect
+ * moveLimit (optional)         The number of cats the player is allowed to remove before failing the level
+ * requiredMatch (optional)     An object mapping the number of cats of a given type that are required.
+ *      blue (optional)         The number of full baskets of blue cats the player must achieve to win the level
+ *      gray (optional)         The number of full baskets of gray cats the player must achieve to win the level
+ *      pink (optional)         The number of full baskets of pink cats the player must achieve to win the level
+ *      stripe (optional)       The number of full baskets of stripe cats the player must achieve to win the level
+ * glitchTypeSpawn (optional)   Used only for levels of type "glitch", specifies which of the four types of glitch cat
+ *                              will spawn in the level. Currently unimplemented.
+ */
 public class Level {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
 
