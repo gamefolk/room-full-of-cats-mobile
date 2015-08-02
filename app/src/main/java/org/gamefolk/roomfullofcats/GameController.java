@@ -10,6 +10,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.converter.NumberStringConverter;
 import org.gamefolk.roomfullofcats.game.CatType;
@@ -33,6 +34,7 @@ public class GameController implements Initializable {
     @FXML private Text message;
     @FXML private Text score;
     @FXML private Text time;
+    @FXML private Text goal;
 
     public GraphicsContext getGraphicsContext2D() {
         return canvas.getGraphicsContext2D();
@@ -41,12 +43,18 @@ public class GameController implements Initializable {
     public void startGame(Level level) {
         Log.info("Starting game.");
 
+        // Make sure the canvas is the correct width.
+        Stage stage = (Stage) root.getScene().getWindow();
+        canvas.widthProperty().set(stage.getWidth());
+        canvas.heightProperty().set(stage.getHeight() / 2);
+
         game = new Game(getGraphicsContext2D());
         game.setLevel(level);
         game.playMusic();
 
         Bindings.bindBidirectional(score.textProperty(), game.scoreProperty(), new NumberStringConverter());
         Bindings.bindBidirectional(time.textProperty(), game.timerProperty());
+        Bindings.bindBidirectional(goal.textProperty(), game.goalProperty());
 
         message.setWrappingWidth(root.getWidth() * 0.75);
 
@@ -115,9 +123,6 @@ public class GameController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadResources();
-
-        canvas.heightProperty().bind(gameView.heightProperty());
-        canvas.widthProperty().bind(gameView.widthProperty());
     }
 
     private void loadResources() {

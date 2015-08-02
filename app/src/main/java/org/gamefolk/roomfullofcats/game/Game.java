@@ -16,6 +16,7 @@ import org.joda.time.Interval;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class Game {
@@ -27,6 +28,7 @@ public class Game {
     private final Settings settings = Settings.INSTANCE;
     private IntegerProperty score = new SimpleIntegerProperty(0);
     private StringProperty timer = new SimpleStringProperty();
+    private StringProperty goal = new SimpleStringProperty();
     private Interval gameTime;
     private Level currentLevel;
     private Cat[][] map;
@@ -74,6 +76,10 @@ public class Game {
         return timer;
     }
 
+    public StringProperty goalProperty() {
+        return goal;
+    }
+
     private Rectangle2D getCatBounds(int x, int y) {
         double xCoordinate = mapOrigin.getX() + catSize.getWidth() * x;
         double yCoordinate = mapOrigin.getY() + catSize.getHeight() * y;
@@ -105,6 +111,52 @@ public class Game {
 
         Log.info("Cat size set to " + catSize);
         Log.info("Map origin set to " + mapOrigin);
+
+        goal.set(getGoal());
+    }
+
+    private String getGoal() {
+        PeriodFormatter levelTimeFormatter = new PeriodFormatterBuilder()
+                .appendMinutes()
+                .appendSuffix(" minute", " minutes")
+                .appendSeparator(" and ")
+                .appendSeconds()
+                .appendSuffix(" second", " seconds")
+                .toFormatter();
+
+        StringBuilder goal = new StringBuilder();
+        goal.append(String.format("You need to get %d points.\n", currentLevel.requiredScore));
+        goal.append(String.format("You have %s.\n", levelTimeFormatter.print(currentLevel.timeLimit.toPeriod())));
+        if (currentLevel.fallTime.getMillis() < Level.DEFAULT_FALL_TIME) {
+            goal.append("Cats will fall faster than normal.\n");
+        } else if (currentLevel.fallTime.getMillis() > Level.DEFAULT_FALL_TIME) {
+            goal.append("Cats will fall slower than normal.\n");
+        }
+
+        if (currentLevel.catsLimit != Level.DEFAULT_CATS_LIMIT) {
+            goal.append(String.format("%d cats fit in a basket.\n", currentLevel.catsLimit));
+        }
+
+        // Do we want to display remaining moves here?
+        if (currentLevel.moveLimit != Level.DEFAULT_MOVE_LIMIT) {
+            goal.append(String.format("You have only %d moves.\n", currentLevel.moveLimit));
+        }
+
+        // TODO: Make this print out nicer.
+        if (currentLevel.requiredMatches.size() > 0) {
+            goal.append("You need to get ");
+            for (Map.Entry<CatType, Integer> entry : currentLevel.requiredMatches.entrySet()) {
+                CatType type = entry.getKey();
+                int num = entry.getValue();
+
+                goal.append(String.format("%d %s match", num, type.toString()));
+                if (num > 1) {
+                    goal.append("es");
+                }
+            }
+        }
+
+        return goal.toString();
     }
 
     public void playMusic() {

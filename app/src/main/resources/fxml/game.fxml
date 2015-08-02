@@ -20,9 +20,13 @@
   </top>
   <center>
     <StackPane onMouseClicked="#handleInput">
-      <Pane fx:id="gameView">
-        <Canvas fx:id="canvas"/>
-      </Pane>
+      <VBox fx:id="gameView">
+        <Canvas fx:id="canvas" VBox.vgrow="ALWAYS" />
+        <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
+          <Text text="Goal:" />
+          <Text fx:id="goal" VBox.vgrow="ALWAYS" textAlignment="CENTER" />
+        </VBox>
+      </VBox>
       <BorderPane>
         <center>
           <VBox alignment="CENTER">
