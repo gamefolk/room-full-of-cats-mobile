@@ -50,7 +50,7 @@ public class GameController implements Initializable {
 
         message.setWrappingWidth(root.getWidth() * 0.75);
 
-        // Fade the level title and message in typewriter-style.
+        // Fade the level title and description in typewriter-style.
         final Animation typewriterAnimation = new Transition() {
             {
                 title.setVisible(true);
@@ -68,11 +68,11 @@ public class GameController implements Initializable {
             @Override
             protected void interpolate(double frac) {
                 title.setText(level.title.substring(0, calculateLength(level.title, frac)));
-                message.setText(level.message.substring(0, calculateLength(level.message, frac)));
+                message.setText(level.description.substring(0, calculateLength(level.description, frac)));
             }
         };
 
-        // Animation to display the level title and message, then a brief pause.
+        // Animation to display the level title and description, then a brief pause.
         SequentialTransition introAnimation = new SequentialTransition(
             typewriterAnimation,
             new PauseTransition(Duration.millis(2000))

@@ -83,18 +83,20 @@ public class Game {
     public void setLevel(Level level) {
         currentLevel = level;
 
-        map = new Cat[currentLevel.mapWidth][currentLevel.mapHeight];
-        buckets = new Bucket[currentLevel.mapWidth];
+        int columns = (int) currentLevel.dimensions.width;
+        int rows = (int) currentLevel.dimensions.height;
+        map = new Cat[columns][rows];
+        buckets = new Bucket[columns];
 
         // Calculate the width of cats, leaving a cat length on either side for margin.
         int catWidth, catHeight;
-        if (currentLevel.mapWidth % 2 == 0) {
-            catWidth = canvasWidth / (currentLevel.mapWidth + 2);
+        if (columns % 2 == 0) {
+            catWidth = canvasWidth / (columns + 2);
             catHeight = catWidth;
             mapOrigin = new Point2D(catWidth, catHeight);
         } else {
             // If there are an odd number of cats, then the middle row of cats, then we do the calculation as if there is one more cat, leaving some extra space on both sides.
-            catWidth = canvasWidth / ((currentLevel.mapWidth + 1) + 2);
+            catWidth = canvasWidth / ((columns + 1) + 2);
             catHeight = catWidth;
             mapOrigin = new Point2D(catWidth + catWidth / 2, catHeight);
         }
@@ -103,7 +105,6 @@ public class Game {
 
         Log.info("Cat size set to " + catSize);
         Log.info("Map origin set to " + mapOrigin);
-
     }
 
     public void playMusic() {
@@ -112,7 +113,7 @@ public class Game {
     }
 
     public void setTimer(Instant time) {
-        gameTime = currentLevel.levelTime.toIntervalFrom(time);
+        gameTime = currentLevel.timeLimit.toIntervalFrom(time);
         timer.set(formatTimer(gameTime.toDuration()));
     }
 
