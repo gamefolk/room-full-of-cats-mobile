@@ -243,6 +243,24 @@ public class Game {
                         bounds.getHeight());
             }
         }
+
+        for(int i = 0; i < buckets.length; i++) {
+
+            Bucket bucket = buckets[i];
+
+            if (bucket == null) {
+                continue;
+            }
+
+            FrameAnimation sprite = bucket.sprite;
+            Rectangle2D bounds = getCatBounds(i, (int) currentLevel.dimensions.height);
+            gc.drawImage(
+                    sprite.getCurrentFrame(),
+                    bounds.getMinX(),
+                    bounds.getMinY(),
+                    bounds.getWidth()  + (bucket.things * 2),
+                    bounds.getHeight() + (bucket.things * 2));
+        }
     }
 
     public void removeCat(double x, double y) {

@@ -46,7 +46,7 @@ public class GameController implements Initializable {
         // Make sure the canvas is the correct width.
         Stage stage = (Stage) root.getScene().getWindow();
         canvas.widthProperty().set(stage.getWidth());
-        canvas.heightProperty().set(stage.getHeight() / 2);
+        canvas.heightProperty().set((stage.getHeight() / 2) * 1.75);
 
         game = new Game(getGraphicsContext2D());
         game.setLevel(level);
