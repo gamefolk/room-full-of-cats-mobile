@@ -6,3 +6,13 @@
 /build
 /local.properties
 app/src/main/resources/assets
+
+# Eclipse
+
+.project
+.settings
+app/.classpath
+app/.project
+app/.settings/
+app/bin/
+
