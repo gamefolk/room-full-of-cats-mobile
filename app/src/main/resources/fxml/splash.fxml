@@ -3,7 +3,7 @@
 <?import java.net.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane fx:controller="org.gamefolk.roomfullofcats.SplashController"
+<Pane fx:id="splashPane" fx:controller="org.gamefolk.roomfullofcats.SplashController"
     xmlns:fx="http://javafx.com/fxml" onMouseClicked="#transitionToMainMenu" styleClass="root">
   <stylesheets>
     <URL value="@styles/splash.css" />

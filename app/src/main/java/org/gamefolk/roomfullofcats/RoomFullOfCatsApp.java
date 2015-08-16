@@ -74,9 +74,12 @@ public class RoomFullOfCatsApp extends Application {
             advertisingService.initializeAdService();
         }
 
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/splash.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/splash.fxml"));
+        Parent root = loader.load();
+        
         Dimension2D screenSize = getRequestedScreenSize();
         Log.info("Setting screen size to " + screenSize);
+        
         primaryStage.setScene(new Scene(root, screenSize.getWidth(), screenSize.getHeight(), Color.BLACK));
 
         // Start full screen
@@ -90,7 +93,8 @@ public class RoomFullOfCatsApp extends Application {
         }
 
         primaryStage.setResizable(false);
-
         primaryStage.show();
+        
+        ((SplashController)loader.getController()).startSplash();
     }
 }
