@@ -49,4 +49,26 @@ public class FXUtils {
 
         return new TransitionInfo<>(newParent, fxmlLoader.getController());
     }
+    
+    /**
+     * Transition between JavaFX scenes.
+     * @param stage The stage that contains both scenes.
+     * @param sceneFxml The FXML to load for the next scene.
+     * @param <T> The type of the controller for the next scene.
+     * @return A {@link org.gamefolk.roomfullofcats.utils.FXUtils.TransitionInfo} object containing the {@link
+     * Parent} of the next scene and the controller of the next scene.
+     */
+    public static <T> TransitionInfo<T> transitionScene(Stage stage, String sceneFxml) {
+        FXMLLoader fxmlLoader = new FXMLLoader(FXUtils.class.getResource(sceneFxml));
+
+        Parent newParent;
+        try {
+            newParent = fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        stage.getScene().setRoot(newParent);
+
+        return new TransitionInfo<>(newParent, fxmlLoader.getController());
+    }
 }
