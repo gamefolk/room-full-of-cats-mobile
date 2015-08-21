@@ -1,45 +1,41 @@
 package org.gamefolk.roomfullofcats;
 
-import org.gamefolk.roomfullofcats.utils.FXUtils;
-
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
+import javafx.animation.Transition;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.gamefolk.roomfullofcats.utils.FXUtils;
 
-public class SplashController {
-	
-	@FXML private Pane splashPane;
-	
-    public void startSplash() {
-    	
-    	Stage stage = (Stage) splashPane.getScene().getWindow();
-    	Rectangle rect = new Rectangle(stage.getWidth(), stage.getHeight(),
-    			Color.BLACK);
-    	splashPane.getChildren().add(rect);
-    	
-    	FadeTransition ft = new FadeTransition(Duration.millis(2000), rect);
-    	ft.setFromValue(1.0);
-    	ft.setToValue(0.0);
-    	
-    	SequentialTransition st = new SequentialTransition(
-    			ft, new PauseTransition(Duration.millis(2000)));
-    	
-    	st.setOnFinished((event) -> {
-    		FXUtils.transitionScene(stage, "/fxml/mainMenu.fxml");
-    	});
-    	
-    	st.play();
-    }
-	
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class SplashController implements Initializable {
+
+    @FXML private Pane splashPane;
+
+    private Transition mainMenuTransition;
+
     @FXML
     private void transitionToMainMenu(MouseEvent event) throws Exception {
+        mainMenuTransition.stop();
         FXUtils.transitionScene(event, "/fxml/mainMenu.fxml");
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        FadeTransition ft = new FadeTransition(Duration.millis(2000), splashPane);
+        ft.setFromValue(0.0);
+        ft.setToValue(1.0);
+
+        mainMenuTransition = new SequentialTransition(ft, new PauseTransition(Duration.millis(2000)));
+        mainMenuTransition.setOnFinished(
+            (event) -> FXUtils.transitionScene((Stage) splashPane.getScene().getWindow(), "/fxml/mainMenu.fxml"));
+        mainMenuTransition.play();
     }
 }

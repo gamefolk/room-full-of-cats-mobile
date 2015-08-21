@@ -94,7 +94,5 @@ public class RoomFullOfCatsApp extends Application {
 
         primaryStage.setResizable(false);
         primaryStage.show();
-        
-        ((SplashController)loader.getController()).startSplash();
     }
 }
