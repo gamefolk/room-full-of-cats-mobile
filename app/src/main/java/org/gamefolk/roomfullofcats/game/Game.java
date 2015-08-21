@@ -176,7 +176,7 @@ public class Game {
         throw new UnsupportedOperationException("unimplemented");
     }
 
-    public Map<CatType, Integer> getNumMatches() {
+    public Map<Cat.Type, Integer> getNumMatches() {
         throw new UnsupportedOperationException("unimplemented");
     }
 
@@ -232,7 +232,7 @@ public class Game {
         }
         // fill the top row with new cats
         for (int x = 0; x < map.length; x++) {
-            map[x][0] = new Cat(CatType.getRandomCat());
+            map[x][0] = new Cat(Cat.Type.getRandomCat());
         }
 
         lastCatFall = currentTime;

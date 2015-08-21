@@ -102,25 +102,25 @@ public class Level {
 
         JsonValue requiredMatch = levelObject.get("requiredMatch");
         if (requiredMatch != null) {
-            Map<CatType, Integer> matches = new HashMap<>();
+            Map<Cat.Type, Integer> matches = new HashMap<>();
             JsonValue blueMatches = requiredMatch.asObject().get("blue");
             if (blueMatches != null) {
-                matches.put(CatType.BLUE_CAT, blueMatches.asInt());
+                matches.put(Cat.Type.BLUE_CAT, blueMatches.asInt());
             }
 
             JsonValue grayMatches = requiredMatch.asObject().get("gray");
             if (grayMatches != null) {
-                matches.put(CatType.GRAY_CAT, grayMatches.asInt());
+                matches.put(Cat.Type.GRAY_CAT, grayMatches.asInt());
             }
 
             JsonValue pinkMatches = requiredMatch.asObject().get("pink");
             if (pinkMatches != null) {
-                matches.put(CatType.PINK_CAT, pinkMatches.asInt());
+                matches.put(Cat.Type.PINK_CAT, pinkMatches.asInt());
             }
 
             JsonValue stripeMatches = requiredMatch.asObject().get("stripe");
             if (stripeMatches != null) {
-                matches.put(CatType.STRIPE_CAT, grayMatches.asInt());
+                matches.put(Cat.Type.STRIPE_CAT, grayMatches.asInt());
             }
 
             levelBuilder = levelBuilder.addGoal(new MatchGoal(matches));

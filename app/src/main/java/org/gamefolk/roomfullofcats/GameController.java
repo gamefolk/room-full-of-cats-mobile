@@ -15,7 +15,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.converter.NumberStringConverter;
-import org.gamefolk.roomfullofcats.game.CatType;
+import org.gamefolk.roomfullofcats.game.Cat;
 import org.gamefolk.roomfullofcats.game.Game;
 import org.gamefolk.roomfullofcats.game.Level;
 import org.gamefolk.roomfullofcats.utils.FXUtils;
@@ -167,25 +167,25 @@ public class GameController implements Initializable {
     }
 
     private void loadResources() {
-        CatType.BLUE_CAT.loadFrames(
+        Cat.Type.BLUE_CAT.loadFrames(
                 "/assets/img/bluecat1.png",
                 "/assets/img/bluecat2.png",
                 "/assets/img/bluecat3.png"
         );
 
-        CatType.GRAY_CAT.loadFrames(
+        Cat.Type.GRAY_CAT.loadFrames(
                 "/assets/img/graycat1.png",
                 "/assets/img/graycat2.png",
                 "/assets/img/graycat3.png"
         );
 
-        CatType.PINK_CAT.loadFrames(
+        Cat.Type.PINK_CAT.loadFrames(
                 "/assets/img/pinkcat1.png",
                 "/assets/img/pinkcat2.png",
                 "/assets/img/pinkcat3.png"
         );
 
-        CatType.STRIPE_CAT.loadFrames(
+        Cat.Type.STRIPE_CAT.loadFrames(
                 "/assets/img/stripecat1.png",
                 "/assets/img/stripecat2.png",
                 "/assets/img/stripecat3.png"
