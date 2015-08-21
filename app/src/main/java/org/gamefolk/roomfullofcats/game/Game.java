@@ -1,15 +1,13 @@
 package org.gamefolk.roomfullofcats.game;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.media.MediaPlayer;
 import org.gamefolk.roomfullofcats.*;
+import org.gamefolk.roomfullofcats.game.goals.Goal;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
@@ -25,7 +23,6 @@ public class Game {
     private final MusicPlayer songPlayer;
     private final Sound blipClip;
     private final Sound scoreClip;
-    private final Settings settings = Settings.INSTANCE;
     private IntegerProperty score = new SimpleIntegerProperty(0);
     private StringProperty timer = new SimpleStringProperty();
     private StringProperty goal = new SimpleStringProperty();
@@ -39,6 +36,7 @@ public class Game {
     private int canvasWidth;
     private int canvasHeight;
     private PeriodFormatter timerFormat;
+    private boolean gameOver;
 
     public Game(GraphicsContext gc) {
         this.gc = gc;
@@ -62,10 +60,25 @@ public class Game {
                 .appendSeconds()
                 .toFormatter();
 
+        gameOver = false;
     }
 
     private String formatTimer(Duration duration) {
         return timerFormat.print(duration.toPeriod());
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public boolean isGoalsSatisfied() {
+        for (Goal goal : currentLevel.goals) {
+            if (!goal.isSatisfied(this)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public IntegerProperty scoreProperty() {
@@ -112,10 +125,10 @@ public class Game {
         Log.info("Cat size set to " + catSize);
         Log.info("Map origin set to " + mapOrigin);
 
-        goal.set(getGoal());
+        goal.set(getGoalDescription());
     }
 
-    private String getGoal() {
+    private String getGoalDescription() {
         PeriodFormatter levelTimeFormatter = new PeriodFormatterBuilder()
                 .appendMinutes()
                 .appendSuffix(" minute", " minutes")
@@ -124,39 +137,29 @@ public class Game {
                 .appendSuffix(" second", " seconds")
                 .toFormatter();
 
-        StringBuilder goal = new StringBuilder();
-        goal.append(String.format("You need to get %d points.\n", currentLevel.requiredScore));
-        goal.append(String.format("You have %s.\n", levelTimeFormatter.print(currentLevel.timeLimit.toPeriod())));
+        StringBuilder goalDescription = new StringBuilder();
+
+        // Required score will always be the first goal.
+        goalDescription.append(currentLevel.goals.get(0).getDescription());
+        goalDescription.append('\n');
+
+        goalDescription.append(String.format("You have %s.\n", levelTimeFormatter.print(currentLevel.timeLimit.toPeriod())));
         if (currentLevel.fallTime.getMillis() < Level.DEFAULT_FALL_TIME) {
-            goal.append("Cats will fall faster than normal.\n");
+            goalDescription.append("Cats will fall faster than normal.\n");
         } else if (currentLevel.fallTime.getMillis() > Level.DEFAULT_FALL_TIME) {
-            goal.append("Cats will fall slower than normal.\n");
+            goalDescription.append("Cats will fall slower than normal.\n");
         }
 
         if (currentLevel.catsLimit != Level.DEFAULT_CATS_LIMIT) {
-            goal.append(String.format("%d cats fit in a basket.\n", currentLevel.catsLimit));
+            goalDescription.append(String.format("%d cats fit in a basket.\n", currentLevel.catsLimit));
         }
 
-        // Do we want to display remaining moves here?
-        if (currentLevel.moveLimit != Level.DEFAULT_MOVE_LIMIT) {
-            goal.append(String.format("You have only %d moves.\n", currentLevel.moveLimit));
+        for (Goal goal : currentLevel.goals.subList(1, currentLevel.goals.size())) {
+            goalDescription.append(goal.getDescription());
+            goalDescription.append('\n');
         }
 
-        // TODO: Make this print out nicer.
-        if (currentLevel.requiredMatches.size() > 0) {
-            goal.append("You need to get ");
-            for (Map.Entry<CatType, Integer> entry : currentLevel.requiredMatches.entrySet()) {
-                CatType type = entry.getKey();
-                int num = entry.getValue();
-
-                goal.append(String.format("%d %s match", num, type.toString()));
-                if (num > 1) {
-                    goal.append("es");
-                }
-            }
-        }
-
-        return goal.toString();
+        return goalDescription.toString();
     }
 
     public void playMusic() {
@@ -169,9 +172,22 @@ public class Game {
         timer.set(formatTimer(gameTime.toDuration()));
     }
 
+    public int getNumMoves() {
+        throw new UnsupportedOperationException("unimplemented");
+    }
+
+    public Map<CatType, Integer> getNumMatches() {
+        throw new UnsupportedOperationException("unimplemented");
+    }
+
     public void updateSprites() {
         long currentTime = System.currentTimeMillis();
         Duration timeLeft = new Duration(currentTime, gameTime.getEndMillis());
+        if (currentTime > gameTime.getEndMillis()) {
+            gameOver = true;
+            return;
+        }
+
         timer.set(formatTimer(timeLeft));
 
         // Only make the cats fall when we need to.
@@ -193,7 +209,7 @@ public class Game {
                         if (current.things == currentLevel.catsLimit) {
                             score.set(score.get() + 1);
                             if (!scoreClip.isPlaying()) {
-                                 scoreClip.play();
+                                scoreClip.play();
                             }
                             buckets[x] = null;
                         }
@@ -244,8 +260,7 @@ public class Game {
             }
         }
 
-        for(int i = 0; i < buckets.length; i++) {
-
+        for (int i = 0; i < buckets.length; i++) {
             Bucket bucket = buckets[i];
 
             if (bucket == null) {
@@ -258,9 +273,17 @@ public class Game {
                     sprite.getCurrentFrame(),
                     bounds.getMinX(),
                     bounds.getMinY(),
-                    bounds.getWidth()  + (bucket.things * 2),
+                    bounds.getWidth() + (bucket.things * 2),
                     bounds.getHeight() + (bucket.things * 2));
         }
+    }
+
+    public Level getCurrentLevel() {
+        return currentLevel;
+    }
+
+    public void stopMusic() {
+        songPlayer.stop();
     }
 
     public void removeCat(double x, double y) {

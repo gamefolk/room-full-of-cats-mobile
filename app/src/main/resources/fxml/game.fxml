@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.*?>
 <?import org.gamefolk.roomfullofcats.Ad?>
 <?import java.net.URL?>
 <BorderPane fx:id="root" styleClass="root"
@@ -35,6 +36,13 @@
           </VBox>
         </center>
      </BorderPane>
+     <VBox fx:id="gameOverView" alignment="CENTER" visible="false">
+       <Text text="GAME OVER"/>
+       <HBox alignment="CENTER">
+         <Button onAction="#transitionToMainMenu" text="Main Menu"/>
+         <Button onAction="#restart" text="Try Again"/>
+       </HBox>
+     </VBox>
     </StackPane>
   </center>
   <bottom>

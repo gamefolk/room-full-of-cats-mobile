@@ -4,12 +4,18 @@ import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 import com.sun.javafx.geom.Dimension2D;
 import org.gamefolk.roomfullofcats.RoomFullOfCatsApp;
+import org.gamefolk.roomfullofcats.game.goals.Goal;
+import org.gamefolk.roomfullofcats.game.goals.MatchGoal;
+import org.gamefolk.roomfullofcats.game.goals.MoveGoal;
+import org.gamefolk.roomfullofcats.game.goals.ScoreGoal;
 import org.gamefolk.roomfullofcats.utils.JsonUtils;
 import org.joda.time.Duration;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -38,7 +44,6 @@ public class Level {
 
     public static final int DEFAULT_FALL_TIME = 1000;
     public static final int DEFAULT_CATS_LIMIT = 4;
-    public static final int DEFAULT_MOVE_LIMIT = 0;
 
     public final int number;
 
@@ -46,25 +51,20 @@ public class Level {
     public final String description;
     public Dimension2D dimensions;
     public final Duration timeLimit;
-    public final int requiredScore;
     public final Duration fallTime;
     public final int catsLimit;
-    public final int moveLimit;
-    public final Map<CatType, Integer> requiredMatches;
+    public final List<Goal> goals;
 
     private Level(int number, String title, String description, Dimension2D dimensions, Duration timeLimit,
-                  int requiredScore, Duration fallTime, int catsLimit, int moveLimit,
-                  Map<CatType, Integer> requiredMatches) {
+                  Duration fallTime, int catsLimit, List<Goal> goals) {
         this.number = number;
         this.title = title;
         this.description = description;
         this.timeLimit = timeLimit;
         this.fallTime = fallTime;
         this.catsLimit = catsLimit;
-        this.moveLimit = moveLimit;
         this.dimensions = dimensions;
-        this.requiredScore = requiredScore;
-        this.requiredMatches = requiredMatches;
+        this.goals = goals;
     }
 
     public static Level loadLevel(String path, int number) throws FileNotFoundException {
@@ -86,28 +86,45 @@ public class Level {
         Duration levelTime = Duration.standardSeconds(levelObject.get("timeLimit").asLong());
         levelBuilder = levelBuilder.levelTime(levelTime);
 
-        int score = levelObject.get("requiredScore").asInt();
-        levelBuilder = levelBuilder.requiredScore(score);
-
         Duration fallTime = Duration.millis(levelObject.getLong("fallTime", DEFAULT_FALL_TIME));
         levelBuilder = levelBuilder.fallTime(fallTime);
 
         int catsLimit = levelObject.getInt("catsLimit", DEFAULT_CATS_LIMIT);
         levelBuilder = levelBuilder.catsLimit(catsLimit);
 
-        int moveLimit = levelObject.getInt("moveLimit", DEFAULT_MOVE_LIMIT);
-        levelBuilder = levelBuilder.moveLimit(moveLimit);
+        int requiredScore = levelObject.get("requiredScore").asInt();
+        levelBuilder = levelBuilder.addGoal(new ScoreGoal(requiredScore));
 
-        JsonValue matchObject = levelObject.get("requiredMatch");
-        Map<CatType, Integer> matches = new HashMap<>();
-        if (matchObject != null) {
-            JsonObject requiredMatches = matchObject.asObject();
-            matches.put(CatType.BLUE_CAT, requiredMatches.getInt("blue", 0));
-            matches.put(CatType.GRAY_CAT, requiredMatches.getInt("gray", 0));
-            matches.put(CatType.PINK_CAT, requiredMatches.getInt("pink", 0));
-            matches.put(CatType.STRIPE_CAT, requiredMatches.getInt("stripe", 0));
+        JsonValue moveLimit = levelObject.get("moveLimit");
+        if (moveLimit != null) {
+            levelBuilder = levelBuilder.addGoal(new MoveGoal(moveLimit.asInt()));
         }
-        levelBuilder = levelBuilder.requiredMatches(matches);
+
+        JsonValue requiredMatch = levelObject.get("requiredMatch");
+        if (requiredMatch != null) {
+            Map<CatType, Integer> matches = new HashMap<>();
+            JsonValue blueMatches = requiredMatch.asObject().get("blue");
+            if (blueMatches != null) {
+                matches.put(CatType.BLUE_CAT, blueMatches.asInt());
+            }
+
+            JsonValue grayMatches = requiredMatch.asObject().get("gray");
+            if (grayMatches != null) {
+                matches.put(CatType.GRAY_CAT, grayMatches.asInt());
+            }
+
+            JsonValue pinkMatches = requiredMatch.asObject().get("pink");
+            if (pinkMatches != null) {
+                matches.put(CatType.PINK_CAT, pinkMatches.asInt());
+            }
+
+            JsonValue stripeMatches = requiredMatch.asObject().get("stripe");
+            if (stripeMatches != null) {
+                matches.put(CatType.STRIPE_CAT, grayMatches.asInt());
+            }
+
+            levelBuilder = levelBuilder.addGoal(new MatchGoal(matches));
+        }
 
         Log.info("level: " + title);
 
@@ -120,17 +137,15 @@ public class Level {
         private final String description;
         private Dimension2D mapDimensions;
         private Duration levelTime;
-        private int requiredScore;
         private Duration fallTime;
         private int catsLimit;
-        private int moveLimit;
-        private Map<CatType, Integer> requiredMatches;
+        private List<Goal> goals;
 
         public Builder(int number, String title, String description) {
             this.number = number;
             this.description = description;
             this.title = title;
-            this.requiredMatches = new HashMap<>();
+            this.goals = new ArrayList<>();
         }
 
         public Builder mapDimensions(int width, int height) {
@@ -143,8 +158,8 @@ public class Level {
             return this;
         }
 
-        public Builder requiredScore(int score) {
-            this.requiredScore = score;
+        public Builder addGoal(Goal goal) {
+            this.goals.add(goal);
             return this;
         }
 
@@ -158,19 +173,8 @@ public class Level {
             return this;
         }
 
-        public Builder requiredMatches(Map<CatType, Integer> matches) {
-            this.requiredMatches = matches;
-            return this;
-        }
-
-        public Builder moveLimit(int moveLimit) {
-            this.moveLimit = moveLimit;
-            return this;
-        }
-
         public Level build() {
-            return new Level(number, title, description, mapDimensions, levelTime, requiredScore, fallTime, catsLimit,
-                             moveLimit, requiredMatches);
+            return new Level(number, title, description, mapDimensions, levelTime, fallTime, catsLimit, goals);
         }
     }
 }

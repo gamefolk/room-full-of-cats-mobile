@@ -2,6 +2,7 @@ package org.gamefolk.roomfullofcats;
 
 import javafx.animation.*;
 import javafx.beans.binding.Bindings;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -9,6 +10,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -16,6 +18,7 @@ import javafx.util.converter.NumberStringConverter;
 import org.gamefolk.roomfullofcats.game.CatType;
 import org.gamefolk.roomfullofcats.game.Game;
 import org.gamefolk.roomfullofcats.game.Level;
+import org.gamefolk.roomfullofcats.utils.FXUtils;
 import org.joda.time.Instant;
 
 import java.net.URL;
@@ -35,6 +38,8 @@ public class GameController implements Initializable {
     @FXML private Text score;
     @FXML private Text time;
     @FXML private Text goal;
+    @FXML private Parent gameOverView;
+    private Timeline gameLoop;
 
     public GraphicsContext getGraphicsContext2D() {
         return canvas.getGraphicsContext2D();
@@ -42,6 +47,8 @@ public class GameController implements Initializable {
 
     public void startGame(Level level) {
         Log.info("Starting game.");
+
+        gameView.setFocusTraversable(true);
 
         // Make sure the canvas is the correct width.
         Stage stage = (Stage) root.getScene().getWindow();
@@ -51,6 +58,21 @@ public class GameController implements Initializable {
         game = new Game(getGraphicsContext2D());
         game.setLevel(level);
         game.playMusic();
+
+        // Create the game loop
+        final Duration oneFrameDuration = Duration.millis(1000 / 60);   // 60 FPS
+        final KeyFrame oneLoop = new KeyFrame(oneFrameDuration, actionEvent -> {
+            game.updateSprites();
+
+            if (game.isGameOver()) {
+                gameOver();
+            }
+
+            game.drawSprites();
+        });
+
+        gameLoop = new Timeline(oneLoop);
+        gameLoop.setCycleCount(Timeline.INDEFINITE);
 
         Bindings.bindBidirectional(score.textProperty(), game.scoreProperty(), new NumberStringConverter());
         Bindings.bindBidirectional(time.textProperty(), game.timerProperty());
@@ -90,25 +112,11 @@ public class GameController implements Initializable {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(1000), title.getParent());
         fadeTransition.setFromValue(1.0);
         fadeTransition.setToValue(0);
-        fadeTransition.setOnFinished((event) -> {
-            title.setVisible(false);
-            message.setVisible(false);
-        });
 
         introAnimation.setOnFinished((event) -> {
             fadeTransition.play();
 
-            // Create the game loop
-            final Duration oneFrameDuration = Duration.millis(1000 / 60);   // 60 FPS
-            final KeyFrame oneLoop = new KeyFrame(oneFrameDuration, actionEvent -> {
-                game.updateSprites();
-
-                game.drawSprites();
-            });
-
             // Play the game!
-            Timeline gameLoop = new Timeline(oneLoop);
-            gameLoop.setCycleCount(Timeline.INDEFINITE);
             game.setTimer(Instant.now());
             scoreView.setVisible(true);
             gameLoop.play();
@@ -117,12 +125,45 @@ public class GameController implements Initializable {
     }
 
     @FXML void handleInput(MouseEvent event) {
+        if (game.isGameOver()) {
+            return;
+        }
+
         game.removeCat(event.getX(), event.getY());
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadResources();
+    }
+
+    private void gameOver() {
+        gameOverView.setVisible(true);
+        if (game.isGoalsSatisfied()) {
+            goal.setFill(Color.GREEN);
+        } else {
+            goal.setFill(Color.RED);
+        }
+    }
+
+    @FXML
+    private void transitionToMainMenu(ActionEvent event) {
+        game.stopMusic();
+        gameLoop.stop();
+        FXUtils.transitionScene(event, "/fxml/mainMenu.fxml");
+    }
+
+    @FXML
+    private void restart() {
+        root.applyCss();
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        title.getParent().setOpacity(1.0);
+        gameOverView.setVisible(false);
+        game.setTimer(Instant.now());
+        game.stopMusic();
+        gameLoop.stop();
+        startGame(game.getCurrentLevel());
     }
 
     private void loadResources() {
