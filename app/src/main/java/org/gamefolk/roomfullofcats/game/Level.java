@@ -4,6 +4,7 @@ import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 import com.sun.javafx.geom.Dimension2D;
 import org.gamefolk.roomfullofcats.RoomFullOfCatsApp;
+import org.gamefolk.roomfullofcats.Settings;
 import org.gamefolk.roomfullofcats.game.goals.Goal;
 import org.gamefolk.roomfullofcats.game.goals.MatchGoal;
 import org.gamefolk.roomfullofcats.game.goals.MoveGoal;
@@ -13,10 +14,7 @@ import org.joda.time.Duration;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -40,28 +38,22 @@ import java.util.logging.Logger;
  *                              will spawn in the level. Currently unimplemented.
  */
 public class Level {
-    private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
-
     public static final int DEFAULT_FALL_TIME = 1000;
     public static final int DEFAULT_CATS_LIMIT = 4;
-
+    private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
     public final int number;
 
     public final String title;
     public final String description;
-    public Dimension2D dimensions;
     public final Duration timeLimit;
     public final Duration fallTime;
     public final int catsLimit;
     public final List<Goal> goals;
-    public Status status;
-
-    public enum Status {
-        WON, UNPLAYED, LOST
-    }
+    public Dimension2D dimensions;
+    private Status status;
 
     private Level(int number, String title, String description, Dimension2D dimensions, Duration timeLimit,
-                  Duration fallTime, int catsLimit, List<Goal> goals) {
+                  Duration fallTime, int catsLimit, List<Goal> goals, Status status) {
         this.number = number;
         this.title = title;
         this.description = description;
@@ -71,7 +63,18 @@ public class Level {
         this.dimensions = dimensions;
         this.goals = goals;
 
-        this.status = Status.UNPLAYED;
+        this.status = status;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+        JsonObject progress = Settings.INSTANCE.getJson("progress", new JsonObject()).asObject();
+        progress.add(title, status.name());
+        Settings.INSTANCE.putJson("progress", progress);
     }
 
     public static Level loadLevel(String path, int number) throws FileNotFoundException {
@@ -85,6 +88,10 @@ public class Level {
         String title = levelObject.get("levelTitle").asString();
         String description = levelObject.get("levelDescription").asString();
         Builder levelBuilder = new Builder(number, title, description);
+
+        JsonObject progress = Settings.INSTANCE.getJson("progress", new JsonObject()).asObject();
+        Status status = Status.valueOf(progress.getString(title, Status.UNPLAYED.name()));
+        levelBuilder.addStatus(status);
 
         int width = levelObject.get("columns").asInt();
         int height = levelObject.get("rows").asInt();
@@ -138,6 +145,10 @@ public class Level {
         return levelBuilder.build();
     }
 
+    public enum Status {
+        WON, UNPLAYED, LOST
+    }
+
     private static class Builder {
         private final int number;
         private final String title;
@@ -147,12 +158,18 @@ public class Level {
         private Duration fallTime;
         private int catsLimit;
         private List<Goal> goals;
+        private Status status;
 
         public Builder(int number, String title, String description) {
             this.number = number;
             this.description = description;
             this.title = title;
             this.goals = new ArrayList<>();
+        }
+
+        public Builder addStatus(Status status) {
+            this.status = status;
+            return this;
         }
 
         public Builder mapDimensions(int width, int height) {
@@ -181,7 +198,7 @@ public class Level {
         }
 
         public Level build() {
-            return new Level(number, title, description, mapDimensions, levelTime, fallTime, catsLimit, goals);
+            return new Level(number, title, description, mapDimensions, levelTime, fallTime, catsLimit, goals, status);
         }
     }
 }

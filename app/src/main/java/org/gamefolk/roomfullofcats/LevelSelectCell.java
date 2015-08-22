@@ -35,7 +35,7 @@ public class LevelSelectCell extends ListCell<Level> {
         if (level != null) {
             title.setText(level.title);
 
-            switch (level.status) {
+            switch (level.getStatus()) {
                 case UNPLAYED:
                     status.setText("NEW");
                     status.getStyleClass().add("new");

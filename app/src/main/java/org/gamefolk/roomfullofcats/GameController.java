@@ -181,8 +181,15 @@ public class GameController implements Initializable {
         pauseButton.setDisable(true);
         if (game.isGoalsSatisfied()) {
             goal.setFill(Color.GREEN);
+            if (game.getCurrentLevel().getStatus() != Level.Status.WON) {
+                game.getCurrentLevel().setStatus(Level.Status.WON);
+            }
         } else {
             goal.setFill(Color.RED);
+            Level.Status currentStatus = game.getCurrentLevel().getStatus();
+            if (currentStatus != Level.Status.LOST && currentStatus != Level.Status.WON) {
+                game.getCurrentLevel().setStatus(Level.Status.LOST);
+            }
         }
     }
 
