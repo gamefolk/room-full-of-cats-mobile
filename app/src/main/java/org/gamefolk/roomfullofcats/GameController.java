@@ -14,12 +14,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.gamefolk.roomfullofcats.game.Cat;
 import org.gamefolk.roomfullofcats.game.Game;
 import org.gamefolk.roomfullofcats.game.Level;
 import org.gamefolk.roomfullofcats.utils.FXUtils;
-import org.joda.time.Instant;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -75,7 +77,31 @@ public class GameController implements Initializable {
         gameLoop.setCycleCount(Timeline.INDEFINITE);
 
         Bindings.bindBidirectional(score.textProperty(), game.scoreProperty(), new NumberStringConverter());
-        Bindings.bindBidirectional(time.textProperty(), game.timerProperty());
+        time.textProperty().bindBidirectional(game.timeRemainingProperty(), new StringConverter<org.joda.time.Duration>() {
+            private PeriodFormatter timerFormat;
+
+            {
+                timerFormat = new PeriodFormatterBuilder()
+                    .printZeroAlways()
+                    .minimumPrintedDigits(1)
+                    .appendMinutes()
+                    .appendSeparator(":")
+                    .minimumPrintedDigits(2)
+                    .appendSeconds()
+                    .toFormatter();
+            }
+
+            @Override
+            public String toString(org.joda.time.Duration duration) {
+                return timerFormat.print(duration.toPeriod());
+            }
+
+            @Override
+            public org.joda.time.Duration fromString(String s) {
+                // We don't really have a way to convert back (nor do we need to), so let's just return a default.
+                return org.joda.time.Duration.millis(0);
+            }
+        });
         Bindings.bindBidirectional(goal.textProperty(), game.goalProperty());
 
         message.setWrappingWidth(root.getWidth() * 0.75);
@@ -117,8 +143,7 @@ public class GameController implements Initializable {
             fadeTransition.play();
 
             // Play the game!
-            game.setTimer(Instant.now());
-            scoreView.setVisible(true);
+            game.startTimer();
             gameLoop.play();
         });
         introAnimation.play();
@@ -160,7 +185,6 @@ public class GameController implements Initializable {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         title.getParent().setOpacity(1.0);
         gameOverView.setVisible(false);
-        game.setTimer(Instant.now());
         game.stopMusic();
         gameLoop.stop();
         startGame(game.getCurrentLevel());

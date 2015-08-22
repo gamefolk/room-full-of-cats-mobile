@@ -6,10 +6,12 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.media.MediaPlayer;
-import org.gamefolk.roomfullofcats.*;
+import org.gamefolk.roomfullofcats.MusicPlayer;
+import org.gamefolk.roomfullofcats.RoomFullOfCatsApp;
+import org.gamefolk.roomfullofcats.Sound;
+import org.gamefolk.roomfullofcats.SoundService;
 import org.gamefolk.roomfullofcats.game.goals.Goal;
 import org.joda.time.Duration;
-import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
@@ -24,7 +26,7 @@ public class Game {
     private final Sound blipClip;
     private final Sound scoreClip;
     private IntegerProperty score = new SimpleIntegerProperty(0);
-    private StringProperty timer = new SimpleStringProperty();
+    private ObjectProperty<Duration> timeRemaining = new SimpleObjectProperty<>();
     private StringProperty goal = new SimpleStringProperty();
     private Interval gameTime;
     private Level currentLevel;
@@ -37,6 +39,7 @@ public class Game {
     private int canvasHeight;
     private PeriodFormatter timerFormat;
     private boolean gameOver;
+    private CountdownTimer timer;
 
     public Game(GraphicsContext gc) {
         this.gc = gc;
@@ -51,20 +54,7 @@ public class Game {
         blipClip = soundService.loadSound("/assets/audio/blip.wav");
         scoreClip = soundService.loadSound("/assets/audio/score.wav");
 
-        timerFormat = new PeriodFormatterBuilder()
-                .printZeroAlways()
-                .minimumPrintedDigits(1)
-                .appendMinutes()
-                .appendSeparator(":")
-                .minimumPrintedDigits(2)
-                .appendSeconds()
-                .toFormatter();
-
         gameOver = false;
-    }
-
-    private String formatTimer(Duration duration) {
-        return timerFormat.print(duration.toPeriod());
     }
 
     public boolean isGameOver() {
@@ -81,12 +71,16 @@ public class Game {
         return true;
     }
 
+    public void startTimer() {
+        timer.start();
+    }
+
     public IntegerProperty scoreProperty() {
         return score;
     }
 
-    public StringProperty timerProperty() {
-        return timer;
+    public ObjectProperty<Duration> timeRemainingProperty() {
+        return timeRemaining;
     }
 
     public StringProperty goalProperty() {
@@ -101,6 +95,9 @@ public class Game {
 
     public void setLevel(Level level) {
         currentLevel = level;
+
+        timer = new CountdownTimer.Builder(currentLevel.timeLimit).build();
+        timeRemaining = new SimpleObjectProperty<>(currentLevel.timeLimit);
 
         int columns = (int) currentLevel.dimensions.width;
         int rows = (int) currentLevel.dimensions.height;
@@ -167,11 +164,6 @@ public class Game {
         songPlayer.play();
     }
 
-    public void setTimer(Instant time) {
-        gameTime = currentLevel.timeLimit.toIntervalFrom(time);
-        timer.set(formatTimer(gameTime.toDuration()));
-    }
-
     public int getNumMoves() {
         throw new UnsupportedOperationException("unimplemented");
     }
@@ -182,13 +174,12 @@ public class Game {
 
     public void updateSprites() {
         long currentTime = System.currentTimeMillis();
-        Duration timeLeft = new Duration(currentTime, gameTime.getEndMillis());
-        if (currentTime > gameTime.getEndMillis()) {
+        if (timer.getRemainingTime() <= 0) {
             gameOver = true;
             return;
         }
 
-        timer.set(formatTimer(timeLeft));
+        timeRemaining.set(Duration.millis(timer.getRemainingTime()));
 
         // Only make the cats fall when we need to.
         if (currentTime - lastCatFall < 2000) {

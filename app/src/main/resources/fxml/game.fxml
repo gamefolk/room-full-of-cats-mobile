@@ -10,7 +10,7 @@
            fx:controller="org.gamefolk.roomfullofcats.GameController"
            xmlns:fx="http://javafx.com/fxml">
   <top>
-    <BorderPane fx:id="scoreView" styleClass="scoreView" visible="false">
+    <BorderPane fx:id="scoreView" styleClass="scoreView">
       <left>
         <Text fx:id="time" />
       </left>
