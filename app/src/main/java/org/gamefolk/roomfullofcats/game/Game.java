@@ -229,6 +229,16 @@ public class Game {
         lastCatFall = currentTime;
     }
 
+    public void pause() {
+        songPlayer.pause();
+        timer.stop();
+    }
+
+    public void unpause() {
+        songPlayer.play();
+        timer.start();
+    }
+
     public void drawSprites() {
         // Erase canvas
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());

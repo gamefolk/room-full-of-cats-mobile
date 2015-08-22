@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -41,14 +42,28 @@ public class GameController implements Initializable {
     @FXML private Text time;
     @FXML private Text goal;
     @FXML private Parent gameOverView;
-    private Timeline gameLoop;
+    @FXML private ToggleButton pauseButton;
 
-    public GraphicsContext getGraphicsContext2D() {
-        return canvas.getGraphicsContext2D();
-    }
+    private Timeline gameLoop;
 
     public void startGame(Level level) {
         Log.info("Starting game.");
+
+        // Pause the game if we lose focus
+        root.getScene().getWindow().focusedProperty().addListener((ov, t, t1) -> {
+            if (ov.getValue()) {
+                unpause();
+            } else {
+                pause();
+            }
+        });
+
+        // Reset everything
+        root.applyCss();
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        title.getParent().setOpacity(1.0);
+        gameOverView.setVisible(false);
 
         gameView.setFocusTraversable(true);
 
@@ -57,7 +72,7 @@ public class GameController implements Initializable {
         canvas.widthProperty().set(stage.getWidth());
         canvas.heightProperty().set((stage.getHeight() / 2) * 1.75);
 
-        game = new Game(getGraphicsContext2D());
+        game = new Game(canvas.getGraphicsContext2D());
         game.setLevel(level);
         game.playMusic();
 
@@ -107,10 +122,8 @@ public class GameController implements Initializable {
         message.setWrappingWidth(root.getWidth() * 0.75);
 
         // Fade the level title and description in typewriter-style.
-        final Animation typewriterAnimation = new Transition() {
+        Animation typewriterAnimation = new Transition() {
             {
-                title.setVisible(true);
-                message.setVisible(true);
                 setCycleDuration(Duration.millis(2000));
             }
 
@@ -145,12 +158,13 @@ public class GameController implements Initializable {
             // Play the game!
             game.startTimer();
             gameLoop.play();
+            pauseButton.setDisable(false);
         });
         introAnimation.play();
     }
 
     @FXML void handleInput(MouseEvent event) {
-        if (game.isGameOver()) {
+        if (game.isGameOver() || pauseButton.isSelected()) {
             return;
         }
 
@@ -164,10 +178,30 @@ public class GameController implements Initializable {
 
     private void gameOver() {
         gameOverView.setVisible(true);
+        pauseButton.setDisable(true);
         if (game.isGoalsSatisfied()) {
             goal.setFill(Color.GREEN);
         } else {
             goal.setFill(Color.RED);
+        }
+    }
+
+    private void pause() {
+        game.pause();
+        gameLoop.pause();
+    }
+
+    private void unpause() {
+        game.unpause();
+        gameLoop.play();
+    }
+
+    @FXML
+    private void pauseButtonToggle() {
+        if (pauseButton.isSelected()) {
+            pause();
+        } else {
+            unpause();
         }
     }
 
@@ -180,11 +214,6 @@ public class GameController implements Initializable {
 
     @FXML
     private void restart() {
-        root.applyCss();
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        title.getParent().setOpacity(1.0);
-        gameOverView.setVisible(false);
         game.stopMusic();
         gameLoop.stop();
         startGame(game.getCurrentLevel());

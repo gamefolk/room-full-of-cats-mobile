@@ -4,9 +4,7 @@ import javafx.scene.media.MediaPlayer;
 import org.robovm.apple.audiotoolbox.AudioServices;
 import org.robovm.apple.avfoundation.AVAudioPlayer;
 import org.robovm.apple.corefoundation.OSStatusException;
-import org.robovm.apple.foundation.NSBundle;
 import org.robovm.apple.foundation.NSErrorException;
-import org.robovm.apple.foundation.NSString;
 import org.robovm.apple.foundation.NSURL;
 
 import java.io.File;
@@ -94,5 +92,10 @@ class IOSMusicPlayer extends MusicPlayer {
     @Override
     public void stop() {
         audioPlayer.stop();
+    }
+
+    @Override
+    public void pause() {
+        audioPlayer.pause();
     }
 }

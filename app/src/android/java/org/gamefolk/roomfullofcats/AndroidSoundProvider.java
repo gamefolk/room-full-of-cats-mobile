@@ -72,6 +72,11 @@ class AndroidMusicPlayer extends MusicPlayer {
     public void stop() {
         mediaPlayer.stop();
     }
+
+    @Override
+    public void pause() {
+        mediaPlayer.pause();
+    }
 }
 
 class AndroidSound extends Sound {

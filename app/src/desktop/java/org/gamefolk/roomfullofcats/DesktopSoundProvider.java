@@ -38,6 +38,11 @@ class DesktopMusicPlayer extends MusicPlayer {
     public void stop() {
         mediaPlayer.stop();
     }
+
+    @Override
+    public void pause() {
+        mediaPlayer.pause();
+    }
 }
 
 class DesktopSound extends Sound {

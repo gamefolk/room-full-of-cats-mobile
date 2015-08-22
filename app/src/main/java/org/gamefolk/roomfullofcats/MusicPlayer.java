@@ -20,4 +20,6 @@ public abstract class MusicPlayer {
     public abstract void setCycleCount(int value);
 
     public abstract void stop();
+
+    public abstract void pause();
 }
