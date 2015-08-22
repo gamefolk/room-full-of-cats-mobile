@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ListCell?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Text?>
+<?import java.net.URL?>
+<fx:root type="javafx.scene.control.ListCell" xmlns:fx="http://javafx.com/fxml">
+  <BorderPane fx:id="root">
+    <left>
+      <Text fx:id="title" />
+    </left>
+    <right>
+      <Text fx:id="status" />
+    </right>
+  </BorderPane>
+  <stylesheets>
+    <URL value="@styles/levelSelectCell.css" />
+  </stylesheets>
+</fx:root>

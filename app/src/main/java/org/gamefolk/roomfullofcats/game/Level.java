@@ -54,6 +54,11 @@ public class Level {
     public final Duration fallTime;
     public final int catsLimit;
     public final List<Goal> goals;
+    public Status status;
+
+    public enum Status {
+        WON, UNPLAYED, LOST
+    }
 
     private Level(int number, String title, String description, Dimension2D dimensions, Duration timeLimit,
                   Duration fallTime, int catsLimit, List<Goal> goals) {
@@ -65,6 +70,8 @@ public class Level {
         this.catsLimit = catsLimit;
         this.dimensions = dimensions;
         this.goals = goals;
+
+        this.status = Status.UNPLAYED;
     }
 
     public static Level loadLevel(String path, int number) throws FileNotFoundException {

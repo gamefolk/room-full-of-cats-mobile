@@ -5,7 +5,6 @@ import com.eclipsesource.json.JsonObject;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import org.gamefolk.roomfullofcats.game.Level;
@@ -24,18 +23,7 @@ public class LevelSelectController implements Initializable {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
     List<Level> levels = new ArrayList<>();
 
-    private static class LevelCell extends ListCell<Level> {
-
-        @Override
-        protected void updateItem(Level level, boolean empty) {
-            super.updateItem(level, empty);
-
-            setText(level == null ? "" : level.title);
-        }
-    }
-
-    @FXML
-    private ListView<Level> root;
+    @FXML private ListView<Level> root;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -45,7 +33,7 @@ public class LevelSelectController implements Initializable {
             throw new RuntimeException(e);
         }
 
-        root.setCellFactory((levelListView) -> new LevelCell());
+        root.setCellFactory((levelListView) -> new LevelSelectCell());
         root.getItems().addAll(levels);
     }
 
@@ -57,8 +45,7 @@ public class LevelSelectController implements Initializable {
             return;
         }
 
-        FXUtils.TransitionInfo<GameController> gameTransition =
-                FXUtils.transitionScene(event, "/fxml/game.fxml");
+        FXUtils.TransitionInfo<GameController> gameTransition = FXUtils.transitionScene(event, "/fxml/game.fxml");
 
         // Ensure that the canvas is the correct size before starting the game.
         Parent gameView = gameTransition.getParent();
@@ -76,7 +63,7 @@ public class LevelSelectController implements Initializable {
                 result = cause;
             }
 
-            Log.log(java.util.logging.Level.SEVERE,  "Caught fatal exception:", result);
+            Log.log(java.util.logging.Level.SEVERE, "Caught fatal exception:", result);
             throw e;
         }
     }

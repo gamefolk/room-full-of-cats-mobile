@@ -1,0 +1,10 @@
+.won {
+  -fx-fill: green;
+  -fx-font-weight: bolder;
+  -fx-font-size: 1.2em;
+}
+
+.new {
+  -fx-fill: orange;
+  -fx-font-weight: bolder;
+}
