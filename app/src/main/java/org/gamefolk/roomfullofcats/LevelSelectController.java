@@ -23,7 +23,8 @@ public class LevelSelectController implements Initializable {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
     List<Level> levels = new ArrayList<>();
 
-    @FXML private ListView<Level> root;
+    @FXML private ListView<Level> levelsView;
+    @FXML private Parent root;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -33,13 +34,13 @@ public class LevelSelectController implements Initializable {
             throw new RuntimeException(e);
         }
 
-        root.setCellFactory((levelListView) -> new LevelSelectCell());
-        root.getItems().addAll(levels);
+        levelsView.setCellFactory((levelListView) -> new LevelSelectCell());
+        levelsView.getItems().addAll(levels);
     }
 
     @FXML
     private void playLevel(MouseEvent event) {
-        Level selectedLevel = root.getSelectionModel().getSelectedItem();
+        Level selectedLevel = levelsView.getSelectionModel().getSelectedItem();
         if (selectedLevel == null) {
             // We didn't select a level that's been loaded.
             return;
@@ -69,6 +70,8 @@ public class LevelSelectController implements Initializable {
     }
 
     private void loadLevels() throws IOException {
+        levelsView.getItems().clear();
+
         JsonObject levelObject;
         try {
             levelObject = JsonUtils.readJsonResource("/assets/levelSelect.json");
@@ -83,9 +86,20 @@ public class LevelSelectController implements Initializable {
         for (int i = 0; i < levelOrder.size(); i++) {
             String levelFilename = levelOrder.get(i).asString();
             Level level = Level.loadLevel("/assets/levels/" + levelFilename, i);
-            root.getItems().add(level);
+            levelsView.getItems().add(level);
         }
 
         Log.info("Loaded " + levelOrder.size() + " levels");
+    }
+
+    @FXML
+    private void clearData() {
+        // TODO: Add confirmation, as of now JavaFXports does not support Alert
+        Settings.INSTANCE.putJson("progress", new JsonObject());
+        try {
+            loadLevels();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

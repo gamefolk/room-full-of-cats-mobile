@@ -38,11 +38,11 @@ public class LevelSelectCell extends ListCell<Level> {
             switch (level.getStatus()) {
                 case UNPLAYED:
                     status.setText("NEW");
-                    status.getStyleClass().add("new");
+                    status.getStyleClass().setAll("new");
                     break;
                 case WON:
                     status.setText("✓");
-                    status.getStyleClass().add("won");
+                    status.getStyleClass().setAll("won");
                     break;
                 case LOST:
                     status.setText("");

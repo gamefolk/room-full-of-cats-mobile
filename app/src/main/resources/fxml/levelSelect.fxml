@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
-
-<ListView fx:id="root" fx:controller="org.gamefolk.roomfullofcats.LevelSelectController"
-            xmlns:fx="http://javafx.com/fxml" styleClass="root" onMouseClicked="#playLevel">
-</ListView>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<BorderPane fx:id="root" fx:controller="org.gamefolk.roomfullofcats.LevelSelectController"
+            xmlns:fx="http://javafx.com/fxml" styleClass="root">
+  <center>
+    <ListView fx:id="levelsView" onMouseClicked="#playLevel">
+    </ListView>
+  </center>
+  <bottom>
+    <HBox>
+      <Button text="Clear Data" onAction="#clearData"/>
+    </HBox>
+  </bottom>
+</BorderPane>
