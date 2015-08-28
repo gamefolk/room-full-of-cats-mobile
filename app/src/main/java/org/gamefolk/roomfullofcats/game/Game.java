@@ -6,6 +6,8 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+
 import org.gamefolk.roomfullofcats.MusicPlayer;
 import org.gamefolk.roomfullofcats.RoomFullOfCatsApp;
 import org.gamefolk.roomfullofcats.Sound;
@@ -43,11 +45,6 @@ public class Game {
 
     public Game(GraphicsContext gc) {
         this.gc = gc;
-
-        this.canvasWidth = (int) gc.getCanvas().getWidth();
-        this.canvasHeight = (int) gc.getCanvas().getHeight();
-
-        Log.info("Canvas dimensions are " + new Dimension2D(canvasWidth, canvasHeight));
 
         SoundService soundService = SoundService.getInstance();
         songPlayer = soundService.loadMusic("/assets/audio/catsphone.mp3");
@@ -99,30 +96,32 @@ public class Game {
         timer = new CountdownTimer.Builder(currentLevel.timeLimit).build();
         timeRemaining = new SimpleObjectProperty<>(currentLevel.timeLimit);
 
-        int columns = (int) currentLevel.dimensions.width;
+        goal.set(getGoalDescription());
+    }
+    
+    public void layoutLevel() {
+    	this.canvasWidth = (int) gc.getCanvas().getWidth();
+        this.canvasHeight = (int) gc.getCanvas().getHeight();
+
+        Log.info("Canvas dimensions are " + new Dimension2D(canvasWidth, canvasHeight));
+        
+    	int columns = (int) currentLevel.dimensions.width;
         int rows = (int) currentLevel.dimensions.height;
         map = new Cat[columns][rows];
         buckets = new Bucket[columns];
 
-        // Calculate the width of cats, leaving a cat length on either side for margin.
-        int catWidth, catHeight;
-        if (columns % 2 == 0) {
-            catWidth = canvasWidth / (columns + 2);
-            catHeight = catWidth;
-            mapOrigin = new Point2D(catWidth, catHeight);
-        } else {
-            // If there are an odd number of cats, then the middle row of cats, then we do the calculation as if there is one more cat, leaving some extra space on both sides.
-            catWidth = canvasWidth / ((columns + 1) + 2);
-            catHeight = catWidth;
-            mapOrigin = new Point2D(catWidth + catWidth / 2, catHeight);
-        }
-        catSize = new Dimension2D(catWidth, catHeight);
-        mapOrigin = new Point2D(catWidth, catHeight);
+        // Calculate the size of cats, leaving a cat length on either side for margin.
+        
+        int tempX = canvasWidth / (columns + 1); 
+        int tempY = canvasHeight / (rows + 1);
+        
+        int catXY = tempX < tempY ? tempX : tempY;
+        
+        catSize = new Dimension2D(catXY, catXY);
+        mapOrigin = new Point2D((canvasWidth - (columns * catXY)) / 2, (canvasHeight - (rows * catXY)) / 2);
 
         Log.info("Cat size set to " + catSize);
         Log.info("Map origin set to " + mapOrigin);
-
-        goal.set(getGoalDescription());
     }
 
     private String getGoalDescription() {

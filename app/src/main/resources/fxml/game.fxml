@@ -21,16 +21,17 @@
       <right>
         <ToggleButton fx:id="pauseButton" text="Pause" onAction="#pauseButtonToggle" disable="true"/>
       </right>
+      <bottom>
+      	<VBox alignment="CENTER" VBox.vgrow="ALWAYS">
+          <Text fx:id="goal" VBox.vgrow="ALWAYS" textAlignment="CENTER" />
+        </VBox>
+      </bottom>
     </BorderPane>
   </top>
   <center>
     <StackPane onMouseClicked="#handleInput">
       <VBox fx:id="gameView">
         <Canvas fx:id="canvas" VBox.vgrow="ALWAYS" />
-        <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
-          <Text text="Goal:" />
-          <Text fx:id="goal" VBox.vgrow="ALWAYS" textAlignment="CENTER" />
-        </VBox>
       </VBox>
       <BorderPane>
         <center>
@@ -50,7 +51,7 @@
     </StackPane>
   </center>
   <bottom>
-    <Ad />
+    <Ad fx:id="ad" />
   </bottom>
   <stylesheets>
     <URL value="@styles/game.css" />

@@ -10,6 +10,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -32,8 +33,8 @@ public class GameController implements Initializable {
     private static final Logger Log = Logger.getLogger(RoomFullOfCatsApp.class.getName());
     private Game game;
 
-    @FXML private Pane root;
-    @FXML private Parent scoreView;
+    @FXML private BorderPane root;
+    @FXML private BorderPane scoreView;
     @FXML private Pane gameView;
     @FXML private Canvas canvas;
     @FXML private Text title;
@@ -43,6 +44,7 @@ public class GameController implements Initializable {
     @FXML private Text goal;
     @FXML private Parent gameOverView;
     @FXML private ToggleButton pauseButton;
+    @FXML private BorderPane ad;
 
     private Timeline gameLoop;
 
@@ -66,11 +68,6 @@ public class GameController implements Initializable {
         gameOverView.setVisible(false);
 
         gameView.setFocusTraversable(true);
-
-        // Make sure the canvas is the correct width.
-        Stage stage = (Stage) root.getScene().getWindow();
-        canvas.widthProperty().set(stage.getWidth());
-        canvas.heightProperty().set((stage.getHeight() / 2) * 1.75);
 
         game = new Game(canvas.getGraphicsContext2D());
         game.setLevel(level);
@@ -152,7 +149,14 @@ public class GameController implements Initializable {
         fadeTransition.setFromValue(1.0);
         fadeTransition.setToValue(0);
 
-        introAnimation.setOnFinished((event) -> {
+        introAnimation.setOnFinished((event) -> {        	
+        	
+        	// Make sure the canvas is the correct width.
+            canvas.widthProperty().set(root.getWidth());
+            canvas.heightProperty().set(root.getHeight() - (scoreView.getHeight() + ad.getHeight()));
+            
+            game.layoutLevel();
+        	
             fadeTransition.play();
 
             // Play the game!
